@@ -1,11 +1,11 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-10-26T14:03:38
+# Project created by QtCreator 2017-10-25T12:33:24
 #
 #-------------------------------------------------
 
-QT       += core gui
-
+QT += core gui
+QT += gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = QtSE
@@ -32,3 +32,9 @@ HEADERS += \
 
 FORMS += \
         mainwindow.ui
+
+DISTFILES += \
+    bg.jpg
+
+RESOURCES += \
+    resources.qrc
