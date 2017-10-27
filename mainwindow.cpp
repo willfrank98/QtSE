@@ -6,6 +6,74 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    int numberOfCells = 32;
+    QGridLayout *controlsLayout = new QGridLayout;
+    int windowSize=530;
+    QGraphicsScene *scene = new QGraphicsScene(0,0,windowSize,windowSize,this);
+    signalMapper = new QSignalMapper(this);
+    for(int i = 0 ; i < numberOfCells ; i++ )
+    {
+        for(int j = 0 ; j < numberOfCells ; j++ )
+        {
+            QString s = QString::number(i)+"."+QString::number(j);
+            button[i][j] = new QPushButton();
+            button[i][j]->setObjectName(s);
+            button[i][j]->setObjectName(s);
+            connect(button[i][j], SIGNAL(pressed()), signalMapper, SLOT(map()));
+                    signalMapper->setMapping(button[i][j], button[i][j]->objectName());
+            button[i][j]->setStyleSheet("background-color: rgba(255, 255, 255, 10);");
+            controlsLayout->addWidget(button[i][j], i, j);
+        }
+    }
+    connect(signalMapper, SIGNAL(mapped(QString)), this, SIGNAL(pressed(QString)));
+    connect(this, &MainWindow::pressed, this, &MainWindow::buttonClicked);
+    ui->graphicsView->setLayout(controlsLayout);
+    controlsLayout->setHorizontalSpacing(0);
+    controlsLayout->setVerticalSpacing(0);
+    QImage image(":/Checkered.png");
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(image));
+    scene->addItem(item);
+}
+
+void MainWindow::buttonClicked(const QString &text){
+    QStringList pieces = text.split( "." );
+    QString needednum1 = pieces.value( pieces.length() - 2 );
+    QString needednum2 = pieces.value( pieces.length() - 1 );
+    int x,y;
+    stringstream(needednum1.toStdString()) >> x;
+    stringstream(needednum2.toStdString()) >> y;
+    button[x][y]->setStyleSheet("background-color: black;");
+}
+
+void MainWindow::animFinished()
+{
+ if (_numScheduledScalings > 0)
+ _numScheduledScalings--;
+ else
+ _numScheduledScalings++;
+ sender()->~QObject();
+}
+
+void MainWindow::scalingTime(qreal x)
+{
+ qreal factor = 1.0+ qreal(_numScheduledScalings) / 300.0;
+ ui->graphicsView->scale(factor, factor);
+ emit scale(factor, factor);
+}
+
+
+void MainWindow::wheelEvent ( QWheelEvent * event )
+{
+ int numDegrees = event->delta() /8;
+ int numSteps = numDegrees / 15; // see QWheelEvent documentation
+ _numScheduledScalings += numSteps;
+ if (_numScheduledScalings * numSteps < 0) // if user moved the wheel in another direction, we reset previously scheduled scalings
+ _numScheduledScalings = numSteps;
+ QTimeLine *anim = new QTimeLine(350, this);
+ anim->setUpdateInterval(20);
+ connect(anim, SIGNAL (valueChanged(qreal)), SLOT (scalingTime(qreal)));
+ connect(anim, SIGNAL (finished()), SLOT (animFinished()));
+ anim->start();
 }
 
 MainWindow::~MainWindow()
