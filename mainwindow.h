@@ -18,6 +18,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    int canvasSize;
+
+    void createCanvas(int);
 };
 
 #endif // MAINWINDOW_H

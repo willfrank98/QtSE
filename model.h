@@ -11,8 +11,12 @@ public:
 signals:
 
 public slots:
+    void exit();    // a better name might be needed
 
 private:
+    bool isSaved = false;   // toggle to true when saved, make false after changes are made
+
+    void promptSave();
 
 };
 
