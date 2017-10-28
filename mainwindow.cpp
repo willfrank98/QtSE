@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "canvas.h"
+#include <FreeImage.h>
 #include <QGraphicsItem>
 #include <QGraphicsRectItem>
 #include <QDebug>
@@ -17,6 +18,15 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(ui->action32x32, &QAction::triggered, this, [this](){ createCanvas(32); });
     connect(ui->action64x64, &QAction::triggered, this, [this](){ createCanvas(64); });
     connect(ui->action128x128, &QAction::triggered, this, [this](){ createCanvas(128); });
+
+    // connects the File>Export actions
+    connect(ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
+        // this is just a lambda function to check if FreeImage doesn't fail
+        // will be updated with proper functionality later
+        FreeImage_Initialise();
+        qDebug() << "Initialized FreeImage " << FreeImage_GetVersion();
+        FreeImage_DeInitialise();
+    });
 
     // connects the File>Exit action
     connect(ui->actionExit, &QAction::triggered, &model, &Model::exit);

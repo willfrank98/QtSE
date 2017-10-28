@@ -37,3 +37,7 @@ HEADERS += \
 
 FORMS += \
         mainwindow.ui
+
+# Necessary changes to be able to use FreeImage
+INCLUDEPATH += $$PWD/3rdparty/FreeImage/include
+LIBS += -L$$PWD/3rdparty/FreeImage/lib/ -lFreeImage
