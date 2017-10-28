@@ -21,8 +21,8 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 
     // connects the File>Export actions
     connect(ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
-        // this is just a lambda function to check if FreeImage doesn't fail
-        // will be updated with proper functionality later
+        // This is just a lambda function to check if FreeImage fails for anyone.
+        // It will be updated with proper functionality once confirmed.
         FreeImage_Initialise();
         qDebug() << "Initialized FreeImage " << FreeImage_GetVersion();
         FreeImage_DeInitialise();
