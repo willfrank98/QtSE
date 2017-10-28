@@ -1,16 +1,27 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "canvas.h"
-//#include "FreeImage.h"
 #include <QGraphicsItem>
 #include <QGraphicsRectItem>
 #include <QDebug>
+#include <iostream>
+#include <QVector>
+using namespace std;
+
 
 MainWindow::MainWindow(Model &model, QWidget *parent) :
 	QMainWindow(parent),
-	ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+    cd = new QColorDialog();
+    cd->setCurrentColor(*new QColor(Qt::black));
+    //set the default colors
+    Canvas::c1 = QColor(Qt::black);
+    Canvas::c2 = QColor(Qt::white);
+    // connects the buttons
+    connect(ui->color1Box, &QAbstractButton::clicked, this, &MainWindow::colorBox1Clicked);
+    connect(ui->color2Box, &QAbstractButton::clicked, this, &MainWindow::colorBox2Clicked);
 
     // connects the File>New actions
     connect(ui->action8x8, &QAction::triggered, this, [this](){ createCanvas(8); });
@@ -18,7 +29,6 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(ui->action32x32, &QAction::triggered, this, [this](){ createCanvas(32); });
     connect(ui->action64x64, &QAction::triggered, this, [this](){ createCanvas(64); });
     connect(ui->action128x128, &QAction::triggered, this, [this](){ createCanvas(128); });
-
     // connects the File>Export actions
     connect(ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
         /*
@@ -33,7 +43,7 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 
     // connects the File>Exit action
     connect(ui->actionExit, &QAction::triggered, &model, &Model::exit);
-
+    // connects the File>Exit action  
 }
 
 MainWindow::~MainWindow()
@@ -41,9 +51,66 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
+void MainWindow::colorBox1Clicked(){
+    Canvas::c1 = QColor(cd->getColor());
+    QString temp = QString::fromStdString("background-color: "+Canvas::c1.name().toStdString()+";");
+    ui->color1Box->setStyleSheet(temp);
+}
+void MainWindow::colorBox2Clicked(){
+    Canvas::c2 = QColor(cd->getColor());
+    QString temp = QString::fromStdString("background-color: "+Canvas::c2.name().toStdString()+";");
+    ui->color2Box->setStyleSheet(temp);
+}
+
 void MainWindow::createCanvas(int size)
 {
     Canvas *canvas = new Canvas(size, ui->graphicsViewCanvas->width()/(qreal)size);
     ui->graphicsViewCanvas->setScene(canvas);
     ui->graphicsViewCanvas->setEnabled(true);
+}
+
+// Adds a background to the canvas at Z-layer -1 (background)
+void MainWindow::addBackground(QGraphicsScene &scene) {
+    // TODO
+}
+
+void MainWindow::addSurface(QGraphicsScene &scene) {
+    QBrush *brush = new QBrush(QColor::fromRgbF(0.0, 0.0, 0.0, 1.0));
+
+    for (qreal y = 0; y < canvasSize; y++) {
+        for (qreal x = 0; x < canvasSize; x++) {
+
+        }
+    }
+}
+
+// Adds a grid to the canvas at Z-layer 1 (foreground)
+// Interestingly, the canvas can pan very slightly regardless of size.
+void MainWindow::addGrid(QGraphicsScene &scene) {
+    QPen *pen = new QPen(QColor::fromRgbF(0.2, 0.2, 0.2, 0.75));
+    pen->setWidthF(0.25);
+
+    for (qreal y = 0; y < canvasSize; y++) {
+        for (qreal x = 0; x < canvasSize; x++) {
+            scene.addRect(pixelSize * x, pixelSize * y, pixelSize, pixelSize, *pen);
+        }
+    }
+    scene.createItemGroup(scene.items())->setZValue(1);
+}
+
+
+
+void MainWindow::on_penTool_clicked()
+{
+    Canvas::c1 = QColor(Canvas::c1Last);
+    Canvas::c2 = QColor(Canvas::c2Last);
+}
+
+void MainWindow::on_eraseButton_clicked()
+{
+    Canvas::c1Last = QColor(Canvas::c1);
+    Canvas::c2Last = QColor(Canvas::c2);
+
+    Canvas::c1 = QColor(Qt::white);
+    Canvas::c2 = QColor(Qt::white);
 }
