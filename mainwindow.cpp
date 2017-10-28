@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "canvas.h"
-#include <FreeImage.h>
+//#include "FreeImage.h"
 #include <QGraphicsItem>
 #include <QGraphicsRectItem>
 #include <QDebug>
@@ -21,11 +21,14 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 
     // connects the File>Export actions
     connect(ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
-        // This is just a lambda function to check if FreeImage fails for anyone.
-        // It will be updated with proper functionality once confirmed.
-        FreeImage_Initialise();
-        qDebug() << "Initialized FreeImage " << FreeImage_GetVersion();
-        FreeImage_DeInitialise();
+        /*
+         * This is just a lambda function to check if FreeImage fails for anyone.
+         * Looks like Window will be difficult to get linked correctly.
+         * Will fix Monday soon.
+         */
+//        FreeImage_Initialise();
+//        qDebug() << "Initialized FreeImage " << FreeImage_GetVersion();
+//        FreeImage_DeInitialise();
     });
 
     // connects the File>Exit action
