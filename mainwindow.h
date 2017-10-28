@@ -19,12 +19,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    int canvasSize;
-    qreal pixelSize;
 
-    void addBackground(QGraphicsScene&);
-    void addSurface(QGraphicsScene&);
-    void addGrid(QGraphicsScene&);
     void createCanvas(int);
 };
 
