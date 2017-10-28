@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>erase.jpg</file>
+        <file>pentool.svg</file>
+    </qresource>
+</RCC>
