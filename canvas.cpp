@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <iostream>
 #include "model.h"
+#include <QGraphicsPixmapItem>
 using namespace std;
 QBrush *Canvas::brush;
 QColor Canvas::c1;
@@ -15,7 +16,6 @@ Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 
 Canvas::Canvas(int size, qreal pixSize, QObject *parent) : QGraphicsScene(parent)
 {
-        QImage image(":/Checkered.png");
     QGraphicsPixmapItem item;
     QString fileNamez = ":/Checkered.png";
     QGraphicsPixmapItem *pm = this->addPixmap( QPixmap(fileNamez) );
