@@ -15,6 +15,10 @@ Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 
 Canvas::Canvas(int size, qreal pixSize, QObject *parent) : QGraphicsScene(parent)
 {
+        QImage image(":/Checkered.png");
+    QGraphicsPixmapItem item;
+    QString fileNamez = ":/Checkered.png";
+    QGraphicsPixmapItem *pm = this->addPixmap( QPixmap(fileNamez) );
     Canvas::brush = new QBrush(Canvas::c1);
     pen = new QPen(QColor::fromRgbF(0.7, 0.8, 0.9, 1.0));
     this->size = size;
