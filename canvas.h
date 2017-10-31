@@ -3,6 +3,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QBrush>
+#include <QStack>
 class Canvas : public QGraphicsScene
 {
     Q_OBJECT
@@ -12,7 +13,10 @@ private:
     int size = 32;
     qreal pixSize = 480/32;
     QImage *data;
+    QStack<QImage> undoStack;
+    QStack<QImage> redoStack;
     bool buttonHeld = false;
+    //bool imageChanged = false;
     void putPixel(QPointF, QColor);
 
 public:
@@ -29,6 +33,8 @@ public:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void redraw();
     void drawGrid();
+    void undo();
+    void redo();
 };
 
 #endif // CANVAS_H
