@@ -6,6 +6,8 @@
 #include "model.h"
 #include <QColorDialog>
 #include <QPalette>
+#include <QQueue>
+#include <QFrame>
 namespace Ui {
 class MainWindow;
 }
@@ -29,10 +31,13 @@ private:
     int canvasSize;
     qreal pixelSize;
     QColorDialog *cd ;
+    QVector<QString> colorHistory;
+    QVector<QFrame*> colorHistoryButtons;
     void addBackground(QGraphicsScene&);
     void addSurface(QGraphicsScene&);
     void addGrid(QGraphicsScene&);
     void createCanvas(int);
+    void updateColorHistory();
 };
 
 #endif // MAINWINDOW_H
