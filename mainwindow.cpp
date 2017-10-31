@@ -23,6 +23,10 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(ui->color1Box, &QAbstractButton::clicked, this, &MainWindow::colorBox1Clicked);
     connect(ui->color2Box, &QAbstractButton::clicked, this, &MainWindow::colorBox2Clicked);
 
+    // connects the undo/redo buttons
+    //connect(ui->actionUndo, &QAction::triggered, this, Canvas::undo());
+    //connect(ui->actionRedo, &QAction::triggered, this, Canvas::redo());
+
     // connects the File>New actions
     connect(ui->action8x8, &QAction::triggered, this, [this](){ createCanvas(8); });
     connect(ui->action16x16, &QAction::triggered, this, [this](){ createCanvas(16); });
