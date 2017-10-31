@@ -23,6 +23,9 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(ui->color1Box, &QAbstractButton::clicked, this, &MainWindow::colorBox1Clicked);
     connect(ui->color2Box, &QAbstractButton::clicked, this, &MainWindow::colorBox2Clicked);
 
+	connect(ui->actionSave, &QAction::triggered, &model, &Model::saveFramesAction);
+	connect(ui->actionLoad, &QAction::triggered, &model, &Model::loadFramesAction);
+
     // connects the File>New actions
     connect(ui->action8x8, &QAction::triggered, this, [this](){ createCanvas(8); });
     connect(ui->action16x16, &QAction::triggered, this, [this](){ createCanvas(16); });

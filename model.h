@@ -18,6 +18,8 @@ private:
 
     void promptSave();
 
+	void promptLoad();
+
 };
 
 #endif // MODEL_H
