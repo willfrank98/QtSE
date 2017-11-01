@@ -13,15 +13,10 @@ signals:
 public slots:
     void exit();    // a better name might be needed
 
-	void saveFramesAction();
-	void loadFramesAction();
-
 private:
     bool isSaved = false;   // toggle to true when saved, make false after changes are made
 
     void promptSave();
-
-	void promptLoad();
 
 };
 
