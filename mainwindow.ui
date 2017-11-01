@@ -134,7 +134,7 @@
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-image: url(:/tool_icons/pen_tool_icon.png);
+      <string notr="true">background-image: url(:/tool_icons/black_background.png);
 image: url(:/tool_icons/eraser_tool_icon.png);
 </string>
      </property>
@@ -158,7 +158,7 @@ image: url(:/tool_icons/eraser_tool_icon.png);
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-image: url(:/tool_icons/pen_tool_icon.png);
+      <string notr="true">background-image: url(:/tool_icons/black_background.png);
 image: url(:/tool_icons/mirror_pen_tool_icon.png);</string>
      </property>
      <property name="text">
@@ -182,7 +182,7 @@ image: url(:/tool_icons/mirror_pen_tool_icon.png);</string>
      </property>
      <property name="styleSheet">
       <string notr="true">image: url(:/tool_icons/dithering_tool_icon.png);
-background-image: url(:/tool_icons/pen_tool_icon.png);</string>
+background-image: url(:/tool_icons/black_background.png);</string>
      </property>
      <property name="text">
       <string/>
@@ -465,7 +465,7 @@ background-image: url(:/tool_icons/pen_tool_icon.png);</string>
      </property>
      <property name="styleSheet">
       <string notr="true">image: url(:/tool_icons/color_fill_tool_icon.png);
-background-image: url(:/tool_icons/pen_tool_icon.png);</string>
+background-image: url(:/tool_icons/black_background.png);</string>
      </property>
      <property name="text">
       <string/>
@@ -488,7 +488,7 @@ background-image: url(:/tool_icons/pen_tool_icon.png);</string>
      </property>
      <property name="styleSheet">
       <string notr="true">image: url(:/tool_icons/bucket_fill_tool_icon.png);
-background-image: url(:/tool_icons/pen_tool_icon.png);</string>
+background-image: url(:/tool_icons/black_background.png);</string>
      </property>
      <property name="text">
       <string/>
@@ -511,7 +511,7 @@ background-image: url(:/tool_icons/pen_tool_icon.png);</string>
      </property>
      <property name="styleSheet">
       <string notr="true">image: url(:/tool_icons/ellipse_tool_icon.png);
-background-image: url(:/tool_icons/pen_tool_icon.png);</string>
+background-image: url(:/tool_icons/black_background.png);</string>
      </property>
      <property name="text">
       <string/>
@@ -527,7 +527,7 @@ background-image: url(:/tool_icons/pen_tool_icon.png);</string>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-image: url(:/tool_icons/pen_tool_icon.png);
+      <string notr="true">background-image: url(:/tool_icons/black_background.png);
 image: url(:/tool_icons/rectangle_tool_icon.png);</string>
      </property>
      <property name="text">
@@ -561,7 +561,7 @@ image: url(:/tool_icons/rectangle_tool_icon.png);</string>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-image: url(:/tool_icons/pen_tool_icon.png);
+      <string notr="true">background-image: url(:/tool_icons/black_background.png);
 image: url(:/tool_icons/pen_tool_icon.png);
 </string>
      </property>
@@ -636,7 +636,7 @@ image: url(:/tool_icons/pen_tool_icon.png);
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-image: url(:/tool_icons/pen_tool_icon.png);
+      <string notr="true">background-image: url(:/tool_icons/black_background.png);
 image: url(:/tool_icons/rectangular_selection_tool_icon.png);</string>
      </property>
      <property name="text">
@@ -653,8 +653,8 @@ image: url(:/tool_icons/rectangular_selection_tool_icon.png);</string>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-image: url(:/tool_icons/pen_tool_icon.png);
-</string>
+      <string notr="true">background-image: url(:/tool_icons/black_background.png);
+image: url(:/tool_icons/line_tool_icon.png);</string>
      </property>
      <property name="text">
       <string/>
