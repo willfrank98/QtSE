@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>erase.jpg</file>
         <file>pentool.svg</file>
+        <file>Checkered.png</file>
     </qresource>
 </RCC>
