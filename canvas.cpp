@@ -4,11 +4,8 @@
 #include <cmath>
 #include "model.h"
 #include <QGraphicsPixmapItem>
-<<<<<<< HEAD
 
-=======
 #include "mainwindow.h"
->>>>>>> 46cdc788b8347550bafb24cd614a118c9e6a71a6
 using namespace std;
 QBrush *Canvas::brush;
 QColor Canvas::c1;
@@ -80,7 +77,7 @@ void Canvas::putPixel(QPointF point, QColor color) {
     if (x < 0 || x >= size || y < 0 || y >= size) return;
     addRect(pixSize*x,pixSize*y,pixSize,pixSize,*pen,*brush);
     std::string newkey = key.toStdString();
-    currentState.try_emplace(newkey, color);
+    //currentState.try_emplace(newkey, color);
 }
 
 void Canvas::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
