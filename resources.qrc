@@ -3,5 +3,16 @@
         <file>erase.jpg</file>
         <file>pentool.svg</file>
         <file>Checkered.png</file>
+        <file>tool_icons/bucket_fill_tool_icon.png</file>
+        <file>tool_icons/color_fill_tool_icon.png</file>
+        <file>tool_icons/deathstar.png</file>
+        <file>tool_icons/dithering_tool_icon.png</file>
+        <file>tool_icons/duplicate_frame_icon.png</file>
+        <file>tool_icons/ellipse_tool_icon.png</file>
+        <file>tool_icons/eraser_tool_icon.png</file>
+        <file>tool_icons/mirror_pen_tool_icon.png</file>
+        <file>tool_icons/pen_tool_icon.png</file>
+        <file>tool_icons/rectangle_tool_icon.png</file>
+        <file>tool_icons/rectangular_selection_tool_icon.png</file>
     </qresource>
 </RCC>

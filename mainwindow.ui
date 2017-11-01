@@ -115,7 +115,7 @@
       <x>10</x>
       <y>330</y>
       <width>161</width>
-      <height>221</height>
+      <height>271</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -124,21 +124,22 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QToolButton" name="eraseButton">
+    <widget class="QToolButton" name="eraserToolButton">
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>40</y>
-       <width>28</width>
-       <height>22</height>
+       <y>47</y>
+       <width>32</width>
+       <height>32</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-image: url(:/erase.jpg);
-image: url(:/erase.jpg);</string>
+      <string notr="true">background-image: url(:/tool_icons/pen_tool_icon.png);
+image: url(:/tool_icons/eraser_tool_icon.png);
+</string>
      </property>
      <property name="text">
-      <string>T</string>
+      <string/>
      </property>
      <property name="checkable">
       <bool>false</bool>
@@ -147,30 +148,44 @@ image: url(:/erase.jpg);</string>
       <bool>false</bool>
      </property>
     </widget>
-    <widget class="QToolButton" name="toolButton_2">
+    <widget class="QToolButton" name="mirrorPenToolButton">
      <property name="geometry">
       <rect>
        <x>120</x>
        <y>10</y>
-       <width>28</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-image: url(:/tool_icons/pen_tool_icon.png);
+image: url(:/tool_icons/mirror_pen_tool_icon.png);</string>
+     </property>
      <property name="text">
-      <string>T</string>
+      <string/>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
      </property>
     </widget>
-    <widget class="QToolButton" name="toolButton_4">
+    <widget class="QToolButton" name="ditheringPenToolButton">
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>40</y>
-       <width>28</width>
-       <height>22</height>
+       <y>47</y>
+       <width>32</width>
+       <height>32</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">image: url(:/tool_icons/dithering_tool_icon.png);
+background-image: url(:/tool_icons/pen_tool_icon.png);</string>
+     </property>
      <property name="text">
-      <string>T</string>
+      <string/>
      </property>
     </widget>
     <widget class="QFrame" name="palette1">
@@ -439,65 +454,93 @@ image: url(:/erase.jpg);</string>
       <enum>QFrame::Raised</enum>
      </property>
     </widget>
-    <widget class="QToolButton" name="toolButton_6">
+    <widget class="QToolButton" name="colorFillToolButton">
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>70</y>
-       <width>28</width>
-       <height>22</height>
+       <y>84</y>
+       <width>32</width>
+       <height>32</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">image: url(:/tool_icons/color_fill_tool_icon.png);
+background-image: url(:/tool_icons/pen_tool_icon.png);</string>
+     </property>
      <property name="text">
-      <string>T</string>
+      <string/>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
      </property>
     </widget>
-    <widget class="QToolButton" name="toolButton_5">
+    <widget class="QToolButton" name="bucketPenToolButton">
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>70</y>
-       <width>28</width>
-       <height>22</height>
+       <y>84</y>
+       <width>32</width>
+       <height>32</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">image: url(:/tool_icons/bucket_fill_tool_icon.png);
+background-image: url(:/tool_icons/pen_tool_icon.png);</string>
+     </property>
      <property name="text">
-      <string>T</string>
+      <string/>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>32</width>
+       <height>32</height>
+      </size>
      </property>
     </widget>
-    <widget class="QToolButton" name="toolButton_8">
+    <widget class="QToolButton" name="ellipseToolButton">
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>100</y>
-       <width>28</width>
-       <height>22</height>
+       <y>121</y>
+       <width>32</width>
+       <height>32</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">image: url(:/tool_icons/ellipse_tool_icon.png);
+background-image: url(:/tool_icons/pen_tool_icon.png);</string>
+     </property>
      <property name="text">
-      <string>T</string>
+      <string/>
      </property>
     </widget>
-    <widget class="QToolButton" name="toolButton_7">
+    <widget class="QToolButton" name="rectangleToolButton">
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>100</y>
-       <width>28</width>
-       <height>22</height>
+       <y>121</y>
+       <width>32</width>
+       <height>32</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-image: url(:/tool_icons/pen_tool_icon.png);
+image: url(:/tool_icons/rectangle_tool_icon.png);</string>
+     </property>
      <property name="text">
-      <string>T</string>
+      <string/>
      </property>
     </widget>
     <widget class="QToolButton" name="color1Box">
      <property name="geometry">
       <rect>
-       <x>110</x>
-       <y>170</y>
-       <width>41</width>
-       <height>31</height>
+       <x>80</x>
+       <y>200</y>
+       <width>42</width>
+       <height>42</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -508,18 +551,18 @@ image: url(:/erase.jpg);</string>
       <string/>
      </property>
     </widget>
-    <widget class="QToolButton" name="penTool">
+    <widget class="QToolButton" name="penToolButton">
      <property name="geometry">
       <rect>
        <x>80</x>
        <y>10</y>
-       <width>28</width>
-       <height>22</height>
+       <width>32</width>
+       <height>32</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">image: url(:/pentool.svg);
-background-image: url(:/pentool.svg);
+      <string notr="true">background-image: url(:/tool_icons/pen_tool_icon.png);
+image: url(:/tool_icons/pen_tool_icon.png);
 </string>
      </property>
      <property name="text">
@@ -529,6 +572,122 @@ background-image: url(:/pentool.svg);
       <bool>false</bool>
      </property>
     </widget>
+    <widget class="QFrame" name="palette13_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>220</y>
+       <width>21</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+    <widget class="QFrame" name="palette14_2">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>220</y>
+       <width>21</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="color2Box">
+     <property name="geometry">
+      <rect>
+       <x>101</x>
+       <y>221</y>
+       <width>42</width>
+       <height>42</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="rectangularSelectionToolButton">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>158</y>
+       <width>32</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-image: url(:/tool_icons/pen_tool_icon.png);
+image: url(:/tool_icons/rectangular_selection_tool_icon.png);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="lineToolButton">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>158</y>
+       <width>32</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-image: url(:/tool_icons/pen_tool_icon.png);
+</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <zorder>eraserToolButton</zorder>
+    <zorder>mirrorPenToolButton</zorder>
+    <zorder>ditheringPenToolButton</zorder>
+    <zorder>palette1</zorder>
+    <zorder>palette2</zorder>
+    <zorder>palette3</zorder>
+    <zorder>palette4</zorder>
+    <zorder>palette5</zorder>
+    <zorder>palette6</zorder>
+    <zorder>palette7</zorder>
+    <zorder>palette8</zorder>
+    <zorder>palette9</zorder>
+    <zorder>palette10</zorder>
+    <zorder>palette11</zorder>
+    <zorder>palette12</zorder>
+    <zorder>palette13</zorder>
+    <zorder>palette14</zorder>
+    <zorder>colorFillToolButton</zorder>
+    <zorder>bucketPenToolButton</zorder>
+    <zorder>ellipseToolButton</zorder>
+    <zorder>rectangleToolButton</zorder>
+    <zorder>penToolButton</zorder>
+    <zorder>palette13_2</zorder>
+    <zorder>palette14_2</zorder>
+    <zorder>color2Box</zorder>
+    <zorder>rectangularSelectionToolButton</zorder>
+    <zorder>color1Box</zorder>
+    <zorder>lineToolButton</zorder>
    </widget>
    <widget class="QScrollArea" name="scrollAreaFrameContainer">
     <property name="geometry">
@@ -577,22 +736,6 @@ background-image: url(:/pentool.svg);
      </widget>
     </widget>
    </widget>
-   <widget class="QToolButton" name="color2Box">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>540</y>
-      <width>41</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -600,7 +743,7 @@ background-image: url(:/pentool.svg);
      <x>0</x>
      <y>0</y>
      <width>671</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
