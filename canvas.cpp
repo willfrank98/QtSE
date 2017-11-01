@@ -1,8 +1,10 @@
 #include "canvas.h"
 #include <QDebug>
 #include <iostream>
+#include <cmath>
 #include "model.h"
 #include <QGraphicsPixmapItem>
+
 using namespace std;
 QBrush *Canvas::brush;
 QColor Canvas::c1;
