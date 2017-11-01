@@ -4,7 +4,11 @@
 #include <cmath>
 #include "model.h"
 #include <QGraphicsPixmapItem>
+<<<<<<< HEAD
 
+=======
+#include "mainwindow.h"
+>>>>>>> 46cdc788b8347550bafb24cd614a118c9e6a71a6
 using namespace std;
 QBrush *Canvas::brush;
 QColor Canvas::c1;
@@ -18,20 +22,24 @@ Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 
 Canvas::Canvas(int size, qreal pixSize, QObject *parent) : QGraphicsScene(parent)
 {
-    QGraphicsPixmapItem item;
-    QString fileNamez = ":/Checkered.png";
-    QGraphicsPixmapItem *pm = this->addPixmap( QPixmap(fileNamez) );
+    setBG();
     Canvas::brush = new QBrush(Canvas::c1);
     pen = new QPen(QColor::fromRgbF(0.7, 0.8, 0.9, 1.0));
     this->size = size;
     this->pixSize = pixSize;
     this->data = new QImage(size, size, QImage::Format_RGB32);
     // drawBg
-    drawGrid();
+    //drawGrid();
 }
 
-void Canvas::redraw() {
-    // This might be necessary later.
+void Canvas::setBG(){
+    QGraphicsPixmapItem item;
+    QString fileNamez = ":/Checkered.png";
+    QGraphicsPixmapItem *pm = this->addPixmap( QPixmap(fileNamez) );
+}
+
+void Canvas::redraw(QPointF point) {
+
 }
 
 void Canvas::drawGrid() {
@@ -42,16 +50,37 @@ void Canvas::drawGrid() {
         }
     }
 }
+void Canvas::deletePixel(QPointF point, QColor color){
+    clear();
+    setBG();
+    QString key = QString::number(floor(point.x()/pixSize)) + "." +QString::number(floor(point.y()/pixSize));
+    currentState.erase(key.toStdString());
+    for (std::pair<std::string, QColor> element : currentState)
+    {
+        std::string delimiter = ".";
+        std::string s1  = element.first.substr(0, element.first.find(delimiter));
+        std::string s2  = element.first.substr(element.first.find(delimiter)+1, element.first.size());
+        QPointF temp;
+        int x1 = std::stoi(s1);
+        int y1 = std::stoi(s2);
+        qreal qx1 = static_cast<qreal>(x1);
+        qreal qy1 = static_cast<qreal>(y1);
+        temp.setX(qx1*pixSize);
+        temp.setY(qy1*pixSize);
+        putPixel(temp, element.second);
+    }
+}
 
 void Canvas::putPixel(QPointF point, QColor color) {
-    qreal x = floor(point.x() / pixSize);
-    qreal y = floor(point.y() / pixSize);
+    int x = floor(point.x() / pixSize);
+    int y = floor(point.y() / pixSize);
     Canvas::brush = new QBrush(color, Qt::SolidPattern);
+    QString key = QString::number(floor(point.x()/pixSize)) + "." +QString::number(floor(point.y()/pixSize));
     // don't place pixels outside the grid
     if (x < 0 || x >= size || y < 0 || y >= size) return;
-
-    data->setPixel(x, y, Canvas::brush->color().rgb());
-    addRect(pixSize * x, pixSize * y, pixSize, pixSize, *pen, *brush);
+    addRect(pixSize*x,pixSize*y,pixSize,pixSize,*pen,*brush);
+    std::string newkey = key.toStdString();
+    currentState.try_emplace(newkey, color);
 }
 
 void Canvas::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
@@ -62,10 +91,18 @@ void Canvas::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
 void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (buttonHeld){
-        if (mouseEvent->buttons() & Qt::LeftButton)
-            putPixel(mouseEvent->scenePos(), Canvas::c1);
-        else if(mouseEvent->buttons() & Qt::RightButton)
-            putPixel(mouseEvent->scenePos(), Canvas::c2);
+        if (mouseEvent->buttons() & Qt::LeftButton){
+            if (drawMode == 0)
+                putPixel(mouseEvent->scenePos(), Canvas::c1);
+            else if (drawMode ==1)
+                deletePixel(mouseEvent->scenePos(), Canvas::c1);
+        }
+        else if(mouseEvent->buttons() & Qt::RightButton){
+            if (drawMode == 0)
+                putPixel(mouseEvent->scenePos(), Canvas::c2);
+            else if (drawMode ==1)
+                deletePixel(mouseEvent->scenePos(), Canvas::c2);
+        }
     }
 //    qDebug() << mouseEvent->scenePos();
 }
@@ -73,10 +110,18 @@ void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     buttonHeld = true;
-    if (mouseEvent->buttons() & Qt::LeftButton)
-        putPixel(mouseEvent->scenePos(), Canvas::c1);
-    else if(mouseEvent->buttons() & Qt::RightButton)
-        putPixel(mouseEvent->scenePos(), Canvas::c2);
+    if (mouseEvent->buttons() & Qt::LeftButton){
+        if (drawMode == 0)
+            putPixel(mouseEvent->scenePos(), Canvas::c1);
+        else if (drawMode ==1)
+            deletePixel(mouseEvent->scenePos(), Canvas::c1);
+    }
+    else if(mouseEvent->buttons() & Qt::RightButton){
+        if (drawMode == 0)
+            putPixel(mouseEvent->scenePos(), Canvas::c2);
+        else if (drawMode ==1)
+            deletePixel(mouseEvent->scenePos(), Canvas::c2);
+    }
 }
 
 void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
@@ -104,6 +149,5 @@ void Canvas::redo(){
         QImage temp =redoStack.pop();
         data = &temp;
     }
-
 
 }

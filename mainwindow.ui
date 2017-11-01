@@ -526,7 +526,7 @@ background-image: url(:/pentool.svg);
       <string/>
      </property>
      <property name="checkable">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
     </widget>
    </widget>
