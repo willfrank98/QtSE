@@ -16,6 +16,23 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 	ui->setupUi(this);
     cd = new QColorDialog();
     cd->setCurrentColor(*new QColor(Qt::black));
+
+    //This is ugly i know but not sure how to make a better way to iterate through the buttons.
+    colorHistoryButtons.append(ui->palette1);
+    colorHistoryButtons.append(ui->palette2);
+    colorHistoryButtons.append(ui->palette3);
+    colorHistoryButtons.append(ui->palette4);
+    colorHistoryButtons.append(ui->palette5);
+    colorHistoryButtons.append(ui->palette6);
+    colorHistoryButtons.append(ui->palette7);
+    colorHistoryButtons.append(ui->palette8);
+    colorHistoryButtons.append(ui->palette9);
+    colorHistoryButtons.append(ui->palette10);
+    colorHistoryButtons.append(ui->palette11);
+    colorHistoryButtons.append(ui->palette12);
+    colorHistoryButtons.append(ui->palette13);
+    colorHistoryButtons.append(ui->palette14);
+
     //set the default colors
     Canvas::c1 = QColor(Qt::black);
     Canvas::c2 = QColor(Qt::white);
@@ -62,12 +79,22 @@ void MainWindow::updateThis(){
 void MainWindow::colorBox1Clicked(){
     Canvas::c1 = QColor(cd->getColor());
     QString temp = QString::fromStdString("background-color: "+Canvas::c1.name().toStdString()+";");
+    colorHistory.append(temp);
+    updateColorHistory();
     ui->color1Box->setStyleSheet(temp);
 }
 void MainWindow::colorBox2Clicked(){
     Canvas::c2 = QColor(cd->getColor());
     QString temp = QString::fromStdString("background-color: "+Canvas::c2.name().toStdString()+";");
+    colorHistory.append(temp);
+    updateColorHistory();
     ui->color2Box->setStyleSheet(temp);
+}
+
+void MainWindow::updateColorHistory(){
+    for(int i = 0, j = colorHistory.size(); j > 0 && i < 14 ; i++, j--){
+        colorHistoryButtons[i]->setStyleSheet(colorHistory[j - 1]);
+    }
 }
 
 void MainWindow::createCanvas(int size)
