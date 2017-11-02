@@ -14,6 +14,8 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+signals:
+    void toolSelection();
 
 public:
     explicit MainWindow(Model& model, QWidget *parent = 0);

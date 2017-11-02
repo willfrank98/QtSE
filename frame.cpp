@@ -7,22 +7,22 @@ Frame::Frame(int dimension) {
     painter.begin(&image);
 }
 
-void Frame::drawEllipse(int x1, int y1, int x2, int y2) {
-    int width = abs(x1 - x2);
-    int height = abs(y1 - y2);
+void Frame::drawEllipse(QVector<int> pixels) {
+    int width = abs(pixels[0] - pixels[2]);
+    int height = abs(pixels[1] - pixels[3]);
 
     int x, y;
-    if(x1 < x2) {
-        x = x1;
+    if(pixels[0] < pixels[2]) {
+        x = pixels[0];
     }
     else {
-        x = x2;
+        x = pixels[2];
     }
-    if (y1 < y2) {
-        y = y1;
+    if (pixels[1] < pixels[3]) {
+        y = pixels[1];
     }
     else {
-        y = y2;
+        y = pixels[3];
     }
 
     painter.drawEllipse(x, y, width, height);
@@ -39,22 +39,22 @@ void Frame::drawPen(QVector<QPoint> pixels, QColor color) {
     }
 }
 
-void Frame::drawRectangle(int x1, int y1, int x2, int y2) {
-    int width = abs(x1 - x2);
-    int height = abs(y1 - y2);
+void Frame::drawRectangle(QVector<int> pixels) {
+    int width = abs(pixels[0] - pixels[2]);
+    int height = abs(pixels[1] - pixels[3]);
 
     int x, y;
-    if(x1 < x2) {
-        x = x1;
+    if(pixels[0] < pixels[2]) {
+        x = pixels[0];
     }
     else {
-        x = x2;
+        x = pixels[2];
     }
-    if (y1 < y2) {
-        y = y1;
+    if (pixels[1] < pixels[3]) {
+        y = pixels[1];
     }
     else {
-        y = y2;
+        y = pixels[3];
     }
 
     painter.drawRect(x, y, width, height);
@@ -64,7 +64,7 @@ void Frame::erase(QVector<int> pixels) {
 
 }
 
-void Frame::bucketFill(int x, int y) {
+void Frame::bucketFill(QVector<int> pixels) {
 
 }
 

@@ -12,12 +12,12 @@ private:
     QPainter painter;
 public:
     Frame(int dimension);
-    void drawEllipse(int x1, int y1, int x2, int y2);
+    void drawEllipse(QVector<int> pixels);
     void drawMirrorPen(QVector<int> pixels);
     void drawPen(QVector<QPoint> pixels, QColor color);
-    void drawRectangle(int x1, int y1, int x2, int y2);
+    void drawRectangle(QVector<int> pixels);
     void erase(QVector<int> pixels);
-    void bucketFill(int x, int y);
+    void bucketFill(QVector<int> pixels);
     void drawDither(QVector<int> pixels);
     QImage pixels();
     QSize size();

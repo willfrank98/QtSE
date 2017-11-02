@@ -42,6 +42,9 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
         ui->color2Box->setStyleSheet(newStyle);
     });
 
+    // Connects the toolButtons
+
+
     // connects the undo/redo buttons
     //connect(ui->actionUndo, &QAction::triggered, this, Canvas::undo());
     //connect(ui->actionRedo, &QAction::triggered, this, Canvas::redo());

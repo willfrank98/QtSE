@@ -14,12 +14,17 @@ void Model::createFrame(int dimension) {
     newFrame = new Frame(dimension);
     currentFrame = newFrame;
     frames.append(currentFrame);
+    selectedTool = PenTool;
     emit frameUpdated(currentFrame->pixels());
 }
 
 void Model::modifyFrame(QVector<QPoint> pixels, QColor color) {
     currentFrame->drawPen(pixels, color);
     emit frameUpdated(currentFrame->pixels());
+}
+
+void Model::setTool(Tool tool) {
+    selectedTool = tool;
 }
 
 void Model::exit() {

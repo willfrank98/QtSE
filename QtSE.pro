@@ -35,7 +35,8 @@ HEADERS += \
     model.h \
     model.h \
     canvas.h \
-    frame.h
+    frame.h \
+    tool.h
 
 FORMS += \
         mainwindow.ui

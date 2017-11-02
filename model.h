@@ -3,6 +3,7 @@
 
 #include <frame.h>
 #include <QObject>
+#include <tool.h>
 
 class Model : public QObject
 {
@@ -18,12 +19,14 @@ signals:
 
 public slots:
     void modifyFrame(QVector<QPoint>, QColor);
+    void setTool(Tool _tool);
     void exit();    // a better name might be needed
 
 private:
     bool isSaved = false;   // toggle to true when saved, make false after changes are made
     QList<Frame*> frames = QList<Frame*>();
     Frame *currentFrame;
+    Tool selectedTool;
 
     void promptSave();
 
