@@ -32,8 +32,6 @@ void Frame::drawMirrorPen(QVector<int> pixels) {
 
 }
 
-// Okay, I can't get the mapping to the right point working with the separation we currently have.
-// At some point, the
 void Frame::drawPen(QVector<QPoint> pixels, QColor color) {
     painter.setPen(color);
     for (QPoint point : pixels) {
