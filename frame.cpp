@@ -1,7 +1,10 @@
 #include "frame.h"
+#include <QDebug>
 
 Frame::Frame(int dimension) {
     image = QImage(dimension, dimension, QImage::Format_ARGB32);
+    image.fill(QColor(0, 0, 0, 0));  // gets rid of weird artifacts that appear on creation
+    painter.begin(&image);
 }
 
 void Frame::drawEllipse(int x1, int y1, int x2, int y2) {
@@ -29,9 +32,12 @@ void Frame::drawMirrorPen(QVector<int> pixels) {
 
 }
 
-void Frame::drawPen(QVector<int> pixels) {
-    for (int i = 0; i < pixels.size(); i + 2) {
-        painter.drawPoint(pixels[i], pixels[i+1]);
+// Okay, I can't get the mapping to the right point working with the separation we currently have.
+// At some point, the
+void Frame::drawPen(QVector<QPoint> pixels, QColor color) {
+    painter.setPen(color);
+    for (QPoint point : pixels) {
+        painter.drawPoint(point);
     }
 }
 

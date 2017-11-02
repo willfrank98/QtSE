@@ -16,8 +16,11 @@ void Canvas::setSecondaryColor(QColor color) {
 }
 
 void Canvas::displayImage(QImage image) {
+    pixSize = QSizeF(sceneRect().width() / (qreal)image.size().width(),
+                                                  sceneRect().height() / (qreal)image.size().height());
+    qDebug() << pixSize;
     clear();
-    addPixmap(QPixmap::fromImage(image));
+    addPixmap(QPixmap::fromImage(image.scaled(sceneRect().width(), sceneRect().height())));
 }
 
 void Canvas::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
@@ -27,20 +30,30 @@ void Canvas::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
 void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    if (buttonHeld){
-        QPoint convertedPoint = QPoint(mouseEvent->scenePos().x(), mouseEvent->scenePos().y());
+    if (buttonHeld != Qt::NoButton){
+        QPoint convertedPoint = QPoint(mouseEvent->scenePos().x() / pixSize.width(), mouseEvent->scenePos().y() / pixSize.height());
+        points.append(convertedPoint);
     }
 //    qDebug() << mouseEvent->scenePos();
 }
 
 void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    buttonHeld = true;
+    buttonHeld = mouseEvent->button();
+
+    QPoint convertedPoint = QPoint(mouseEvent->scenePos().x() / pixSize.width(), mouseEvent->scenePos().y() / pixSize.height());
+    points.append(convertedPoint);
 }
 
 void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    buttonHeld = false;
+    QPoint convertedPoint = QPoint(mouseEvent->scenePos().x() / pixSize.width(), mouseEvent->scenePos().y() / pixSize.height());
+    points.append(convertedPoint);
+    if (buttonHeld == Qt::LeftButton) emit modifiedPixels(points, primaryColor);
+    else if (buttonHeld == Qt::RightButton) emit modifiedPixels(points, secondaryColor);
+    points.clear();
+    buttonHeld = Qt::NoButton;
+
 //    qDebug() << mouseEvent->scenePos();
 }
 

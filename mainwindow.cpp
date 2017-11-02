@@ -11,9 +11,14 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    model.createFrame(32);
     ui->graphicsViewCanvas->setScene(canvas);
+    ui->graphicsViewCanvas->scene()->setSceneRect(ui->graphicsViewCanvas->rect());  // scales the canvas to the QGraphicsView
     ui->graphicsViewCanvas->setEnabled(true);
+
+    // this feels hacky; if anyone can get the connections to work without this, that'd be great
     this->model = &model;
+
     QColorDialog *colorPicker1 = new QColorDialog();
     QColorDialog *colorPicker2 = new QColorDialog();
 
@@ -22,6 +27,20 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(colorPicker1, &QColorDialog::colorSelected, canvas, &Canvas::setPrimaryColor);
     connect(ui->color2Box, &QToolButton::clicked, canvas, [=](){ colorPicker2->show(); });
     connect(colorPicker2, &QColorDialog::colorSelected, canvas, &Canvas::setSecondaryColor);
+    connect(colorPicker1, &QColorDialog::colorSelected, ui->color1Box, [=](QColor color){
+        QString newStyle = "background-color: rgb(" +
+                QString::number(color.red()) + "," +
+                QString::number(color.green()) + "," +
+                QString::number(color.blue()) + ");";
+        ui->color1Box->setStyleSheet(newStyle);
+    });
+    connect(colorPicker2, &QColorDialog::colorSelected, ui->color2Box, [=](QColor color){
+        QString newStyle = "background-color: rgb(" +
+                QString::number(color.red()) + "," +
+                QString::number(color.green()) + "," +
+                QString::number(color.blue()) + ");";
+        ui->color2Box->setStyleSheet(newStyle);
+    });
 
     // connects the undo/redo buttons
     //connect(ui->actionUndo, &QAction::triggered, this, Canvas::undo());
@@ -32,7 +51,10 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(ui->action16x16, &QAction::triggered, this, [=](){ this->model->createFrame(16); });
     connect(ui->action32x32, &QAction::triggered, this, [=](){ this->model->createFrame(32); });
     connect(ui->action64x64, &QAction::triggered, this, [=](){ this->model->createFrame(64); });
-    connect(&model, &Model::frameCreated, canvas, &Canvas::displayImage);
+
+    // I think something like this is what you wanted? Sorry if I still didn't get it right.
+    connect(canvas, &Canvas::modifiedPixels, &model, &Model::modifyFrame);
+    connect(&model, &Model::frameUpdated, canvas, &Canvas::displayImage);
 
     // connects the File>Export actions
     connect(ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){

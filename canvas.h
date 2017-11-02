@@ -9,7 +9,7 @@ class Canvas : public QGraphicsScene
 {
     Q_OBJECT
 signals:
-    void modifiedPixels(QVector<QPoint> pixels);
+    void modifiedPixels(QVector<QPoint> pixels, QColor color);
 
 public slots:
     void setPrimaryColor(QColor);
@@ -20,7 +20,8 @@ private:
     QColor primaryColor = QColor(0, 0, 0, 255);
     QColor secondaryColor = QColor(255, 255, 255, 255);
     QVector<QPoint> points = QVector<QPoint>();
-    bool buttonHeld = false;
+    Qt::MouseButton buttonHeld = Qt::NoButton;
+    QSizeF pixSize = QSizeF(32, 32);
 
     // TODO: move these to model
 //    QStack<QImage> undoStack;

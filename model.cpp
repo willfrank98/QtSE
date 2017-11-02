@@ -10,11 +10,16 @@ Model::Model(QObject *parent) : QObject(parent)
 
 void Model::createFrame(int dimension) {
     Frame *newFrame;
-    if (frames.count() > 0) newFrame = new Frame(frames.first()->size().width());
-    else newFrame = new Frame(dimension);
-    newFrame->drawEllipse(0, 0, 20, 20);
-    frames.insert(++currentFrame, newFrame);
-    emit frameCreated(newFrame->pixels());
+//    if (frames.count() > 0) newFrame = new Frame(frames.first()->size().width());
+    newFrame = new Frame(dimension);
+    currentFrame = newFrame;
+    frames.append(currentFrame);
+    emit frameUpdated(currentFrame->pixels());
+}
+
+void Model::modifyFrame(QVector<QPoint> pixels, QColor color) {
+    currentFrame->drawPen(pixels, color);
+    emit frameUpdated(currentFrame->pixels());
 }
 
 void Model::exit() {
