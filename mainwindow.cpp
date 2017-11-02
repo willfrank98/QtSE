@@ -4,42 +4,41 @@
 #include <QGraphicsItem>
 #include <QGraphicsRectItem>
 #include <QDebug>
-#include <iostream>
 #include <QVector>
-using namespace std;
-
 
 MainWindow::MainWindow(Model &model, QWidget *parent) :
 	QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-	ui->setupUi(this);
-    cd = new QColorDialog();
-    cd->setCurrentColor(*new QColor(Qt::black));
-    //set the default colors
-    Canvas::c1 = QColor(Qt::black);
-    Canvas::c2 = QColor(Qt::white);
-    // connects the buttons
+    ui->setupUi(this);
+    ui->graphicsViewCanvas->setScene(canvas);
+    ui->graphicsViewCanvas->setEnabled(true);
+    this->model = &model;
+    QColorDialog *colorPicker1 = new QColorDialog();
+    QColorDialog *colorPicker2 = new QColorDialog();
 
-    connect(ui->color1Box, &QAbstractButton::clicked, this, &MainWindow::colorBox1Clicked);
-    connect(ui->color2Box, &QAbstractButton::clicked, this, &MainWindow::colorBox2Clicked);
+    // connects the color selection buttons
+    connect(ui->color1Box, &QToolButton::clicked, canvas, [=](){ colorPicker1->show(); });
+    connect(colorPicker1, &QColorDialog::colorSelected, canvas, &Canvas::setPrimaryColor);
+    connect(ui->color2Box, &QToolButton::clicked, canvas, [=](){ colorPicker2->show(); });
+    connect(colorPicker2, &QColorDialog::colorSelected, canvas, &Canvas::setSecondaryColor);
 
     // connects the undo/redo buttons
     //connect(ui->actionUndo, &QAction::triggered, this, Canvas::undo());
     //connect(ui->actionRedo, &QAction::triggered, this, Canvas::redo());
 
     // connects the File>New actions
-    connect(ui->action8x8, &QAction::triggered, this, [this](){ createCanvas(8); });
-    connect(ui->action16x16, &QAction::triggered, this, [this](){ createCanvas(16); });
-    connect(ui->action32x32, &QAction::triggered, this, [this](){ createCanvas(32); });
-    connect(ui->action64x64, &QAction::triggered, this, [this](){ createCanvas(64); });
-    connect(ui->action128x128, &QAction::triggered, this, [this](){ createCanvas(128); });
+    connect(ui->action8x8, &QAction::triggered, this, [=](){ this->model->createFrame(8); });
+    connect(ui->action16x16, &QAction::triggered, this, [=](){ this->model->createFrame(16); });
+    connect(ui->action32x32, &QAction::triggered, this, [=](){ this->model->createFrame(32); });
+    connect(ui->action64x64, &QAction::triggered, this, [=](){ this->model->createFrame(64); });
+    connect(&model, &Model::frameCreated, canvas, &Canvas::displayImage);
+
     // connects the File>Export actions
     connect(ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
         /*
          * This is just a lambda function to check if FreeImage fails for anyone.
          * Looks like Window will be difficult to get linked correctly.
-         * Will fix Monday soon.
          */
 //        FreeImage_Initialise();
 //        qDebug() << "Initialized FreeImage " << FreeImage_GetVersion();
@@ -48,74 +47,9 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 
     // connects the File>Exit action
     connect(ui->actionExit, &QAction::triggered, &model, &Model::exit);
-    // connects the File>Exit action  
 }
 
 MainWindow::~MainWindow()
 {
 	delete ui;
-}
-void MainWindow::updateThis(){
-    update();
-    ui->graphicsViewCanvas->update();
-}
-void MainWindow::colorBox1Clicked(){
-    Canvas::c1 = QColor(cd->getColor());
-    QString temp = QString::fromStdString("background-color: "+Canvas::c1.name().toStdString()+";");
-    ui->color1Box->setStyleSheet(temp);
-}
-void MainWindow::colorBox2Clicked(){
-    Canvas::c2 = QColor(cd->getColor());
-    QString temp = QString::fromStdString("background-color: "+Canvas::c2.name().toStdString()+";");
-    ui->color2Box->setStyleSheet(temp);
-}
-
-void MainWindow::createCanvas(int size)
-{
-    this->canvas = new Canvas(size, ui->graphicsViewCanvas->width()/(qreal)size);
-    ui->graphicsViewCanvas->setScene(canvas);
-    ui->graphicsViewCanvas->setEnabled(true);
-    this->canvas->drawMode = 0;
-    connect(this->canvas, SIGNAL(updateGV()),this, SLOT(updateThis()));
-}
-
-// Adds a background to the canvas at Z-layer -1 (background)
-void MainWindow::addBackground(QGraphicsScene &scene) {
-    // TODO
-}
-
-void MainWindow::addSurface(QGraphicsScene &scene) {
-    QBrush *brush = new QBrush(QColor::fromRgbF(0.0, 0.0, 0.0, 1.0));
-
-    for (qreal y = 0; y < canvasSize; y++) {
-        for (qreal x = 0; x < canvasSize; x++) {
-
-        }
-    }
-}
-
-// Adds a grid to the canvas at Z-layer 1 (foreground)
-// Interestingly, the canvas can pan very slightly regardless of size.
-void MainWindow::addGrid(QGraphicsScene &scene) {
-    QPen *pen = new QPen(QColor::fromRgbF(0.2, 0.2, 0.2, 0.75));
-    pen->setWidthF(0.25);
-
-    for (qreal y = 0; y < canvasSize; y++) {
-        for (qreal x = 0; x < canvasSize; x++) {
-            scene.addRect(pixelSize * x, pixelSize * y, pixelSize, pixelSize, *pen);
-        }
-    }
-    scene.createItemGroup(scene.items())->setZValue(1);
-}
-
-
-
-void MainWindow::on_penTool_clicked()
-{
-    this->canvas->drawMode = 0;
-}
-
-void MainWindow::on_eraseButton_clicked()
-{
-    this->canvas->drawMode = 1;
 }
