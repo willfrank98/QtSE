@@ -23,6 +23,14 @@ private slots:
     void on_eraseButton_clicked();
 
 
+    void on_penToolButton_clicked();
+
+    void on_eraserToolButton_clicked();
+
+    void on_rectangleToolButton_clicked();
+
+    void on_ellipseToolButton_clicked();
+
 public:
     explicit MainWindow(Model& model, QWidget *parent = 0);
     ~MainWindow();

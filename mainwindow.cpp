@@ -112,10 +112,30 @@ void MainWindow::addGrid(QGraphicsScene &scene) {
 
 void MainWindow::on_penTool_clicked()
 {
-    this->canvas->drawMode = 0;
+
 }
 
 void MainWindow::on_eraseButton_clicked()
 {
+
+}
+
+void MainWindow::on_penToolButton_clicked()
+{
+    this->canvas->drawMode = 0;
+}
+
+void MainWindow::on_eraserToolButton_clicked()
+{
     this->canvas->drawMode = 1;
+}
+
+void MainWindow::on_rectangleToolButton_clicked()
+{
+    this->canvas->drawMode = 3;
+}
+
+void MainWindow::on_ellipseToolButton_clicked()
+{
+    this->canvas->drawMode = 2;
 }
