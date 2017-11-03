@@ -32,6 +32,13 @@ private slots:
 
     void on_ellipseToolButton_clicked();
 
+	void saveAction();
+	void loadAction();
+
+signals:
+	void createSaveFile(QString fileName);
+	void loadSaveFile(QString fileName);
+
 public:
     explicit MainWindow(Model& model, QWidget *parent = 0);
     ~MainWindow();

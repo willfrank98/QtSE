@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <iostream>
 #include <QVector>
+#include <QFileDialog>
 using namespace std;
 
 
@@ -66,12 +67,32 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     // connects the File>Exit action
     connect(ui->actionExit, &QAction::triggered, &model, &Model::exit);
     // connects the File>Exit action  
+
+	//connects save and load actions to functions which bring up a FileDialog, then call to the model
+	connect(ui->actionSave, &QAction::triggered, this, &MainWindow::saveAction);
+	connect(ui->actionLoad, &QAction::triggered, this, &MainWindow::loadAction);
+
+	connect(this, &MainWindow::createSaveFile, &model, &Model::saveFramesToFile);
+	connect(this, &MainWindow::loadSaveFile, &model, &Model::loadFramesFromFile);
 }
 
 MainWindow::~MainWindow()
 {
 	delete ui;
 }
+//is called immediately after the save button is called to get a file path
+void saveAction()
+{
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "C:\\untitled.ssp", tr("Sprites (*.ssp);;All files (*.*)"));
+	emit MainWindow::createSaveFile(fileName);
+}
+
+void loadAction()
+{
+	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "C:\\", tr("Sprites (*.ssp)::All files (*.*)"));
+	emit MainWindow::loadSaveFile(fileName);
+}
+
 void MainWindow::updateThis(){
     update();
     ui->graphicsViewCanvas->update();
