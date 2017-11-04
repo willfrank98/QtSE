@@ -211,7 +211,7 @@ void MainWindow::updateColorHistory(){
 void MainWindow::createCanvas(int sizex, int sizey)
 {
     int pixSize;
-    if (sizex > sizey)
+    if (sizex >= sizey)
         pixSize = ui->graphicsViewCanvas->width()/(qreal)sizex;
     else if (sizey > sizex)
         pixSize = ui->graphicsViewCanvas->width()/(qreal)sizey;
