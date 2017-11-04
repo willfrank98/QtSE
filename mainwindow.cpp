@@ -153,9 +153,9 @@ void MainWindow::loadAction()
             QColor color;
             color.setRgb(r,g,b,a);
             QBrush brush(color, Qt::SolidPattern);
-            //i.setPixel(x1, heightCounter, brush.color().rgb());
-
+            i.setPixel(x1, heightCounter, brush.color().rgb());
         }
+        Frame fr(width,height);
         lineCounter++;
         heightCounter++;
     }

@@ -1,7 +1,7 @@
 #include "frame.h"
 
-Frame::Frame(int dimension) {
-    image = QImage(dimension, dimension, QImage::Format_ARGB32);
+Frame::Frame(int sizex,int sizey) {
+    image = QImage(sizex, sizey, QImage::Format_ARGB32);
 }
 
 void Frame::drawEllipse(int x1, int y1, int x2, int y2) {

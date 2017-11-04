@@ -11,7 +11,7 @@ private:
     QImage image;
     QPainter painter;
 public:
-    Frame(int dimension);
+    Frame(int sizex,int sizey);
     void drawEllipse(int x1, int y1, int x2, int y2);
     void drawMirrorPen(QVector<int> pixels);
     void drawPen(QVector<int> pixels);
