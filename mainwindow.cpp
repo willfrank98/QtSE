@@ -149,44 +149,23 @@ void MainWindow::loadAction()
                 if (x2==3)
                     a = val;
             }
-            cout<<r<<" "<<g<<" "<<" "<<b<<" "<<a<<" "<<endl;
+            //cout<<r<<" "<<g<<" "<<" "<<b<<" "<<a<<" "<<endl;
+            cout<<x1<<" "<<heightCounter<<endl;
             QColor color;
             color.setRgb(r,g,b,a);
             QBrush brush(color, Qt::SolidPattern);
             i.setPixel(x1, heightCounter, brush.color().rgb());
         }
+        QRgb *values = reinterpret_cast<QRgb *>(i.scanLine(0));
+        cout<<values<<endl;
         Frame fr(width,height);
         lineCounter++;
         heightCounter++;
     }
     f.close();
+    i = i.scaledToHeight(400, Qt::TransformationMode::FastTransformation);
     QPixmap map;
     map.fromImage(i, Qt::AutoColor);
-    QRect rect = map.rect();
-    /////////////////////////////////////////////////////// dignostic section
-    //QColor test(Qt::black);
-    //QBrush brush(test, Qt::SolidPattern);
-    //i.setPixel(0,0, brush.color().rgba());
-    //test.setRgba(Qt::red);
-    //i.setPixel(0,1, brush.color().rgba());
-    QRgb *values = reinterpret_cast<QRgb *>(i.scanLine(0));
-    cout<<values<<endl;
-    cout<<"width: "<<i.width()<<" height: "<<i.height()<<endl;
-    if ( false == i.isNull() )
-    {
-        QVector<QRgb> v = i.colorTable(); // returns a list of colors contained in the image's color table.
-
-        for ( QVector<QRgb>::const_iterator it = v.begin(), itE = v.end(); it != itE; ++it )
-        {
-            QColor clrCurrent( *it );
-            std::cout << "Red: " << clrCurrent.red()
-                      << " Green: " << clrCurrent.green()
-                      << " Blue: " << clrCurrent.blue()
-                      << " Alpha: " << clrCurrent.alpha()
-                      << std::endl;
-        }
-    }
-    /////////////////////////////////////////////////////// dignostic section
     QGraphicsPixmapItem gpi;
     gpi.setPixmap(map);
     gpi.show();
@@ -202,7 +181,6 @@ void MainWindow::loadAction()
     filez.open(QIODevice::WriteOnly);
     filez.write(ba);
     filez.close();
-
 }
 
 void MainWindow::updateThis(){
