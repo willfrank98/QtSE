@@ -743,7 +743,7 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
      <x>0</x>
      <y>0</y>
      <width>671</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -768,6 +768,10 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
      <addaction name="action32x32"/>
      <addaction name="action64x64"/>
      <addaction name="action128x128"/>
+     <addaction name="action4x8"/>
+     <addaction name="action8x4"/>
+     <addaction name="action2x3"/>
+     <addaction name="actioncustom_2"/>
     </widget>
     <addaction name="menuNew"/>
     <addaction name="actionSave"/>
@@ -882,6 +886,26 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
   <action name="action128x128">
    <property name="text">
     <string>128x128</string>
+   </property>
+  </action>
+  <action name="action4x8">
+   <property name="text">
+    <string>4x8</string>
+   </property>
+  </action>
+  <action name="action8x4">
+   <property name="text">
+    <string>8x4</string>
+   </property>
+  </action>
+  <action name="action2x3">
+   <property name="text">
+    <string>2x3</string>
+   </property>
+  </action>
+  <action name="actioncustom_2">
+   <property name="text">
+    <string>custom</string>
    </property>
   </action>
  </widget>

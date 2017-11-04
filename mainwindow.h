@@ -8,6 +8,7 @@
 #include <QPalette>
 #include <QFrame>
 #include "canvas.h"
+#include "form.h"
 namespace Ui {
 class MainWindow;
 }
@@ -26,6 +27,7 @@ private slots:
     void on_eraserToolButton_clicked();
     void on_rectangleToolButton_clicked();
     void on_ellipseToolButton_clicked();
+    void custom_clicked();
 	void saveAction();
 	void loadAction();
 
@@ -37,6 +39,7 @@ public:
     ~MainWindow();
 
 private:
+    Form popup;
     Model *model;
     Canvas *canvas;
     Ui::MainWindow *ui;
@@ -48,7 +51,7 @@ private:
     void addBackground(QGraphicsScene&);
     void addSurface(QGraphicsScene&);
     void addGrid(QGraphicsScene&);
-    void createCanvas(int);
+    void createCanvas(int,int);
     void updateColorHistory();
     void createSaveFile(QString fileName);
     void loadSaveFile(QString fileName);

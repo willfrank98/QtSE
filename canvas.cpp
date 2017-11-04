@@ -17,7 +17,7 @@ Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 
 }
 
-Canvas::Canvas(int size, qreal pixSize, QObject *parent) : QGraphicsScene(parent)
+Canvas::Canvas(int sizex, int sizey, qreal pixSize, QObject *parent) : QGraphicsScene(parent)
 {
     for (int i = 0; i < 128; i++)
         for (int j = 0; j < 128; j++)
@@ -25,17 +25,18 @@ Canvas::Canvas(int size, qreal pixSize, QObject *parent) : QGraphicsScene(parent
     setBG();
     Canvas::brush = new QBrush(Canvas::c1);
     pen = new QPen(QColor::fromRgbF(0.7, 0.8, 0.9, 1.0));
-    this->size = size;
+    this->sizex = sizex;
+    this->sizey = sizey;
     this->pixSize = pixSize;
-    this->data = new QImage(size, size, QImage::Format_RGB32);
+    this->data = new QImage(sizex, sizey, QImage::Format_RGB32);
     // drawBg
     drawGrid();
 }
 
 void Canvas::setBG(){
-    QGraphicsPixmapItem item;
-    QString fileNamez = ":/Checkered.png";
-    QGraphicsPixmapItem *pm = this->addPixmap( QPixmap(fileNamez) );
+    //QGraphicsPixmapItem item;
+    //QString fileNamez = ":/Checkered.png";
+    //QGraphicsPixmapItem *pm = this->addPixmap( QPixmap(fileNamez) );
 }
 
 void Canvas::redraw(std::unordered_map<std::string, QColor> points, int mode) {
@@ -47,7 +48,7 @@ void Canvas::redraw(std::unordered_map<std::string, QColor> points, int mode) {
         QPointF temp;
         int x1 = std::stoi(s1);
         int y1 = std::stoi(s2);
-        if (x1 < 0 | x1 > size | y1 < 0 | y1 > size)
+        if (x1 < 0 | x1 > sizex | y1 < 0 | y1 > sizey)
             return;
         qreal qx1 = static_cast<qreal>(x1);
         qreal qy1 = static_cast<qreal>(y1);
@@ -62,8 +63,8 @@ void Canvas::redraw(std::unordered_map<std::string, QColor> points, int mode) {
 
 void Canvas::drawGrid() {
     pen->setWidthF(0.25);
-    for (qreal y = 0; y < size; y++) {
-        for (qreal x = 0; x < size; x++) {
+    for (qreal y = 0; y < sizey; y++) {
+        for (qreal x = 0; x < sizex; x++) {
             addRect(pixSize * x, pixSize * y, pixSize, pixSize, *pen);
         }
     }
@@ -84,7 +85,7 @@ void Canvas::putPixel(QPointF point, QColor color) {
     Canvas::brush = new QBrush(color, Qt::SolidPattern);
     QString key = QString::number(floor(point.x()/pixSize)) + "." +QString::number(floor(point.y()/pixSize));
     // don't place pixels outside the grid
-    if (x < 0 || x >= size || y < 0 || y >= size) return;
+    if (x < 0 || x >= sizex || y < 0 || y >= sizey) return;
     if (rect[x][y] != NULL){
         removeItem(rect[x][y]);
         rect[x][y]==NULL;
@@ -138,7 +139,7 @@ std::unordered_map<std::string, QColor> Canvas::getRectPoints(QPointF endingPoin
 void Canvas::drawRect(QPointF point, QColor color){
     int x = floor(point.x() / pixSize);
     int y = floor(point.y() / pixSize);
-    if (x < 0 || x >= size || y < 0 || y >= size) return;
+    if (x < 0 || x >= sizex || y < 0 || y >= sizey) return;
     redraw(currentRect, 1);  //mode 1 for erase mode 0 for draw
     currentRect = getRectPoints(point,color);
     redraw(previousState, 0);

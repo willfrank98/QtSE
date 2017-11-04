@@ -20,7 +20,8 @@ private:
     QGraphicsRectItem *rect[128][128];
     QPen *pen;
     qreal lastx,lasty;
-    int size = 32;
+    int sizex = 32;
+    int sizey = 32;
     QImage *data;
     QPointF startingPoint;
     QStack<QImage> undoStack;
@@ -45,7 +46,7 @@ public:
     static QColor c2Last;
     static QBrush *brush;
     explicit Canvas(QObject *parent = nullptr);
-    explicit Canvas(int, qreal, QObject *parent = nullptr);
+    explicit Canvas(int, int, qreal, QObject *parent = nullptr);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent);

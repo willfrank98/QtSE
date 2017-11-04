@@ -48,12 +48,16 @@ MainWindow::MainWindow(Model *model, QWidget *parent) :
     //connect(ui->actionUndo, &QAction::triggered, this, Canvas::undo());
     //connect(ui->actionRedo, &QAction::triggered, this, Canvas::redo());
 
-    // connects the File>New actions
-    connect(ui->action8x8, &QAction::triggered, this, [this](){ createCanvas(8); });
-    connect(ui->action16x16, &QAction::triggered, this, [this](){ createCanvas(16); });
-    connect(ui->action32x32, &QAction::triggered, this, [this](){ createCanvas(32); });
-    connect(ui->action64x64, &QAction::triggered, this, [this](){ createCanvas(64); });
-    connect(ui->action128x128, &QAction::triggered, this, [this](){ createCanvas(128); });
+    // connects the File>New actions\
+
+    connect(ui->actioncustom_2, &QAction::triggered, [this](){ custom_clicked(); });
+    connect(ui->action2x3, &QAction::triggered, this, [this](){ createCanvas(2,3); });
+    connect(ui->action4x8, &QAction::triggered, this, [this](){ createCanvas(4,8); });
+    connect(ui->action8x4, &QAction::triggered, this, [this](){ createCanvas(8,4); });
+    connect(ui->action16x16, &QAction::triggered, this, [this](){ createCanvas(8,8); });
+    connect(ui->action32x32, &QAction::triggered, this, [this](){ createCanvas(32,32); });
+    connect(ui->action64x64, &QAction::triggered, this, [this](){ createCanvas(64,64); });
+    connect(ui->action128x128, &QAction::triggered, this, [this](){ createCanvas(128,128); });
     // connects the File>Export actions
 //    connect(ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
         /*
@@ -92,6 +96,11 @@ void MainWindow::saveAction()
     QDataStream out(&f);   // we will serialize the data into the file
     out << QImage();
     f.close();
+}
+
+void MainWindow::custom_clicked()
+{
+    popup.show();
 }
 
 void MainWindow::loadAction()
@@ -161,9 +170,9 @@ void MainWindow::loadAction()
     map.fromImage(*i, Qt::AutoColor);
     QGraphicsPixmapItem gpi;
     gpi.setPixmap(map);
-    createCanvas(32);
-    this->canvas->addItem(&gpi);
-    canvas->update();
+    //createCanvas();
+    //this->canvas->addItem(&gpi);
+    //canvas->update();
 }
 
 void MainWindow::updateThis(){
@@ -191,9 +200,15 @@ void MainWindow::updateColorHistory(){
     }
 }
 
-void MainWindow::createCanvas(int size)
+void MainWindow::createCanvas(int sizex, int sizey)
 {
-    this->canvas = new Canvas(size, ui->graphicsViewCanvas->width()/(qreal)size);
+    int pixSize;
+    if (sizex > sizey)
+        pixSize = ui->graphicsViewCanvas->width()/(qreal)sizex;
+    else if (sizey > sizex)
+        pixSize = ui->graphicsViewCanvas->width()/(qreal)sizey;
+    this->canvas = new Canvas(sizex,sizey, pixSize);
+    //canvas->setSceneRect(pos);
     ui->graphicsViewCanvas->setScene(canvas);
     ui->graphicsViewCanvas->setEnabled(true);
     this->canvas->drawMode = 0;

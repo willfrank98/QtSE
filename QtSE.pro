@@ -28,17 +28,20 @@ SOURCES += \
         mainwindow.cpp \
     model.cpp \
     canvas.cpp \
-    frame.cpp
+    frame.cpp \
+    form.cpp
 
 HEADERS += \
         mainwindow.h \
     model.h \
     model.h \
     canvas.h \
-    frame.h
+    frame.h \
+    form.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    form.ui
 
 RESOURCES += \
     resources.qrc
