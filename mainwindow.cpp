@@ -5,6 +5,7 @@
 #include <QGraphicsRectItem>
 #include <QDebug>
 #include <QVector>
+#include <QObject>
 
 MainWindow::MainWindow(Model &model, QWidget *parent) :
 	QMainWindow(parent),
@@ -15,6 +16,7 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     ui->graphicsViewCanvas->setScene(canvas);
     ui->graphicsViewCanvas->scene()->setSceneRect(ui->graphicsViewCanvas->rect());  // scales the canvas to the QGraphicsView
     ui->graphicsViewCanvas->setEnabled(true);
+
 
     // this feels hacky; if anyone can get the connections to work without this, that'd be great
     this->model = &model;
@@ -70,11 +72,35 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 //        FreeImage_DeInitialise();
     });
 
+    connect(&model, &Model::framePreview, this, [=](){ &MainWindow::addFramePreview; });
+
     // connects the File>Exit action
     connect(ui->actionExit, &QAction::triggered, &model, &Model::exit);
 }
 
 MainWindow::~MainWindow()
 {
+
 	delete ui;
+}
+
+
+void MainWindow::addFramePreview(QList<Frame> frames){
+
+    //QWidget *window = new QWidget;
+    QHBoxLayout *layout = new QHBoxLayout;
+    QString name = "";
+
+    for (int i = 0; i< frames.size(); i++)
+    {
+    name = "Frame " + i;
+    QLabel *name = new QLabel();
+    name-> setFrameStyle(QLabel::Sunken | QLabel::Box);
+    //name->setPixmap(&QPixmap::fromImage(&frames.at(i).pixels()));    //This line needs work
+    name->setVisible(true);
+    layout->addWidget(name);
+    }
+
+    ui->frameContainer->addLayout(layout);
+
 }

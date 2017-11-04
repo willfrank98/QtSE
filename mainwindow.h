@@ -19,6 +19,7 @@ signals:
 
 public:
     explicit MainWindow(Model& model, QWidget *parent = 0);
+    void addFramePreview(QList<Frame>);
     ~MainWindow();
 
 private:
@@ -27,6 +28,7 @@ private:
     Ui::MainWindow *ui;
     int canvasSize;
     qreal pixelSize;
+    int frameNum;
 };
 
 #endif // MAINWINDOW_H

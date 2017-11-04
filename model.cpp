@@ -15,11 +15,13 @@ void Model::createFrame(int dimension) {
     currentFrame = newFrame;
     frames.append(currentFrame);
     selectedTool = PenTool;
+    emit framePreview(frames);
     emit frameUpdated(currentFrame->pixels());
 }
 
 void Model::modifyFrame(QVector<QPoint> pixels, QColor color) {
     currentFrame->drawPen(pixels, color);
+    emit framePreview(frames);
     emit frameUpdated(currentFrame->pixels());
 }
 
@@ -35,4 +37,12 @@ void Model::exit() {
 void Model::promptSave() {
     // TODO: prompt if the user wants to save the project or something
     qDebug() << "prompt to save";
+}
+
+
+void Model::setActiveFrame(int index){
+    currentFrame = frames.at(index);
+}
+void Model::removeFrame(int index){
+    frames.removeOne(frames.at(index));
 }
