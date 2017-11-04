@@ -17,23 +17,26 @@ public:
 
 signals:
     void frameUpdated(QImage);
+    void framePreview(QList<Frame*>);
 
 public slots:
     void modifyFrame(QVector<QPoint>, QColor);
     void undo();
     void redo();
     void setTool(Tool _tool);
+    void setActiveFrame(int);
+    void removeFrame(int);
     void exit();    // a better name might be needed
 
 private:
     bool isSaved = false;   // toggle to true when saved, make false after changes are made
     QList<Frame*> frames = QList<Frame*>();
     Frame *currentFrame;
-    QImage tempImage;
+    int currIndex = 0;
     Tool selectedTool;
+    QImage tempImage;
     QStack<QImage> undoStack;
     QStack<QImage> redoStack;
-
     void promptSave();
 
 
