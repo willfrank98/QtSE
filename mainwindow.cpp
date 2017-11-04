@@ -48,8 +48,8 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 
 
     // connects the undo/redo buttons
-    //connect(ui->actionUndo, &QAction::triggered, this, Canvas::undo());
-    //connect(ui->actionRedo, &QAction::triggered, this, Canvas::redo());
+    connect(ui->actionUndo, &QAction::triggered, this, [=](){this->model->undo();});
+    connect(ui->actionRedo, &QAction::triggered, this, [=](){this->model->redo();});
 
     // connects the File>New actions
     connect(ui->action8x8, &QAction::triggered, this, [=](){ this->model->createFrame(8); });

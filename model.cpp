@@ -21,8 +21,37 @@ void Model::createFrame(int dimension) {
 
 void Model::modifyFrame(QVector<QPoint> pixels, QColor color) {
     currentFrame->drawPen(pixels, color);
+<<<<<<< HEAD
     emit framePreview(frames);
+=======
+    //New changes clear the redo stack but not undo stack.
+    if (!redoStack.isEmpty()){
+        QStack<QImage> temp;
+        redoStack = temp;
+    }
+
+    undoStack.push(currentFrame->pixels());
+>>>>>>> 577400578ec6b356dd52e4e6aeab9898bba2af3b
     emit frameUpdated(currentFrame->pixels());
+}
+
+void Model::undo(){
+    if(!undoStack.isEmpty()){
+        redoStack.push(currentFrame->pixels());
+        tempImage = undoStack.pop();
+        currentFrame->setPixels(tempImage);
+        emit frameUpdated(currentFrame->pixels());
+    }
+}
+
+void Model::redo(){
+    if(!redoStack.isEmpty()){
+        undoStack.push(currentFrame->pixels());
+        tempImage = redoStack.pop();
+        currentFrame->setPixels(tempImage);
+        emit frameUpdated(currentFrame->pixels());
+    }
+
 }
 
 void Model::setTool(Tool tool) {

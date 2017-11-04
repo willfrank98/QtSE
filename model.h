@@ -4,6 +4,7 @@
 #include <frame.h>
 #include <QObject>
 #include <tool.h>
+#include <QStack>
 
 class Model : public QObject
 {
@@ -20,6 +21,8 @@ signals:
 
 public slots:
     void modifyFrame(QVector<QPoint>, QColor);
+    void undo();
+    void redo();
     void setTool(Tool _tool);
     void setActiveFrame(int);
     void removeFrame(int);
@@ -31,6 +34,10 @@ private:
     Frame *currentFrame;
     int currIndex = 0;
     Tool selectedTool;
+    QImage tempImage;
+    Tool selectedTool;
+    QStack<QImage> undoStack;
+    QStack<QImage> redoStack;
     void promptSave();
 
 
