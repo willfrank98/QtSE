@@ -98,8 +98,6 @@ void MainWindow::loadAction()
     QFile f( filename );
     f.open(QIODevice::ReadOnly);
     QTextStream in(&f);
-//    if (!f.open(QIODevice::Text))
-//            return;
     while (!in.atEnd()) {
        QString line = in.readLine();
        cout<<line.toStdString()<<endl;
