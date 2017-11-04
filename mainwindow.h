@@ -39,6 +39,8 @@ public:
     ~MainWindow();
 
 private:
+    int imageHeight;
+    int pixSize;
     Form popup;
     Model *model;
     Canvas *canvas;
@@ -55,6 +57,7 @@ private:
     void updateColorHistory();
     void createSaveFile(QString fileName);
     void loadSaveFile(QString fileName);
+    void setPixSize(int sizex, int sizey);
 };
 
 #endif // MAINWINDOW_H

@@ -163,16 +163,15 @@ void MainWindow::loadAction()
         heightCounter++;
     }
     f.close();
-    i = i.scaledToHeight(400, Qt::TransformationMode::FastTransformation);
-    QPixmap map;
-    map.fromImage(i, Qt::AutoColor);
-    QGraphicsPixmapItem gpi;
-    gpi.setPixmap(map);
-    gpi.show();
-    gpi.setZValue(2);
+    setPixSize(width, height);
+    imageHeight = height * pixSize;
+    i = i.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(i));
     createCanvas(width, height);
-    this->canvas->addItem(&gpi);
+    this->canvas->addItem(item);
     canvas->update();
+    ui->graphicsViewCanvas->update();
+    //this is for demo purposes but can later be used in the save method.
     QByteArray ba;
     QBuffer buffer(&ba);
     buffer.open(QIODevice::WriteOnly);
@@ -208,15 +207,19 @@ void MainWindow::updateColorHistory(){
     }
 }
 
+void MainWindow::setPixSize(int sizex, int sizey){
+    if (sizex >= sizey){
+        pixSize = ui->graphicsViewCanvas->width()/(qreal)sizex;
+    }
+
+    else if (sizey > sizex){
+        pixSize = ui->graphicsViewCanvas->width()/(qreal)sizey;
+    }
+}
 void MainWindow::createCanvas(int sizex, int sizey)
 {
-    int pixSize;
-    if (sizex >= sizey)
-        pixSize = ui->graphicsViewCanvas->width()/(qreal)sizex;
-    else if (sizey > sizex)
-        pixSize = ui->graphicsViewCanvas->width()/(qreal)sizey;
+    setPixSize(sizex,sizey);
     this->canvas = new Canvas(sizex,sizey, pixSize);
-    //canvas->setSceneRect(pos);
     ui->graphicsViewCanvas->setScene(canvas);
     ui->graphicsViewCanvas->setEnabled(true);
     this->canvas->drawMode = 0;
