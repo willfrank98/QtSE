@@ -111,8 +111,9 @@ void MainWindow::loadAction()
     f.open(QIODevice::ReadOnly);
     QTextStream in(&f);
     QRegExp rx("(\\ )"); //RegEx  ' '
-    int lineCounter, width, height, numberOfFrames;
+    int lineCounter, width, height, numberOfFrames, heightCounter;
     lineCounter = 0;
+    heightCounter = 0;
     //read the first line
     QString line = in.readLine();
     QStringList query = line.split(rx);
@@ -126,58 +127,48 @@ void MainWindow::loadAction()
     numberOfFrames = line.toInt();
     QImage i(width, height, QImage::Format_ARGB32);
     while (!in.atEnd()) {
-        lineCounter++;
+        heightCounter = lineCounter % height;
         line = in.readLine();
         query = line.split(rx);
-        for (int y = 0; y < height; y++){
-            for(int x1 = 0; x1 < width; x1++) {
+        int widthCounter = 0;
+        for(int x1 = 0; x1 < width; x1++) {
+            int r,g,b,a;
+            for (int x2 = 0; x2< 4; x2++){
+                qs = query.at(x1*4+x2);
+                int val = qs.toInt();
                 QPoint qp;
-                qp.setX(x1);
-                int r,g,b,a;
-                QString str;
-                for (int x2 = 0; x2< 4; x2++){
-                    if (x2==0){
-                        str = query.at(x2);
-                        r = str.toInt();
-                    }
-                    if (x2==1){
-                        str = query.at(x2);
-                        g = str.toInt();
-                    }
-                    if (x2==2){
-                        str = query.at(x2);
-                        b = str.toInt();
-                    }
-                    if (x2==3){
-                        str = query.at(x2);
-                        a = str.toInt();
-                    }
+                qp.setX(widthCounter);
 
-                }
-                int *r1,*g1,*b1,*a1;
-                r1 = &r;
-                g1 = &g;
-                b1 = &b;
-                a1 = &a;
-                QColor color;
-                color.getRgb(r1,g1,b1,a1);
-                QBrush brush(color, Qt::SolidPattern);
-                i.setPixel(x1, y, brush.color().rgb());
+                QString str;
+                if (x2==0)
+                    r = val;
+                if (x2==1)
+                    g = val;
+                if (x2==2)
+                    b = val;
+                if (x2==3)
+                    a = val;
             }
+            cout<<r<<" "<<g<<" "<<" "<<b<<" "<<a<<" "<<endl;
+            QColor color;
+            color.setRgb(r,g,b,a);
+            QBrush brush(color, Qt::SolidPattern);
+            //i.setPixel(x1, heightCounter, brush.color().rgb());
+
         }
+        lineCounter++;
+        heightCounter++;
     }
     f.close();
-
-    QColor test(Qt::black);
-    QBrush brush(test, Qt::SolidPattern);
-    i.setPixel(0,0, brush.color().rgba());
-    test.setRgba(Qt::red);
-    i.setPixel(0,1, brush.color().rgba());
     QPixmap map;
     map.fromImage(i, Qt::AutoColor);
     QRect rect = map.rect();
     /////////////////////////////////////////////////////// dignostic section
-
+    //QColor test(Qt::black);
+    //QBrush brush(test, Qt::SolidPattern);
+    //i.setPixel(0,0, brush.color().rgba());
+    //test.setRgba(Qt::red);
+    //i.setPixel(0,1, brush.color().rgba());
     QRgb *values = reinterpret_cast<QRgb *>(i.scanLine(0));
     cout<<values<<endl;
     cout<<"width: "<<i.width()<<" height: "<<i.height()<<endl;
