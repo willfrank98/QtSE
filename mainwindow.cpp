@@ -7,6 +7,7 @@
 #include <iostream>
 #include <QVector>
 #include <QFileDialog>
+#include <QBuffer>
 #include "frame.h"
 using namespace std;
 
@@ -123,7 +124,7 @@ void MainWindow::loadAction()
     line = in.readLine();
     query = line.split(rx);
     numberOfFrames = line.toInt();
-    QImage *i = new QImage(width, height, QImage::Format_ARGB32);
+    QImage i(width, height, QImage::Format_ARGB32);
     while (!in.atEnd()) {
         lineCounter++;
         line = in.readLine();
@@ -161,18 +162,56 @@ void MainWindow::loadAction()
                 QColor color;
                 color.getRgb(r1,g1,b1,a1);
                 QBrush brush(color, Qt::SolidPattern);
-                i->setPixel(x1, y, brush.color().rgb());
+                i.setPixel(x1, y, brush.color().rgb());
             }
         }
     }
     f.close();
+
+    QColor test(Qt::black);
+    QBrush brush(test, Qt::SolidPattern);
+    i.setPixel(0,0, brush.color().rgba());
+    test.setRgba(Qt::red);
+    i.setPixel(0,1, brush.color().rgba());
     QPixmap map;
-    map.fromImage(*i, Qt::AutoColor);
+    map.fromImage(i, Qt::AutoColor);
+    QRect rect = map.rect();
+    /////////////////////////////////////////////////////// dignostic section
+
+    QRgb *values = reinterpret_cast<QRgb *>(i.scanLine(0));
+    cout<<values<<endl;
+    cout<<"width: "<<i.width()<<" height: "<<i.height()<<endl;
+    if ( false == i.isNull() )
+    {
+        QVector<QRgb> v = i.colorTable(); // returns a list of colors contained in the image's color table.
+
+        for ( QVector<QRgb>::const_iterator it = v.begin(), itE = v.end(); it != itE; ++it )
+        {
+            QColor clrCurrent( *it );
+            std::cout << "Red: " << clrCurrent.red()
+                      << " Green: " << clrCurrent.green()
+                      << " Blue: " << clrCurrent.blue()
+                      << " Alpha: " << clrCurrent.alpha()
+                      << std::endl;
+        }
+    }
+    /////////////////////////////////////////////////////// dignostic section
     QGraphicsPixmapItem gpi;
     gpi.setPixmap(map);
-    //createCanvas();
-    //this->canvas->addItem(&gpi);
-    //canvas->update();
+    gpi.show();
+    gpi.setZValue(2);
+    createCanvas(width, height);
+    this->canvas->addItem(&gpi);
+    canvas->update();
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    cout<<i.save(&buffer, "PNG")<<endl; // writes image into ba in PNG formal. output bool if save was succes.
+    QFile filez("a.png"); //write into the debug folder
+    filez.open(QIODevice::WriteOnly);
+    filez.write(ba);
+    filez.close();
+
 }
 
 void MainWindow::updateThis(){
