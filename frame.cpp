@@ -1,6 +1,11 @@
 #include "frame.h"
 #include <QDebug>
 
+Frame::Frame(){
+
+
+}
+
 Frame::Frame(int dimension) {
     image = QImage(dimension, dimension, QImage::Format_ARGB32);
     image.fill(QColor(0, 0, 0, 0));  // gets rid of weird artifacts that appear on creation
@@ -74,6 +79,12 @@ void Frame::drawDither(QVector<int> pixels) {
             painter.drawPoint(pixels[i], pixels[i+1]);
         }
     }
+}
+
+void Frame::setPixels(QImage newImage){
+    painter.end();
+    image = newImage;
+    painter.begin(&image);
 }
 
 QImage Frame::pixels() {

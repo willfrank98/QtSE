@@ -9,8 +9,10 @@ class Frame
 {
 private:
     QImage image;
+    //You cannot copy a Qpainter object. Therefore we cannot copy frames.
     QPainter painter;
 public:
+    Frame();
     Frame(int dimension);
     void drawEllipse(QVector<int> pixels);
     void drawMirrorPen(QVector<int> pixels);
@@ -19,6 +21,7 @@ public:
     void erase(QVector<int> pixels);
     void bucketFill(QVector<int> pixels);
     void drawDither(QVector<int> pixels);
+    void setPixels(QImage newImage);
     QImage pixels();
     QSize size();
 };
