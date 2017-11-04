@@ -18,6 +18,27 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 
     // this feels hacky; if anyone can get the connections to work without this, that'd be great
     this->model = &model;
+    ui->paletteButtons->addButton(ui->palette1, 0);
+    ui->paletteButtons->addButton(ui->palette2, 1);
+    ui->paletteButtons->addButton(ui->palette3, 2);
+    ui->paletteButtons->addButton(ui->palette4, 3);
+    ui->paletteButtons->addButton(ui->palette5, 4);
+    ui->paletteButtons->addButton(ui->palette6, 5);
+    ui->paletteButtons->addButton(ui->palette7, 6);
+    ui->paletteButtons->addButton(ui->palette8, 7);
+    ui->paletteButtons->addButton(ui->palette9, 8);
+    ui->paletteButtons->addButton(ui->palette10, 9);
+    ui->paletteButtons->addButton(ui->palette11, 10);
+    ui->paletteButtons->addButton(ui->palette12, 11);
+    ui->paletteButtons->addButton(ui->palette13, 12);
+    ui->paletteButtons->addButton(ui->palette14, 13);
+    ui->paletteButtons->addButton(ui->palette15, 14);
+    ui->paletteButtons->addButton(ui->palette16, 15);
+
+
+
+
+
 
     QColorDialog *colorPicker1 = new QColorDialog();
     QColorDialog *colorPicker2 = new QColorDialog();
@@ -25,8 +46,10 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     // connects the color selection buttons
     connect(ui->color1Box, &QToolButton::clicked, canvas, [=](){ colorPicker1->show(); });
     connect(colorPicker1, &QColorDialog::colorSelected, canvas, &Canvas::setPrimaryColor);
+    connect(colorPicker1, &QColorDialog::colorSelected, this, &MainWindow::updateHistory);
     connect(ui->color2Box, &QToolButton::clicked, canvas, [=](){ colorPicker2->show(); });
     connect(colorPicker2, &QColorDialog::colorSelected, canvas, &Canvas::setSecondaryColor);
+    connect(colorPicker2, &QColorDialog::colorSelected, this, &MainWindow::updateHistory);
     connect(colorPicker1, &QColorDialog::colorSelected, ui->color1Box, [=](QColor color){
         QString newStyle = "background-color: rgb(" +
                 QString::number(color.red()) + "," +
@@ -44,6 +67,10 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 
     // Connects the toolButtons
 
+
+    // Connects the colorPaletteHistory
+    connect(ui->paletteButtons, SIGNAL(buttonClicked(int)), this, SLOT(paletteClicked(int)));
+    connect(this, SIGNAL(updateColor(QColor)), canvas, SLOT(setPrimaryColor(QColor)));
 
     // connects the undo/redo buttons
     connect(ui->actionUndo, &QAction::triggered, this, [=](){this->model->undo();});
@@ -72,6 +99,32 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 
     // connects the File>Exit action
     connect(ui->actionExit, &QAction::triggered, &model, &Model::exit);
+}
+
+void MainWindow::paletteClicked(int buttonID){
+    if (colorHistory.size() - buttonID > 0){
+        QColor newColor = colorHistory[colorHistory.size() - buttonID - 1];
+        QString newStyle = convertRgbToString(newColor.red(),newColor.green(),newColor.blue());
+        ui->color1Box->setStyleSheet(newStyle);
+        emit updateColor(newColor);
+    }
+}
+
+void MainWindow::updateHistory(QColor newColor){
+    colorHistory.append(newColor);
+    for(int i = 0, j = colorHistory.size(); i < 16 && j > 0;i++, j--){
+        QString temp = convertRgbToString(colorHistory[j-1].red(), colorHistory[j-1].green(), colorHistory[j-1].blue());
+        ui->paletteButtons->button(i)->setStyleSheet(temp);
+    }
+
+}
+
+QString MainWindow::convertRgbToString(int red, int green, int blue){
+    QString output = "background-color: rgb(" +
+            QString::number(red) + "," +
+            QString::number(green) + "," +
+            QString::number(blue) + ");";
+    return output;
 }
 
 MainWindow::~MainWindow()
