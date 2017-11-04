@@ -72,8 +72,8 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 	connect(ui->actionSave, &QAction::triggered, this, &MainWindow::saveAction);
 	connect(ui->actionLoad, &QAction::triggered, this, &MainWindow::loadAction);
 
-	connect(this, &MainWindow::createSaveFile, &model, &Model::saveFramesToFile);
-	connect(this, &MainWindow::loadSaveFile, &model, &Model::loadFramesFromFile);
+//	connect(this, &MainWindow::createSaveFile, &model, &Model::saveFramesToFile);
+//	connect(this, &MainWindow::loadSaveFile, &model, &Model::loadFramesFromFile);
 }
 
 MainWindow::~MainWindow()
@@ -81,16 +81,20 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 //is called immediately after the save button is called to get a file path
-void saveAction()
+void MainWindow::saveAction()
 {
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "C:\\untitled.ssp", tr("Sprites (*.ssp);;All files (*.*)"));
-	emit MainWindow::createSaveFile(fileName);
+    QString filename = QFileDialog::getSaveFileName();
+    QFile f( filename );
+    f.open( QIODevice::WriteOnly );
+    // store data in f
+    f.close();
+    //emit MainWindow::createSaveFile(fileName);
 }
 
-void loadAction()
+void MainWindow::loadAction()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "C:\\", tr("Sprites (*.ssp)::All files (*.*)"));
-	emit MainWindow::loadSaveFile(fileName);
+    //QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "C:\\", tr("Sprites (*.ssp)::All files (*.*)"));
+    //emit MainWindow::loadSaveFile(fileName);
 }
 
 void MainWindow::updateThis(){

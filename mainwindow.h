@@ -22,22 +22,15 @@ private slots:
     void colorBox2Clicked();
     void on_penTool_clicked();
     void on_eraseButton_clicked();
-
-
     void on_penToolButton_clicked();
-
     void on_eraserToolButton_clicked();
-
     void on_rectangleToolButton_clicked();
-
     void on_ellipseToolButton_clicked();
-
 	void saveAction();
 	void loadAction();
 
 signals:
-	void createSaveFile(QString fileName);
-	void loadSaveFile(QString fileName);
+
 
 public:
     explicit MainWindow(Model& model, QWidget *parent = 0);
@@ -56,6 +49,8 @@ private:
     void addGrid(QGraphicsScene&);
     void createCanvas(int);
     void updateColorHistory();
+    void createSaveFile(QString fileName);
+    void loadSaveFile(QString fileName);
 };
 
 #endif // MAINWINDOW_H

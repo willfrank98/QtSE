@@ -19,15 +19,4 @@ void Model::promptSave() {
     qDebug() << "prompt to save";
 }
 
-//Converts current frames into some kinda of portable (text) file
-void Model::saveFrames(QString fileName)
-{
-	//QFileDialog dialog;
 
-}
-
-//Converts above text file back into editable frames
-void Model::loadFramesAction()
-{
-
-}
