@@ -33,10 +33,11 @@ signals:
 
 
 public:
-    explicit MainWindow(Model& model, QWidget *parent = 0);
+    explicit MainWindow(Model *model, QWidget *parent = 0);
     ~MainWindow();
 
 private:
+    Model *model;
     Canvas *canvas;
     Ui::MainWindow *ui;
     int canvasSize;

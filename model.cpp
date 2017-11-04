@@ -9,6 +9,10 @@ Model::Model(QObject *parent) : QObject(parent)
 
 }
 
+void Model::addFrame(Frame f){
+    //frames.push_back(f);
+}
+
 void Model::exit() {
     if (isSaved) QApplication::exit();
     else promptSave();

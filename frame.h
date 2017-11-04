@@ -5,13 +5,13 @@
 #include <QPainter>
 #include <QVector>
 
-class frame
+class Frame
 {
 private:
     QImage image;
     QPainter painter;
 public:
-    frame(int dimension);
+    Frame(int dimension);
     void drawEllipse(int x1, int y1, int x2, int y2);
     void drawMirrorPen(QVector<int> pixels);
     void drawPen(QVector<int> pixels);

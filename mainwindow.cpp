@@ -7,14 +7,16 @@
 #include <iostream>
 #include <QVector>
 #include <QFileDialog>
+#include "frame.h"
 using namespace std;
 
 
-MainWindow::MainWindow(Model &model, QWidget *parent) :
-	QMainWindow(parent),
+MainWindow::MainWindow(Model *model, QWidget *parent) :
+    QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+    this->model = model;
     cd = new QColorDialog();
     cd->setCurrentColor(*new QColor(Qt::black));
 
@@ -53,7 +55,7 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(ui->action64x64, &QAction::triggered, this, [this](){ createCanvas(64); });
     connect(ui->action128x128, &QAction::triggered, this, [this](){ createCanvas(128); });
     // connects the File>Export actions
-    connect(ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
+//    connect(ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
         /*
          * This is just a lambda function to check if FreeImage fails for anyone.
          * Looks like Window will be difficult to get linked correctly.
@@ -62,10 +64,10 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 //        FreeImage_Initialise();
 //        qDebug() << "Initialized FreeImage " << FreeImage_GetVersion();
 //        FreeImage_DeInitialise();
-    });
+    //});
 
     // connects the File>Exit action
-    connect(ui->actionExit, &QAction::triggered, &model, &Model::exit);
+//    connect(ui->actionExit, &QAction::triggered, &model, &Model::exit);
     // connects the File>Exit action  
 
 	//connects save and load actions to functions which bring up a FileDialog, then call to the model
@@ -98,13 +100,70 @@ void MainWindow::loadAction()
     QFile f( filename );
     f.open(QIODevice::ReadOnly);
     QTextStream in(&f);
-//    if (!f.open(QIODevice::Text))
-//            return;
+    QRegExp rx("(\\ )"); //RegEx  ' '
+    int lineCounter, width, height, numberOfFrames;
+    lineCounter = 0;
+    //read the first line
+    QString line = in.readLine();
+    QStringList query = line.split(rx);
+    QString qs = query.at(0);
+    height = qs.toInt();
+    qs = query.at(1);
+    width = qs.toInt();
+    //read the 2nd line
+    line = in.readLine();
+    query = line.split(rx);
+    numberOfFrames = line.toInt();
+    QImage *i = new QImage(width, height, QImage::Format_ARGB32);
     while (!in.atEnd()) {
-       QString line = in.readLine();
-       cout<<line.toStdString()<<endl;
+        lineCounter++;
+        line = in.readLine();
+        query = line.split(rx);
+        for (int y = 0; y < height; y++){
+            for(int x1 = 0; x1 < width; x1++) {
+                QPoint qp;
+                qp.setX(x1);
+                int r,g,b,a;
+                QString str;
+                for (int x2 = 0; x2< 4; x2++){
+                    if (x2==0){
+                        str = query.at(x2);
+                        r = str.toInt();
+                    }
+                    if (x2==1){
+                        str = query.at(x2);
+                        g = str.toInt();
+                    }
+                    if (x2==2){
+                        str = query.at(x2);
+                        b = str.toInt();
+                    }
+                    if (x2==3){
+                        str = query.at(x2);
+                        a = str.toInt();
+                    }
+
+                }
+                int *r1,*g1,*b1,*a1;
+                r1 = &r;
+                g1 = &g;
+                b1 = &b;
+                a1 = &a;
+                QColor color;
+                color.getRgb(r1,g1,b1,a1);
+                QBrush brush(color, Qt::SolidPattern);
+                i->setPixel(x1, y, brush.color().rgb());
+            }
+        }
     }
     f.close();
+    QPixmap map;
+    map.fromImage(*i, Qt::AutoColor);
+    QGraphicsPixmapItem gpi;
+    gpi.setPixmap(map);
+    createCanvas(32);
+    this->canvas->addItem(&gpi);
+    canvas->update();
 }
 
 void MainWindow::updateThis(){
