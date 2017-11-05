@@ -24,8 +24,9 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+public slots:
+    void updateFocus();
 private slots:
-    void updateThis();
     void colorBox1Clicked();
     void colorBox2Clicked();
     void on_penTool_clicked();
@@ -43,6 +44,8 @@ signals:
 
 
 public:
+    QVector <QGraphicsScene*> scenes;
+    Canvas *canvas;
     explicit MainWindow(Model *model, QWidget *parent = 0);
     ~MainWindow();
 
@@ -51,9 +54,10 @@ private:
     QList <QImage> images;
     int imageHeight;
     int pixSize;
+    int sizeX;
+    int sizeY;
     Form popup;
     Model *model;
-    Canvas *canvas;
     Ui::MainWindow *ui;
     int canvasSize;
     qreal pixelSize;
@@ -67,7 +71,7 @@ private:
     void updateColorHistory();
     void createSaveFile(QString fileName);
     void loadSaveFile(QString fileName);
-    void setPixSize(int sizex, int sizey);
+    void setPixSize(int sizex, int sizey, int gvsize);
     void addFramePreview(QImage image);
 };
 

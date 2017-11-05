@@ -236,6 +236,7 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         else if (drawMode ==1)
             deletePixel(mouseEvent->scenePos(), Canvas::c2);
     }
+    emit clickToGV();
 }
 
 void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)

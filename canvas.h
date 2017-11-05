@@ -11,7 +11,7 @@ class Canvas : public QGraphicsScene
 {
     Q_OBJECT
 signals:
-    void updateGV();
+    void clickToGV();
 private:
     std::unordered_map<std::string, QColor> previousState;
     std::unordered_map<std::string, QColor> currentState;

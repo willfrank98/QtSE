@@ -13,6 +13,8 @@ MainWindow::MainWindow(Model *model, QWidget *parent) :
     cd = new QColorDialog();
     cd->setCurrentColor(*new QColor(Qt::black));
     QHBoxLayout *layout1 = new QHBoxLayout;
+    layout1->setAlignment(Qt::AlignLeft);
+    layout1->setMargin(10);
     ui->frameContainer->addLayout(layout1);
     //This is ugly i know but not sure how to make a better way to iterate through the buttons.
     colorHistoryButtons.append(ui->palette1);
@@ -44,11 +46,12 @@ MainWindow::MainWindow(Model *model, QWidget *parent) :
 
     // connects the File>New actions\
 
-    connect(ui->actioncustom_2, &QAction::triggered, [this](){ custom_clicked(); });
+    connect(ui->actioncustom_2, &QAction::triggered, this, [this](){ custom_clicked(); });
     connect(ui->action2x3, &QAction::triggered, this, [this](){ createCanvas(2,3); });
     connect(ui->action4x8, &QAction::triggered, this, [this](){ createCanvas(4,8); });
     connect(ui->action8x4, &QAction::triggered, this, [this](){ createCanvas(8,4); });
     connect(ui->action16x16, &QAction::triggered, this, [this](){ createCanvas(8,8); });
+    connect(ui->action16x16, &QAction::triggered, this, [this](){ createCanvas(16,16); });
     connect(ui->action32x32, &QAction::triggered, this, [this](){ createCanvas(32,32); });
     connect(ui->action64x64, &QAction::triggered, this, [this](){ createCanvas(64,64); });
     connect(ui->action128x128, &QAction::triggered, this, [this](){ createCanvas(128,128); });
@@ -104,33 +107,33 @@ void MainWindow::loadAction()
     f.open(QIODevice::ReadOnly);
     QTextStream in(&f);
     QRegExp rx("(\\ )"); //RegEx  ' '
-    int lineCounter, width, height, numberOfFrames, heightCounter;
+    int lineCounter, numberOfFrames, heightCounter;
     lineCounter = 0;
     heightCounter = 0;
     //read the first line
     QString line = in.readLine();
     QStringList query = line.split(rx);
     QString qs = query.at(0);
-    height = qs.toInt();
+    sizeY = qs.toInt();
     qs = query.at(1);
-    width = qs.toInt();
+    sizeX = qs.toInt();
     //read the 2nd line
     line = in.readLine();
     query = line.split(rx);
     numberOfFrames = line.toInt();
-    QImage i(width, height, QImage::Format_ARGB32);
-    QImage iCanvas(width, height, QImage::Format_ARGB32);
-    setPixSize(width, height);
-    imageHeight = height * pixSize;
+    QImage i(sizeX, sizeY, QImage::Format_ARGB32);
+    QImage iCanvas(sizeX, sizeY, QImage::Format_ARGB32);
+    setPixSize(sizeX, sizeY, ui->graphicsViewCanvas->height());
+    imageHeight = sizeY * pixSize;
     int testCount = 0;
 
     while (!in.atEnd()) {
 
-        heightCounter = lineCounter % height;
+        heightCounter = lineCounter % sizeY;
         line = in.readLine();
         query = line.split(rx);
         int widthCounter = 0;
-        for(int x1 = 0; x1 < width; x1++) {
+        for(int x1 = 0; x1 < sizeX; x1++) {
             int r,g,b,a;
             for (int x2 = 0; x2< 4; x2++){
                 qs = query.at(x1*4+x2);
@@ -153,10 +156,10 @@ void MainWindow::loadAction()
             QBrush brush(color, Qt::SolidPattern);
             i.setPixel(x1, heightCounter, brush.color().rgb());
         }
-        if (heightCounter == height - 1){
+        if (heightCounter == sizeY - 1){
             addFramePreview(i);
         }
-        if (testCount == height - 1){
+        if (testCount == sizeY - 1){
             iCanvas = QImage(i);
         }
         lineCounter++;
@@ -165,10 +168,14 @@ void MainWindow::loadAction()
     }
     iCanvas = iCanvas.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(iCanvas));
-    createCanvas(width, height);
-    this->canvas->addItem(item);
-    canvas->update();
-    ui->graphicsViewCanvas->update();
+    createCanvas(sizeX, sizeY);
+    //this->canvas->addItem(item);
+
+    //setPixSize(sizeX,sizeY,ui->graphicsViewCanvas->height());
+    //scenes.at(0)->addItem(item);
+    //ui->graphicsViewCanvas->setScene(scenes.at(0));
+    //ui->graphicsViewCanvas->fitInView(scenes.at(0)->sceneRect(), Qt::KeepAspectRatio);
+    //ui->graphicsViewCanvas->update();
     f.close();
 
     //this is for demo purposes but can later be used in the save method.
@@ -192,15 +199,28 @@ void MainWindow::addFramePreview(QImage image){
     label-> setFrameStyle(QLabel::Sunken | QLabel::Box);
     label->setPixmap(QPixmap::fromImage(image));    //This line needs work
     label->setVisible(true);
-    QGraphicsView  *gv = new QGraphicsView;
-    QFrame *frm = new QFrame;
-
-    ui->frameContainer->layout()->addWidget(frm);
-
+    Frame *gv = new Frame(sizeX,sizeY);
+    //connect(&gv, &QGraphicsView)
+    //gv->setAlignment(Qt::AlignLeft);
+    gv->setMaximumHeight(100);
+    gv->setMinimumHeight(100);
+    gv->setMaximumWidth(100);
+    gv->setMinimumHeight(100);
+    //gv->setSceneRect(gv->frameGeometry()); // set the scene's bounding rect to rect of mainwindow
+    gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff );
+    setPixSize(sizeX, sizeY, gv->height());
+    Canvas *c = new Canvas(sizeX, sizeY, pixSize);
+    scenes.push_back(c);
+    c->drawMode = 0;
+    gv->setScene(c);
+    gv->setEnabled(true);
+    ui->frameContainer->layout()->addWidget(gv);
+    connect(gv, SIGNAL(updateGV()), this, SLOT(updateFocus()));
 }
-void MainWindow::updateThis(){
-    update();
-    ui->graphicsViewCanvas->update();
+void MainWindow::updateFocus(){
+    cout<<"r"<<endl;
+    //ui->graphicsViewCanvas->setScene(scene);
 }
 void MainWindow::colorBox1Clicked(){
     Canvas::c1 = QColor(cd->getColor());
@@ -223,23 +243,30 @@ void MainWindow::updateColorHistory(){
     }
 }
 
-void MainWindow::setPixSize(int sizex, int sizey){
+void MainWindow::setPixSize(int sizex, int sizey, int gvsize){
     if (sizex >= sizey){
-        pixSize = ui->graphicsViewCanvas->width()/(qreal)sizex;
+        pixSize = gvsize/(qreal)sizex;
     }
 
     else if (sizey > sizex){
-        pixSize = ui->graphicsViewCanvas->width()/(qreal)sizey;
+        pixSize = gvsize/(qreal)sizey;
     }
 }
 void MainWindow::createCanvas(int sizex, int sizey)
 {
-    setPixSize(sizex,sizey);
-    this->canvas = new Canvas(sizex,sizey, pixSize);
-    ui->graphicsViewCanvas->setScene(canvas);
+    setPixSize(sizex,sizey, ui->graphicsViewCanvas->height());
+    if (scenes.size()>=1){
+        cout<<"hi:"<<endl;
+        ui->graphicsViewCanvas->setScene(scenes.at(0));
+        ui->graphicsViewCanvas->fitInView(scenes.at(0)->sceneRect(), Qt::KeepAspectRatio);
+    }
+    else{
+        this->canvas = new Canvas(sizex,sizey, pixSize);
+        ui->graphicsViewCanvas->setScene(canvas);
+        ui->graphicsViewCanvas->fitInView(canvas->sceneRect(), Qt::KeepAspectRatio);
+        this->canvas->drawMode = 0;
+    }
     ui->graphicsViewCanvas->setEnabled(true);
-    this->canvas->drawMode = 0;
-    connect(this->canvas, SIGNAL(updateGV()),this, SLOT(updateThis()));
 }
 
 // Adds a background to the canvas at Z-layer -1 (background)
@@ -307,5 +334,4 @@ void MainWindow::on_pushButtonAddFrame_clicked()
 {
 
 }
-
 

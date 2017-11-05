@@ -1,6 +1,6 @@
 #include "frame.h"
 
-Frame::Frame(int sizex,int sizey) {
+Frame::Frame(int sizex,int sizey) : QGraphicsView(){
     image = QImage(sizex, sizey, QImage::Format_ARGB32);
 }
 
@@ -70,4 +70,8 @@ void Frame::drawDither(QVector<int> pixels) {
             painter.drawPoint(pixels[i], pixels[i+1]);
         }
     }
+}
+
+void Frame::mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent){
+    emit updateGV();
 }
