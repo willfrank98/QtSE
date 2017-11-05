@@ -119,8 +119,13 @@ void MainWindow::loadAction()
     query = line.split(rx);
     numberOfFrames = line.toInt();
     QImage i(width, height, QImage::Format_ARGB32);
+    QImage iCanvas(width, height, QImage::Format_ARGB32);
     setPixSize(width, height);
+    imageHeight = height * pixSize;
+    int testCount = 0;
+
     while (!in.atEnd()) {
+
         heightCounter = lineCounter % height;
         line = in.readLine();
         query = line.split(rx);
@@ -148,25 +153,24 @@ void MainWindow::loadAction()
             QBrush brush(color, Qt::SolidPattern);
             i.setPixel(x1, heightCounter, brush.color().rgb());
         }
-        QRgb *values = reinterpret_cast<QRgb *>(i.scanLine(0));
-        Frame fr(width,height);
         if (heightCounter == height - 1){
-            cout<<heightCounter<<endl;
-            imageHeight = height * pixSize;
-            i = i.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
             addFramePreview(i);
-            images.push_back(i);
-            QImage i(width, height, QImage::Format_ARGB32);
+        }
+        if (testCount == height - 1){
+            iCanvas = QImage(i);
         }
         lineCounter++;
         heightCounter++;
+        testCount++;
     }
-    f.close();
-    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(i));
+    iCanvas = iCanvas.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(iCanvas));
     createCanvas(width, height);
     this->canvas->addItem(item);
     canvas->update();
     ui->graphicsViewCanvas->update();
+    f.close();
+
     //this is for demo purposes but can later be used in the save method.
     QByteArray ba;
     QBuffer buffer(&ba);
@@ -178,6 +182,22 @@ void MainWindow::loadAction()
     filez.close();
 }
 
+void MainWindow::addFramePreview(QImage image){
+    //QWidget *window = new QWidget;
+    cout<<"image.size().t"<<endl;
+    QString name = "";
+    int s = images.size();
+    image = image.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
+    QLabel *label = new QLabel();
+    label-> setFrameStyle(QLabel::Sunken | QLabel::Box);
+    label->setPixmap(QPixmap::fromImage(image));    //This line needs work
+    label->setVisible(true);
+    QGraphicsView  *gv = new QGraphicsView;
+    QFrame *frm = new QFrame;
+
+    ui->frameContainer->layout()->addWidget(frm);
+
+}
 void MainWindow::updateThis(){
     update();
     ui->graphicsViewCanvas->update();
@@ -288,22 +308,4 @@ void MainWindow::on_pushButtonAddFrame_clicked()
 
 }
 
-void MainWindow::addFramePreview(QImage image){
-    //QWidget *window = new QWidget;
 
-    QString name = "";
-    int s = images.size();
-
-    for (int i = 0; i<s; i++)
-    {
-        name = "Frame " + i;
-        QLabel *label = new QLabel();
-        //label->setGeometry(0,0,100,100);
-        label-> setFrameStyle(QLabel::Sunken | QLabel::Box);
-        label->setPixmap(QPixmap::fromImage(image));    //This line needs work
-        label->setVisible(true);
-        ui->frameContainer->layout()->addWidget(label);
-    }
-
-
-}
