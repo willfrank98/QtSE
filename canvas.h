@@ -11,7 +11,7 @@ class Canvas : public QGraphicsScene
 {
     Q_OBJECT
 signals:
-    void clickToGV();
+    void clickToGV(QGraphicsSceneMouseEvent*, int frameNum);
 private:
     std::unordered_map<std::string, QColor> previousState;
     std::unordered_map<std::string, QColor> currentState;
@@ -38,6 +38,7 @@ private:
 
 
 public:
+    int frameNumber;
     qreal pixSize = 480/32;
     int drawMode;
     static QColor c1;
@@ -46,7 +47,7 @@ public:
     static QColor c2Last;
     static QBrush *brush;
     explicit Canvas(QObject *parent = nullptr);
-    explicit Canvas(int, int, qreal, QObject *parent = nullptr);
+    explicit Canvas(int, int, qreal,int, QObject *parent = nullptr);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent);

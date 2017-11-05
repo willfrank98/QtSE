@@ -72,6 +72,6 @@ void Frame::drawDither(QVector<int> pixels) {
     }
 }
 
-void Frame::mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent){
-    emit updateGV();
+void Frame::mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent, int framenum){
+    emit updateGV(framenum);
 }

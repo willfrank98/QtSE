@@ -47,14 +47,14 @@ MainWindow::MainWindow(Model *model, QWidget *parent) :
     // connects the File>New actions\
 
     connect(ui->actioncustom_2, &QAction::triggered, this, [this](){ custom_clicked(); });
-    connect(ui->action2x3, &QAction::triggered, this, [this](){ createCanvas(2,3); });
-    connect(ui->action4x8, &QAction::triggered, this, [this](){ createCanvas(4,8); });
-    connect(ui->action8x4, &QAction::triggered, this, [this](){ createCanvas(8,4); });
-    connect(ui->action16x16, &QAction::triggered, this, [this](){ createCanvas(8,8); });
-    connect(ui->action16x16, &QAction::triggered, this, [this](){ createCanvas(16,16); });
-    connect(ui->action32x32, &QAction::triggered, this, [this](){ createCanvas(32,32); });
-    connect(ui->action64x64, &QAction::triggered, this, [this](){ createCanvas(64,64); });
-    connect(ui->action128x128, &QAction::triggered, this, [this](){ createCanvas(128,128); });
+    connect(ui->action2x3, &QAction::triggered, this, [this](){ createCanvas(2,3,0); });
+    connect(ui->action4x8, &QAction::triggered, this, [this](){ createCanvas(4,8,0); });
+    connect(ui->action8x4, &QAction::triggered, this, [this](){ createCanvas(8,4,0); });
+    connect(ui->action8x8, &QAction::triggered, this, [this](){ createCanvas(8,8,0); });
+    connect(ui->action16x16, &QAction::triggered, this, [this](){ createCanvas(16,16,0); });
+    connect(ui->action32x32, &QAction::triggered, this, [this](){ createCanvas(32,32,0); });
+    connect(ui->action64x64, &QAction::triggered, this, [this](){ createCanvas(64,64,0); });
+    connect(ui->action128x128, &QAction::triggered, this, [this](){ createCanvas(128,128,0); });
     // connects the File>Export actions
 //    connect(ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
         /*
@@ -126,7 +126,6 @@ void MainWindow::loadAction()
     setPixSize(sizeX, sizeY, ui->graphicsViewCanvas->height());
     imageHeight = sizeY * pixSize;
     int testCount = 0;
-
     while (!in.atEnd()) {
 
         heightCounter = lineCounter % sizeY;
@@ -168,7 +167,7 @@ void MainWindow::loadAction()
     }
     iCanvas = iCanvas.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(iCanvas));
-    createCanvas(sizeX, sizeY);
+    createCanvas(sizeX, sizeY, 0);
     //this->canvas->addItem(item);
 
     //setPixSize(sizeX,sizeY,ui->graphicsViewCanvas->height());
@@ -191,7 +190,6 @@ void MainWindow::loadAction()
 
 void MainWindow::addFramePreview(QImage image){
     //QWidget *window = new QWidget;
-    cout<<"image.size().t"<<endl;
     QString name = "";
     int s = images.size();
     image = image.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
@@ -210,17 +208,18 @@ void MainWindow::addFramePreview(QImage image){
     gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff );
     setPixSize(sizeX, sizeY, gv->height());
-    Canvas *c = new Canvas(sizeX, sizeY, pixSize);
+    frameID = scenes.size();
+    Canvas *c = new Canvas(sizeX, sizeY, pixSize, frameID);
     scenes.push_back(c);
     c->drawMode = 0;
     gv->setScene(c);
     gv->setEnabled(true);
     ui->frameContainer->layout()->addWidget(gv);
-    connect(gv, SIGNAL(updateGV()), this, SLOT(updateFocus()));
+    connect(c, SIGNAL(clickToGV(QGraphicsSceneMouseEvent*,int)), gv, SLOT(mousePressEvent(QGraphicsSceneMouseEvent*,int)));
+    connect(gv, &Frame::updateGV, this, &MainWindow::updateFocus);
 }
-void MainWindow::updateFocus(){
-    cout<<"r"<<endl;
-    //ui->graphicsViewCanvas->setScene(scene);
+void MainWindow::updateFocus(int frameNum){
+    ui->graphicsViewCanvas->setScene(scenes.at(frameNum));
 }
 void MainWindow::colorBox1Clicked(){
     Canvas::c1 = QColor(cd->getColor());
@@ -252,16 +251,15 @@ void MainWindow::setPixSize(int sizex, int sizey, int gvsize){
         pixSize = gvsize/(qreal)sizey;
     }
 }
-void MainWindow::createCanvas(int sizex, int sizey)
+void MainWindow::createCanvas(int sizex, int sizey, int frameID)
 {
     setPixSize(sizex,sizey, ui->graphicsViewCanvas->height());
     if (scenes.size()>=1){
-        cout<<"hi:"<<endl;
         ui->graphicsViewCanvas->setScene(scenes.at(0));
         ui->graphicsViewCanvas->fitInView(scenes.at(0)->sceneRect(), Qt::KeepAspectRatio);
     }
     else{
-        this->canvas = new Canvas(sizex,sizey, pixSize);
+        this->canvas = new Canvas(sizex,sizey, pixSize, frameID);
         ui->graphicsViewCanvas->setScene(canvas);
         ui->graphicsViewCanvas->fitInView(canvas->sceneRect(), Qt::KeepAspectRatio);
         this->canvas->drawMode = 0;

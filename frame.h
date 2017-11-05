@@ -9,14 +9,14 @@ class Frame : public QGraphicsView
 {
 Q_OBJECT
 signals:
-    void updateGV();
+    void updateGV(int framenum);
 
 private:
     QImage image;
     QPainter painter;
 
 public slots:
-    void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent);
+    void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent, int framenum);
 
 public:
     Frame(int sizex,int sizey);

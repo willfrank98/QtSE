@@ -25,7 +25,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public slots:
-    void updateFocus();
+    void updateFocus(int frameNumber);
 private slots:
     void colorBox1Clicked();
     void colorBox2Clicked();
@@ -50,7 +50,7 @@ public:
     ~MainWindow();
 
 private:
-
+    int frameID;
     QList <QImage> images;
     int imageHeight;
     int pixSize;
@@ -67,7 +67,7 @@ private:
     void addBackground(QGraphicsScene&);
     void addSurface(QGraphicsScene&);
     void addGrid(QGraphicsScene&);
-    void createCanvas(int,int);
+    void createCanvas(int,int,int);
     void updateColorHistory();
     void createSaveFile(QString fileName);
     void loadSaveFile(QString fileName);

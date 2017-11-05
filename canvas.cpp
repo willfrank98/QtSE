@@ -17,8 +17,9 @@ Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 
 }
 
-Canvas::Canvas(int sizex, int sizey, qreal pixSize, QObject *parent) : QGraphicsScene(parent)
+Canvas::Canvas(int sizex, int sizey, qreal pixSize, int frame, QObject *parent) : QGraphicsScene(parent)
 {
+    frameNumber = frame;
     for (int i = 0; i < 128; i++)
         for (int j = 0; j < 128; j++)
             rect[i][j] = NULL;
@@ -236,7 +237,7 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         else if (drawMode ==1)
             deletePixel(mouseEvent->scenePos(), Canvas::c2);
     }
-    emit clickToGV();
+    emit clickToGV(mouseEvent, frameNumber);
 }
 
 void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
