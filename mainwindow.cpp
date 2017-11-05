@@ -1,13 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "canvas.h"
-#include <QGraphicsItem>
-#include <QGraphicsRectItem>
-#include <QDebug>
-#include <iostream>
-#include <QVector>
-#include <QFileDialog>
-#include <QBuffer>
 #include "frame.h"
 using namespace std;
 
@@ -20,7 +12,8 @@ MainWindow::MainWindow(Model *model, QWidget *parent) :
     this->model = model;
     cd = new QColorDialog();
     cd->setCurrentColor(*new QColor(Qt::black));
-
+    QHBoxLayout *layout1 = new QHBoxLayout;
+    ui->frameContainer->addLayout(layout1);
     //This is ugly i know but not sure how to make a better way to iterate through the buttons.
     colorHistoryButtons.append(ui->palette1);
     colorHistoryButtons.append(ui->palette2);
@@ -126,6 +119,7 @@ void MainWindow::loadAction()
     query = line.split(rx);
     numberOfFrames = line.toInt();
     QImage i(width, height, QImage::Format_ARGB32);
+    setPixSize(width, height);
     while (!in.atEnd()) {
         heightCounter = lineCounter % height;
         line = in.readLine();
@@ -149,23 +143,25 @@ void MainWindow::loadAction()
                 if (x2==3)
                     a = val;
             }
-            //cout<<r<<" "<<g<<" "<<" "<<b<<" "<<a<<" "<<endl;
-            cout<<x1<<" "<<heightCounter<<endl;
             QColor color;
             color.setRgb(r,g,b,a);
             QBrush brush(color, Qt::SolidPattern);
             i.setPixel(x1, heightCounter, brush.color().rgb());
         }
         QRgb *values = reinterpret_cast<QRgb *>(i.scanLine(0));
-        cout<<values<<endl;
         Frame fr(width,height);
+        if (heightCounter == height - 1){
+            cout<<heightCounter<<endl;
+            imageHeight = height * pixSize;
+            i = i.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
+            addFramePreview(i);
+            images.push_back(i);
+            QImage i(width, height, QImage::Format_ARGB32);
+        }
         lineCounter++;
         heightCounter++;
     }
     f.close();
-    setPixSize(width, height);
-    imageHeight = height * pixSize;
-    i = i.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(i));
     createCanvas(width, height);
     this->canvas->addItem(item);
@@ -175,7 +171,7 @@ void MainWindow::loadAction()
     QByteArray ba;
     QBuffer buffer(&ba);
     buffer.open(QIODevice::WriteOnly);
-    cout<<i.save(&buffer, "PNG")<<endl; // writes image into ba in PNG formal. output bool if save was succes.
+    i.save(&buffer, "PNG"); // writes image into ba in PNG formal. output bool if save was succes.
     QFile filez("a.png"); //write into the debug folder
     filez.open(QIODevice::WriteOnly);
     filez.write(ba);
@@ -285,4 +281,29 @@ void MainWindow::on_rectangleToolButton_clicked()
 void MainWindow::on_ellipseToolButton_clicked()
 {
     this->canvas->drawMode = 2;
+}
+
+void MainWindow::on_pushButtonAddFrame_clicked()
+{
+
+}
+
+void MainWindow::addFramePreview(QImage image){
+    //QWidget *window = new QWidget;
+
+    QString name = "";
+    int s = images.size();
+
+    for (int i = 0; i<s; i++)
+    {
+        name = "Frame " + i;
+        QLabel *label = new QLabel();
+        //label->setGeometry(0,0,100,100);
+        label-> setFrameStyle(QLabel::Sunken | QLabel::Box);
+        label->setPixmap(QPixmap::fromImage(image));    //This line needs work
+        label->setVisible(true);
+        ui->frameContainer->layout()->addWidget(label);
+    }
+
+
 }

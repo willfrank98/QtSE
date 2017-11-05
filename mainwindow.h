@@ -3,10 +3,17 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
+#include <QGraphicsItem>
 #include "model.h"
 #include <QColorDialog>
 #include <QPalette>
 #include <QFrame>
+#include <QGraphicsRectItem>
+#include <QDebug>
+#include <iostream>
+#include <QVector>
+#include <QFileDialog>
+#include <QBuffer>
 #include "canvas.h"
 #include "form.h"
 namespace Ui {
@@ -30,6 +37,7 @@ private slots:
     void custom_clicked();
 	void saveAction();
 	void loadAction();
+    void on_pushButtonAddFrame_clicked();
 
 signals:
 
@@ -39,6 +47,8 @@ public:
     ~MainWindow();
 
 private:
+
+    QList <QImage> images;
     int imageHeight;
     int pixSize;
     Form popup;
@@ -58,6 +68,7 @@ private:
     void createSaveFile(QString fileName);
     void loadSaveFile(QString fileName);
     void setPixSize(int sizex, int sizey);
+    void addFramePreview(QImage image);
 };
 
 #endif // MAINWINDOW_H
