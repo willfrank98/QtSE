@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QVector>
 #include <QObject>
+#include <QFileDialog>
 
 MainWindow::MainWindow(Model &model, QWidget *parent) :
 	QMainWindow(parent),
@@ -91,10 +92,13 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(&model, &Model::frameUpdated, canvas, &Canvas::displayImage);
 
     // connects the File>Export actions
+    connect(ui->actionCurrentFrame, &QAction::triggered, this, [=](){
+        QString filename = QFileDialog::getSaveFileName(this, tr("Export to .PNG"), "./", tr("PNG Files (.png)"));
+        this->model->saveCurrentFrameToPNG(filename);
+    });
     connect(ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
         /*
-         * This is just a lambda function to check if FreeImage fails for anyone.
-         * Looks like Window will be difficult to get linked correctly.
+         * Gonna likely replace this with gif.h
          */
 //        FreeImage_Initialise();
 //        qDebug() << "Initialized FreeImage " << FreeImage_GetVersion();

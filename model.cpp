@@ -54,6 +54,11 @@ void Model::setTool(Tool tool) {
     selectedTool = tool;
 }
 
+void Model::saveCurrentFrameToPNG(QString filename) {
+    if (!filename.endsWith(".png") || !filename.endsWith(".PNG")) filename.append(".png");
+    currentFrame->pixels().save(filename);
+}
+
 void Model::exit() {
     if (isSaved) QApplication::exit();
     else promptSave();

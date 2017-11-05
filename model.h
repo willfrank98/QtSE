@@ -11,7 +11,7 @@ class Model : public QObject
     Q_OBJECT
 
 public:
-	explicit Model(QObject *parent = nullptr);
+    explicit Model(QObject *parent = nullptr);
     void createFrame(int dimension);
     QSize frameDimensions();
 
@@ -26,6 +26,7 @@ public slots:
     void setTool(Tool _tool);
     void setActiveFrame(int);
     void removeFrame(int);
+    void saveCurrentFrameToPNG(QString filename);
     void exit();    // a better name might be needed
 
 private:
