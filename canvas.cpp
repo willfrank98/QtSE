@@ -19,7 +19,6 @@ void Canvas::setSecondaryColor(QColor color) {
 void Canvas::displayImage(QImage image) {
     pixSize = QSizeF(sceneRect().width() / (qreal)image.size().width(),
                                                   sceneRect().height() / (qreal)image.size().height());
-    qDebug() << pixSize;
     clear();
     addPixmap(QPixmap::fromImage(image.scaled(sceneRect().width(), sceneRect().height())));
 }

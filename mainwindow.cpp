@@ -44,6 +44,8 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 
     QColorDialog *colorPicker1 = new QColorDialog();
     QColorDialog *colorPicker2 = new QColorDialog();
+    colorPicker1->setOption(QColorDialog::ShowAlphaChannel, true);
+    colorPicker2->setOption(QColorDialog::ShowAlphaChannel, true);
 
     // connects the color selection buttons
     connect(ui->color1Box, &QToolButton::clicked, canvas, [=](){ colorPicker1->show(); });
