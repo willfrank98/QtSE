@@ -4,7 +4,6 @@
 #include <cmath>
 #include "model.h"
 #include <QGraphicsPixmapItem>
-
 #include "mainwindow.h"
 using namespace std;
 QBrush *Canvas::brush;
@@ -12,6 +11,7 @@ QColor Canvas::c1;
 QColor Canvas::c2;
 QColor Canvas::c1Last;
 QColor Canvas::c2Last;
+int Canvas::drawMode;
 Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 {
 
@@ -19,6 +19,7 @@ Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 
 Canvas::Canvas(QImage i, int sizex, int sizey,  int frame, QObject *parent) : QGraphicsScene(parent)
 {
+    drawMode = 0;
     image = i;
     QGraphicsPixmapItem *gp = new QGraphicsPixmapItem(QPixmap::fromImage(image));
     addItem(gp);

@@ -317,22 +317,22 @@ void MainWindow::on_eraseButton_clicked()
 
 void MainWindow::on_penToolButton_clicked()
 {
-    this->canvas->drawMode = 0;
+    Canvas::drawMode = 0;
 }
 
 void MainWindow::on_eraserToolButton_clicked()
 {
-    this->canvas->drawMode = 1;
+    Canvas::drawMode = 1;
 }
 
 void MainWindow::on_rectangleToolButton_clicked()
 {
-    this->canvas->drawMode = 3;
+    Canvas::drawMode = 3;
 }
 
 void MainWindow::on_ellipseToolButton_clicked()
 {
-    this->canvas->drawMode = 2;
+    Canvas::drawMode = 2;
 }
 
 void MainWindow::on_pushButtonAddFrame_clicked()

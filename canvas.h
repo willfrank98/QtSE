@@ -42,7 +42,7 @@ public:
     void setMap();
     int frameNumber;
     qreal pixSize = 480/32;
-    int drawMode;
+    static int drawMode;
     static QColor c1;
     static QColor c2;
     static QColor c1Last;
