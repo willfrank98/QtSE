@@ -3,7 +3,6 @@
 #include <iostream>
 #include <cmath>
 #include "model.h"
-#include <QGraphicsPixmapItem>
 #include "mainwindow.h"
 using namespace std;
 QBrush *Canvas::brush;
@@ -20,9 +19,9 @@ Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 Canvas::Canvas(QImage i, int sizex, int sizey,  int frame, QObject *parent) : QGraphicsScene(parent)
 {
     drawMode = 0;
-    image = i;
-    QGraphicsPixmapItem *gp = new QGraphicsPixmapItem(QPixmap::fromImage(image));
-    addItem(gp);
+    QPixmap *pix = new QPixmap(QPixmap::fromImage(i));
+    //graphicspixmap->paint(painter, );
+    //addItem(graphicspixmap);
     frameNumber = frame;
     for (int i = 0; i < 128; i++)
         for (int j = 0; j < 128; j++)
@@ -35,6 +34,11 @@ Canvas::Canvas(QImage i, int sizex, int sizey,  int frame, QObject *parent) : QG
     this->pixSize = 1;
     this->data = new QImage(sizex, sizey, QImage::Format_RGB32);
     drawGrid();
+    QPainter *painter = new QPainter(pix);
+    QRect r(0,0,3,2);
+    painter->drawRect(r);
+    QGraphicsPixmapItem *graphicspixmap = new QGraphicsPixmapItem(*pix);
+    addItem(graphicspixmap);
 }
 
 void Canvas::setBG(){

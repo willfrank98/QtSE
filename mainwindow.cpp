@@ -205,7 +205,6 @@ void MainWindow::addFramePreview(QImage image, int x, int y){
     gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff );
     frameID = scenes.size();
     Canvas *c = new Canvas(image, x, y, frameID);//canvas now set sizeof the smallest graphicsview.
-    c->image = image;
     scenes.push_back(c);
     c->drawMode = 0;
     gv->setScene(c);

@@ -7,6 +7,9 @@
 #include<QRectF>
 #include <unordered_map>
 #include <frame.h>
+#include <QPainter>
+#include <QGraphicsPixmapItem>
+#include <QWidget>
 class Canvas : public QGraphicsScene
 {
     Q_OBJECT
@@ -38,7 +41,8 @@ private:
 
 
 public:
-    QImage image;
+    QPainter painter;
+    QGraphicsPixmapItem *graphicspixmap;
     void setMap();
     int frameNumber;
     qreal pixSize = 480/32;
