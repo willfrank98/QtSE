@@ -17,8 +17,11 @@ Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 
 }
 
-Canvas::Canvas(int sizex, int sizey, qreal pixSize, int frame, QObject *parent) : QGraphicsScene(parent)
+Canvas::Canvas(QImage i, int sizex, int sizey,  int frame, QObject *parent) : QGraphicsScene(parent)
 {
+    image = i;
+    QGraphicsPixmapItem *gp = new QGraphicsPixmapItem(QPixmap::fromImage(image));
+    addItem(gp);
     frameNumber = frame;
     for (int i = 0; i < 128; i++)
         for (int j = 0; j < 128; j++)
@@ -28,7 +31,7 @@ Canvas::Canvas(int sizex, int sizey, qreal pixSize, int frame, QObject *parent) 
     pen = new QPen(QColor::fromRgbF(0.7, 0.8, 0.9, 1.0));
     this->sizex = sizex;
     this->sizey = sizey;
-    this->pixSize = pixSize;
+    this->pixSize = 1;
     this->data = new QImage(sizex, sizey, QImage::Format_RGB32);
     drawGrid();
 }
@@ -60,7 +63,7 @@ void Canvas::redraw(std::unordered_map<std::string, QColor> points, int mode) {
 }
 
 void Canvas::drawGrid() {
-    pen->setWidthF(0.25);
+    pen->setWidthF(0);
     for (qreal y = 0; y < sizey; y++) {
         for (qreal x = 0; x < sizex; x++) {
             addRect(pixSize * x, pixSize * y, pixSize, pixSize, *pen);

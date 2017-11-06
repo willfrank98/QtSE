@@ -203,23 +203,21 @@ void MainWindow::addFramePreview(QImage image, int x, int y){
     gv->setMinimumHeight(100);
     gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff );
-    setPixSize(x, y, gv->height());
-    imageHeight = y * pixSize;
-    image = image.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
-    QGraphicsPixmapItem *gp = new QGraphicsPixmapItem(QPixmap::fromImage(image));
     frameID = scenes.size();
-    Canvas *c = new Canvas(x, y, pixSize, frameID);//canvas now set sizeof the smallest graphicsview.
+    Canvas *c = new Canvas(image, x, y, frameID);//canvas now set sizeof the smallest graphicsview.
+    c->image = image;
     scenes.push_back(c);
     c->drawMode = 0;
-    c->addItem(gp);
     gv->setScene(c);
     gv->setEnabled(true);
+    gv->show();
     ui->frameContainer->layout()->addWidget(gv);
     connect(c, SIGNAL(clickToGV(QGraphicsSceneMouseEvent*,int)), gv, SLOT(mousePressEvent(QGraphicsSceneMouseEvent*,int)));
     connect(gv, &Frame::updateGV, this, &MainWindow::updateFocus);
     ui->graphicsViewCanvas->setScene(c);
     ui->graphicsViewCanvas->setEnabled(true);
     ui->graphicsViewCanvas->fitInView(scenes.at(animationCounter)->sceneRect(), Qt::KeepAspectRatio);
+    gv->fitInView(scenes.at(animationCounter)->sceneRect(), Qt::KeepAspectRatio);
 }
 void MainWindow::updateFocus(int frameNum){
     ui->graphicsViewCanvas->setScene(scenes.at(frameNum));

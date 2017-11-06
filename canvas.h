@@ -38,6 +38,7 @@ private:
 
 
 public:
+    QImage image;
     void setMap();
     int frameNumber;
     qreal pixSize = 480/32;
@@ -48,7 +49,7 @@ public:
     static QColor c2Last;
     static QBrush *brush;
     explicit Canvas(QObject *parent = nullptr);
-    explicit Canvas(int, int, qreal,int, QObject *parent = nullptr);
+    explicit Canvas(QImage, int, int, int, QObject *parent = nullptr);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent);
