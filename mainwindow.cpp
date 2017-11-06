@@ -10,6 +10,8 @@ MainWindow::MainWindow(Model *model, QWidget *parent) :
 {
 	ui->setupUi(this);
     this->model = model;
+    animationCounter = 0;
+    timer = new QTimer(this);
     cd = new QColorDialog();
     cd->setCurrentColor(*new QColor(Qt::black));
     QHBoxLayout *layout1 = new QHBoxLayout;
@@ -77,6 +79,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent) :
 
 //	connect(this, &MainWindow::createSaveFile, &model, &Model::saveFramesToFile);
 //	connect(this, &MainWindow::loadSaveFile, &model, &Model::loadFramesFromFile);
+    ui->graphicsViewPreview->setEnabled(true);
 }
 
 MainWindow::~MainWindow()
@@ -296,7 +299,13 @@ void MainWindow::addGrid(QGraphicsScene &scene) {
     scene.createItemGroup(scene.items())->setZValue(1);
 }
 
-
+void MainWindow::updateAnimation(){
+    animationCounter = animationCounter % scenes.size();
+    cout<<animationCounter<<" "<<scenes.size()<<" "<<endl;
+    ui->graphicsViewPreview->setScene(scenes.at(animationCounter));
+    ui->graphicsViewPreview->fitInView(scenes.at(animationCounter)->sceneRect(), Qt::KeepAspectRatio);
+    animationCounter++;
+}
 
 void MainWindow::on_penTool_clicked()
 {
@@ -333,3 +342,18 @@ void MainWindow::on_pushButtonAddFrame_clicked()
 
 }
 
+
+void MainWindow::on_spinBoxSpeed_valueChanged(int arg1)
+{
+
+    //set the initial delay to 1 fps(setting 1) and increase by 1 fps for each additional speed.
+    if (arg1 == 0)
+        speedupMultiplier = 1000;
+    else
+        speedupMultiplier = 1000/arg1;
+    cout<<speedupMultiplier<<endl;
+    //QTime time = QTime::currentTime();
+    //qsrand((uint)time.msec());
+    timer->start(speedupMultiplier);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateAnimation()));
+}

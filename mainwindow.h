@@ -14,6 +14,8 @@
 #include <QVector>
 #include <QFileDialog>
 #include <QBuffer>
+#include <QTime>
+#include <QTimer>
 #include "canvas.h"
 #include "form.h"
 namespace Ui {
@@ -39,6 +41,8 @@ private slots:
 	void saveAction();
 	void loadAction();
     void on_pushButtonAddFrame_clicked();
+    void updateAnimation();
+    void on_spinBoxSpeed_valueChanged(int arg1);
 
 signals:
 
@@ -50,6 +54,9 @@ public:
     ~MainWindow();
 
 private:
+    int animationCounter;
+    double speedupMultiplier;
+    QTimer *timer;
     int frameID;
     QList <QImage> images;
     int imageHeight;
