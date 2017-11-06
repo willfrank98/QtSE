@@ -48,14 +48,14 @@ signals:
 
 
 public:
-    QVector <QGraphicsScene*> scenes;
+    std::vector <QGraphicsScene*> scenes;
     Canvas *canvas;
     explicit MainWindow(Model *model, QWidget *parent = 0);
     ~MainWindow();
 
 private:
     int animationCounter;
-    double speedupMultiplier;
+    double speed;
     QTimer *timer;
     int frameID;
     QList <QImage> images;

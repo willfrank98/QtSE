@@ -8,10 +8,13 @@ MainWindow::MainWindow(Model *model, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    sizeX = 32;
+    sizeY = 32;
 	ui->setupUi(this);
     this->model = model;
     animationCounter = 0;
     timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(updateAnimation()));
     cd = new QColorDialog();
     cd->setCurrentColor(*new QColor(Qt::black));
     QHBoxLayout *layout1 = new QHBoxLayout;
@@ -256,6 +259,8 @@ void MainWindow::setPixSize(int sizex, int sizey, int gvsize){
 }
 void MainWindow::createCanvas(int sizex, int sizey, int frameID)
 {
+    sizeX = sizex;
+    sizeY = sizey;
     setPixSize(sizex,sizey, ui->graphicsViewCanvas->height());
     if (scenes.size()>=1){
         ui->graphicsViewCanvas->setScene(scenes.at(0));
@@ -300,10 +305,11 @@ void MainWindow::addGrid(QGraphicsScene &scene) {
 }
 
 void MainWindow::updateAnimation(){
-    animationCounter = animationCounter % scenes.size();
-    cout<<animationCounter<<" "<<scenes.size()<<" "<<endl;
+    if (animationCounter == scenes.size())
+        animationCounter = 0;
     ui->graphicsViewPreview->setScene(scenes.at(animationCounter));
     ui->graphicsViewPreview->fitInView(scenes.at(animationCounter)->sceneRect(), Qt::KeepAspectRatio);
+    ui->graphicsViewPreview->update();
     animationCounter++;
 }
 
@@ -339,21 +345,18 @@ void MainWindow::on_ellipseToolButton_clicked()
 
 void MainWindow::on_pushButtonAddFrame_clicked()
 {
-
+    QImage i(sizeX, sizeY, QImage::Format_ARGB32);
+    addFramePreview(i);
 }
 
 
 void MainWindow::on_spinBoxSpeed_valueChanged(int arg1)
 {
-
+    cout<<"changed"<<endl;
     //set the initial delay to 1 fps(setting 1) and increase by 1 fps for each additional speed.
     if (arg1 == 0)
-        speedupMultiplier = 1000;
+        speed = 1000;
     else
-        speedupMultiplier = 1000/arg1;
-    cout<<speedupMultiplier<<endl;
-    //QTime time = QTime::currentTime();
-    //qsrand((uint)time.msec());
-    timer->start(speedupMultiplier);
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateAnimation()));
+        speed = 1000/arg1;
+    timer->start(speed);
 }
