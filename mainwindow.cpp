@@ -197,6 +197,10 @@ void MainWindow::createCanvas(int sizex, int sizey)
 
 void MainWindow::addFramePreview(QImage image, int x, int y){
     image = image.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
+    QLabel *label = new QLabel();
+    label-> setFrameStyle(QLabel::Sunken | QLabel::Box);
+    label->setPixmap(QPixmap::fromImage(image));    //This line needs work
+    label->setVisible(true);
     Frame *gv = new Frame(x,y);
     gv->setMaximumHeight(100);
     gv->setMinimumHeight(100);
