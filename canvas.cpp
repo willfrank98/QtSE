@@ -35,9 +35,7 @@ Canvas::Canvas(int sizex, int sizey, qreal pixSize, int frame, QObject *parent) 
 }
 
 void Canvas::setBG(){
-    //QGraphicsPixmapItem item;
-    //QString fileNamez = ":/Checkered.png";
-    //QGraphicsPixmapItem *pm = this->addPixmap( QPixmap(fileNamez) );
+
 }
 
 void Canvas::redraw(std::unordered_map<std::string, QColor> points, int mode) {

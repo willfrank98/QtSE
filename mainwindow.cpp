@@ -14,7 +14,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent) :
     this->model = model;
     animationCounter = 0;
     timer = new QTimer(this);
-        connect(timer, SIGNAL(timeout()), this, SLOT(updateAnimation()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateAnimation()));
     cd = new QColorDialog();
     cd->setCurrentColor(*new QColor(Qt::black));
     QHBoxLayout *layout1 = new QHBoxLayout;
@@ -108,6 +108,7 @@ void MainWindow::custom_clicked()
 
 void MainWindow::loadAction()
 {
+    std::unordered_map<std::string, QColor> singleMap;
     QString filename = QFileDialog::getOpenFileName();
     QFile f( filename );
     f.open(QIODevice::ReadOnly);
@@ -160,6 +161,7 @@ void MainWindow::loadAction()
             color.setRgb(r,g,b,a);
             QBrush brush(color, Qt::SolidPattern);
             i.setPixel(x1, heightCounter, brush.color().rgb());
+            std::string temp = std::to_string(x1)+"."+std::to_string(heightCounter);
         }
         if (heightCounter == sizeY - 1){
             addFramePreview(i);
@@ -199,23 +201,17 @@ void MainWindow::addFramePreview(QImage image){
     QString name = "";
     int s = images.size();
     image = image.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
-    QLabel *label = new QLabel();
-    label-> setFrameStyle(QLabel::Sunken | QLabel::Box);
-    label->setPixmap(QPixmap::fromImage(image));    //This line needs work
-    label->setVisible(true);
     Frame *gv = new Frame(sizeX,sizeY);
-    //connect(&gv, &QGraphicsView)
-    //gv->setAlignment(Qt::AlignLeft);
     gv->setMaximumHeight(100);
     gv->setMinimumHeight(100);
     gv->setMaximumWidth(100);
     gv->setMinimumHeight(100);
-    //gv->setSceneRect(gv->frameGeometry()); // set the scene's bounding rect to rect of mainwindow
     gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff );
     setPixSize(sizeX, sizeY, gv->height());
     frameID = scenes.size();
     Canvas *c = new Canvas(sizeX, sizeY, pixSize, frameID);
+    //c->redraw(pointMap,0);
     scenes.push_back(c);
     c->drawMode = 0;
     gv->setScene(c);
@@ -223,6 +219,8 @@ void MainWindow::addFramePreview(QImage image){
     ui->frameContainer->layout()->addWidget(gv);
     connect(c, SIGNAL(clickToGV(QGraphicsSceneMouseEvent*,int)), gv, SLOT(mousePressEvent(QGraphicsSceneMouseEvent*,int)));
     connect(gv, &Frame::updateGV, this, &MainWindow::updateFocus);
+    ui->graphicsViewCanvas->setScene(c);
+    ui->graphicsViewCanvas->fitInView(scenes.at(animationCounter)->sceneRect(), Qt::KeepAspectRatio);
 }
 void MainWindow::updateFocus(int frameNum){
     ui->graphicsViewCanvas->setScene(scenes.at(frameNum));
@@ -313,6 +311,16 @@ void MainWindow::updateAnimation(){
     animationCounter++;
 }
 
+void MainWindow::on_spinBoxSpeed_valueChanged(int arg1)
+{
+    //set the initial delay to 1 fps(setting 1) and increase by 1 fps for each additional speed.
+    if (arg1 == 0)
+        speed = 1000;
+    else
+        speed = 1000/arg1;
+    timer->start(speed);
+}
+
 void MainWindow::on_penTool_clicked()
 {
 
@@ -350,13 +358,3 @@ void MainWindow::on_pushButtonAddFrame_clicked()
 }
 
 
-void MainWindow::on_spinBoxSpeed_valueChanged(int arg1)
-{
-    cout<<"changed"<<endl;
-    //set the initial delay to 1 fps(setting 1) and increase by 1 fps for each additional speed.
-    if (arg1 == 0)
-        speed = 1000;
-    else
-        speed = 1000/arg1;
-    timer->start(speed);
-}

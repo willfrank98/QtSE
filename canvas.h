@@ -38,6 +38,7 @@ private:
 
 
 public:
+    void setMap();
     int frameNumber;
     qreal pixSize = 480/32;
     int drawMode;
