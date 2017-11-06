@@ -54,6 +54,7 @@ public:
     ~MainWindow();
 
 private:
+    QImage dummyImage;
     int animationCounter;
     double speed;
     QTimer *timer;
@@ -74,12 +75,12 @@ private:
     void addBackground(QGraphicsScene&);
     void addSurface(QGraphicsScene&);
     void addGrid(QGraphicsScene&);
-    void createCanvas(int,int,int);
+    void createCanvas(int,int);
     void updateColorHistory();
     void createSaveFile(QString fileName);
     void loadSaveFile(QString fileName);
     void setPixSize(int sizex, int sizey, int gvsize);
-    void addFramePreview(QImage image);
+    void addFramePreview(QImage image, int x, int y);
 };
 
 #endif // MAINWINDOW_H

@@ -30,7 +30,6 @@ Canvas::Canvas(int sizex, int sizey, qreal pixSize, int frame, QObject *parent) 
     this->sizey = sizey;
     this->pixSize = pixSize;
     this->data = new QImage(sizex, sizey, QImage::Format_RGB32);
-    // drawBg
     drawGrid();
 }
 

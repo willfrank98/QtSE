@@ -10,6 +10,7 @@ MainWindow::MainWindow(Model *model, QWidget *parent) :
 {
     sizeX = 32;
     sizeY = 32;
+    QImage dummyImage(sizeX, sizeY, QImage::Format_ARGB32);
 	ui->setupUi(this);
     this->model = model;
     animationCounter = 0;
@@ -52,14 +53,14 @@ MainWindow::MainWindow(Model *model, QWidget *parent) :
     // connects the File>New actions\
 
     connect(ui->actioncustom_2, &QAction::triggered, this, [this](){ custom_clicked(); });
-    connect(ui->action2x3, &QAction::triggered, this, [this](){ createCanvas(2,3,0); });
-    connect(ui->action4x8, &QAction::triggered, this, [this](){ createCanvas(4,8,0); });
-    connect(ui->action8x4, &QAction::triggered, this, [this](){ createCanvas(8,4,0); });
-    connect(ui->action8x8, &QAction::triggered, this, [this](){ createCanvas(8,8,0); });
-    connect(ui->action16x16, &QAction::triggered, this, [this](){ createCanvas(16,16,0); });
-    connect(ui->action32x32, &QAction::triggered, this, [this](){ createCanvas(32,32,0); });
-    connect(ui->action64x64, &QAction::triggered, this, [this](){ createCanvas(64,64,0); });
-    connect(ui->action128x128, &QAction::triggered, this, [this](){ createCanvas(128,128,0); });
+    connect(ui->action2x3, &QAction::triggered, this, [this](){ createCanvas(2,3); });
+    connect(ui->action4x8, &QAction::triggered, this, [this](){ createCanvas(4,8); });
+    connect(ui->action8x4, &QAction::triggered, this, [this](){ createCanvas(8,4); });
+    connect(ui->action8x8, &QAction::triggered, this, [this](){ createCanvas(8,8); });
+    connect(ui->action16x16, &QAction::triggered, this, [this](){ createCanvas(16,16); });
+    connect(ui->action32x32, &QAction::triggered, this, [this](){ createCanvas(32,32); });
+    connect(ui->action64x64, &QAction::triggered, this, [this](){ createCanvas(64,64); });
+    connect(ui->action128x128, &QAction::triggered, this, [this](){ createCanvas(128,128); });
     // connects the File>Export actions
 //    connect(ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
         /*
@@ -82,7 +83,6 @@ MainWindow::MainWindow(Model *model, QWidget *parent) :
 
 //	connect(this, &MainWindow::createSaveFile, &model, &Model::saveFramesToFile);
 //	connect(this, &MainWindow::loadSaveFile, &model, &Model::loadFramesFromFile);
-    ui->graphicsViewPreview->setEnabled(true);
 }
 
 MainWindow::~MainWindow()
@@ -164,7 +164,7 @@ void MainWindow::loadAction()
             std::string temp = std::to_string(x1)+"."+std::to_string(heightCounter);
         }
         if (heightCounter == sizeY - 1){
-            addFramePreview(i);
+            addFramePreview(i,sizeX,sizeY);
         }
         if (testCount == sizeY - 1){
             iCanvas = QImage(i);
@@ -173,16 +173,7 @@ void MainWindow::loadAction()
         heightCounter++;
         testCount++;
     }
-    iCanvas = iCanvas.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
-    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(iCanvas));
-    createCanvas(sizeX, sizeY, 0);
-    //this->canvas->addItem(item);
 
-    //setPixSize(sizeX,sizeY,ui->graphicsViewCanvas->height());
-    //scenes.at(0)->addItem(item);
-    //ui->graphicsViewCanvas->setScene(scenes.at(0));
-    //ui->graphicsViewCanvas->fitInView(scenes.at(0)->sceneRect(), Qt::KeepAspectRatio);
-    //ui->graphicsViewCanvas->update();
     f.close();
 
     //this is for demo purposes but can later be used in the save method.
@@ -196,22 +187,26 @@ void MainWindow::loadAction()
     filez.close();
 }
 
-void MainWindow::addFramePreview(QImage image){
-    //QWidget *window = new QWidget;
-    QString name = "";
-    int s = images.size();
+void MainWindow::createCanvas(int sizex, int sizey)
+{
+    sizeX = sizex;
+    sizeY = sizey;
+    QImage dummyImage(sizex,sizey,QImage::Format_ARGB32);
+    addFramePreview(dummyImage, sizex, sizey);
+}
+
+void MainWindow::addFramePreview(QImage image, int x, int y){
     image = image.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
-    Frame *gv = new Frame(sizeX,sizeY);
+    Frame *gv = new Frame(x,y);
     gv->setMaximumHeight(100);
     gv->setMinimumHeight(100);
     gv->setMaximumWidth(100);
     gv->setMinimumHeight(100);
     gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff );
-    setPixSize(sizeX, sizeY, gv->height());
+    setPixSize(x, y, gv->height());
     frameID = scenes.size();
-    Canvas *c = new Canvas(sizeX, sizeY, pixSize, frameID);
-    //c->redraw(pointMap,0);
+    Canvas *c = new Canvas(x, y, pixSize, frameID);
     scenes.push_back(c);
     c->drawMode = 0;
     gv->setScene(c);
@@ -220,6 +215,7 @@ void MainWindow::addFramePreview(QImage image){
     connect(c, SIGNAL(clickToGV(QGraphicsSceneMouseEvent*,int)), gv, SLOT(mousePressEvent(QGraphicsSceneMouseEvent*,int)));
     connect(gv, &Frame::updateGV, this, &MainWindow::updateFocus);
     ui->graphicsViewCanvas->setScene(c);
+    ui->graphicsViewCanvas->setEnabled(true);
     ui->graphicsViewCanvas->fitInView(scenes.at(animationCounter)->sceneRect(), Qt::KeepAspectRatio);
 }
 void MainWindow::updateFocus(int frameNum){
@@ -255,23 +251,7 @@ void MainWindow::setPixSize(int sizex, int sizey, int gvsize){
         pixSize = gvsize/(qreal)sizey;
     }
 }
-void MainWindow::createCanvas(int sizex, int sizey, int frameID)
-{
-    sizeX = sizex;
-    sizeY = sizey;
-    setPixSize(sizex,sizey, ui->graphicsViewCanvas->height());
-    if (scenes.size()>=1){
-        ui->graphicsViewCanvas->setScene(scenes.at(0));
-        ui->graphicsViewCanvas->fitInView(scenes.at(0)->sceneRect(), Qt::KeepAspectRatio);
-    }
-    else{
-        this->canvas = new Canvas(sizex,sizey, pixSize, frameID);
-        ui->graphicsViewCanvas->setScene(canvas);
-        ui->graphicsViewCanvas->fitInView(canvas->sceneRect(), Qt::KeepAspectRatio);
-        this->canvas->drawMode = 0;
-    }
-    ui->graphicsViewCanvas->setEnabled(true);
-}
+
 
 // Adds a background to the canvas at Z-layer -1 (background)
 void MainWindow::addBackground(QGraphicsScene &scene) {
@@ -313,12 +293,16 @@ void MainWindow::updateAnimation(){
 
 void MainWindow::on_spinBoxSpeed_valueChanged(int arg1)
 {
+    cout<<arg1<<endl;
     //set the initial delay to 1 fps(setting 1) and increase by 1 fps for each additional speed.
-    if (arg1 == 0)
-        speed = 1000;
-    else
+    if (arg1 == 0){
+        timer->stop();
+    }
+    else{
         speed = 1000/arg1;
-    timer->start(speed);
+        timer->start(speed);
+    }
+
 }
 
 void MainWindow::on_penTool_clicked()
@@ -353,8 +337,7 @@ void MainWindow::on_ellipseToolButton_clicked()
 
 void MainWindow::on_pushButtonAddFrame_clicked()
 {
-    QImage i(sizeX, sizeY, QImage::Format_ARGB32);
-    addFramePreview(i);
+    addFramePreview(dummyImage, sizeX, sizeY);
 }
 
 
