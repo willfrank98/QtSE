@@ -196,11 +196,6 @@ void MainWindow::createCanvas(int sizex, int sizey)
 }
 
 void MainWindow::addFramePreview(QImage image, int x, int y){
-    image = image.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
-    QLabel *label = new QLabel();
-    label-> setFrameStyle(QLabel::Sunken | QLabel::Box);
-    label->setPixmap(QPixmap::fromImage(image));    //This line needs work
-    label->setVisible(true);
     Frame *gv = new Frame(x,y);
     gv->setMaximumHeight(100);
     gv->setMinimumHeight(100);
@@ -209,10 +204,14 @@ void MainWindow::addFramePreview(QImage image, int x, int y){
     gv->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     gv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff );
     setPixSize(x, y, gv->height());
+    imageHeight = y * pixSize;
+    image = image.scaledToHeight(imageHeight, Qt::TransformationMode::FastTransformation);
+    QGraphicsPixmapItem *gp = new QGraphicsPixmapItem(QPixmap::fromImage(image));
     frameID = scenes.size();
-    Canvas *c = new Canvas(x, y, pixSize, frameID);
+    Canvas *c = new Canvas(x, y, pixSize, frameID);//canvas now set sizeof the smallest graphicsview.
     scenes.push_back(c);
     c->drawMode = 0;
+    c->addItem(gp);
     gv->setScene(c);
     gv->setEnabled(true);
     ui->frameContainer->layout()->addWidget(gv);
@@ -250,7 +249,6 @@ void MainWindow::setPixSize(int sizex, int sizey, int gvsize){
     if (sizex >= sizey){
         pixSize = gvsize/(qreal)sizex;
     }
-
     else if (sizey > sizex){
         pixSize = gvsize/(qreal)sizey;
     }
