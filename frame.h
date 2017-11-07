@@ -29,10 +29,6 @@ public:
     void bucketFill(QPoint startPoint, QColor fill);
     void colorSwap(QPoint startPoint, QColor color);
     void drawDither(QPoint point, QColor color1, QColor color2);
-
-    void storeUndoImage();
-    void undo();
-    void redo();
     QImage pixels();
     QSize size();
 };

@@ -81,45 +81,6 @@ void Frame::colorSwap(QPoint startPoint, QColor color) {
     painter->drawPixmap(image.rect(), mask, mask.rect());
 }
 
-void Frame::undo() {
-    if (!undoStack.isEmpty()) {
-        painter->end();
-        QImage temp = undoStack.pop();
-        if (image == temp && !undoStack.isEmpty()) {
-            redoStack.push(temp);
-            temp = undoStack.pop();
-        }
-        else {
-            image = temp;
-            painter->begin(&image);
-            return;
-        }
-        redoStack.push(temp);
-        image = temp;
-        painter->begin(&image);
-    }
-}
-
-void Frame::redo() {
-    if (!redoStack.isEmpty()) {
-        painter->end();
-        QImage temp = redoStack.pop();
-        if (image == temp) {
-            undoStack.push(temp);
-            temp = redoStack.pop();
-        }
-        undoStack.push(temp);
-        image = temp;
-        painter->begin(&image);
-    }
-}
-
-void Frame::storeUndoImage() {
-    redoStack.clear();
-    if (undoStack.size() == 10) undoStack.pop_back();
-    undoStack.push(image);
-}
-
 QImage Frame::pixels() {
     return image;
 }
