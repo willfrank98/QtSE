@@ -22,6 +22,10 @@ public:
     void bucketFill(QVector<int> pixels);
     void drawDither(QVector<int> pixels);
     void setPixels(QImage newImage);
+
+    void storeUndoImage();
+    void undo();
+    void redo();
     QImage pixels();
     QSize size();
 };

@@ -4,17 +4,21 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QVector>
 #include <QStack>
+#include <tool.h>
+#include <frame.h>
 
 class Canvas : public QGraphicsScene
 {
     Q_OBJECT
 signals:
-    void modifiedPixels(QVector<QPoint> pixels, QColor color);
+    void frameUpdated(Frame *frame);
 
 public slots:
-    void setPrimaryColor(QColor);
-    void setSecondaryColor(QColor);
-    void displayImage(QImage);
+    void setPrimaryColor(QColor color);
+    void setSecondaryColor(QColor color);
+    void swapColors();
+    void setTool(Tool _tool);
+    void setFrame(Frame *frame);
 
 private:
     QColor primaryColor = QColor(0, 0, 0, 255);
@@ -22,21 +26,21 @@ private:
     QVector<QPoint> points = QVector<QPoint>();
     Qt::MouseButton buttonHeld = Qt::NoButton;
     QSizeF pixSize = QSizeF(32, 32);
+    Frame *frame;
+    Tool tool;
+    QRectF rect;
+    bool mouseEnabled = true;
 
-    // TODO: move these to model
-//    QStack<QImage> undoStack;
-//    QStack<QImage> redoStack;
+    void draw(QPointF point);
+    void refresh();
 
 public:
     explicit Canvas(QObject *parent = nullptr);
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * mouseEvent);
+    void setDisableMouse(bool val) { mouseEnabled = !val; }
     void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent * mouseEvent);
 
-    // TODO: move these to model
-//    void undo();
-//    void redo();
 };
 
 #endif // CANVAS_H

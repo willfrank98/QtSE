@@ -24,22 +24,22 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     this->model = &model;
 
     //To make iterating easy, i gave each an unique ID.
-    ui->paletteButtons->addButton(ui->palette1, 0);
-    ui->paletteButtons->addButton(ui->palette2, 1);
-    ui->paletteButtons->addButton(ui->palette3, 2);
-    ui->paletteButtons->addButton(ui->palette4, 3);
-    ui->paletteButtons->addButton(ui->palette5, 4);
-    ui->paletteButtons->addButton(ui->palette6, 5);
-    ui->paletteButtons->addButton(ui->palette7, 6);
-    ui->paletteButtons->addButton(ui->palette8, 7);
-    ui->paletteButtons->addButton(ui->palette9, 8);
-    ui->paletteButtons->addButton(ui->palette10, 9);
-    ui->paletteButtons->addButton(ui->palette11, 10);
-    ui->paletteButtons->addButton(ui->palette12, 11);
-    ui->paletteButtons->addButton(ui->palette13, 12);
-    ui->paletteButtons->addButton(ui->palette14, 13);
-    ui->paletteButtons->addButton(ui->palette15, 14);
-    ui->paletteButtons->addButton(ui->palette16, 15);
+    ui->paletteButtons->setId(ui->palette1, 0);
+    ui->paletteButtons->setId(ui->palette2, 1);
+    ui->paletteButtons->setId(ui->palette3, 2);
+    ui->paletteButtons->setId(ui->palette4, 3);
+    ui->paletteButtons->setId(ui->palette5, 4);
+    ui->paletteButtons->setId(ui->palette6, 5);
+    ui->paletteButtons->setId(ui->palette7, 6);
+    ui->paletteButtons->setId(ui->palette8, 7);
+    ui->paletteButtons->setId(ui->palette9, 8);
+    ui->paletteButtons->setId(ui->palette10, 9);
+    ui->paletteButtons->setId(ui->palette11, 10);
+    ui->paletteButtons->setId(ui->palette12, 11);
+    ui->paletteButtons->setId(ui->palette13, 12);
+    ui->paletteButtons->setId(ui->palette14, 13);
+    ui->paletteButtons->setId(ui->palette15, 14);
+    ui->paletteButtons->setId(ui->palette16, 15);
 
 
     QColorDialog *colorPicker1 = new QColorDialog();

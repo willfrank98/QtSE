@@ -33,7 +33,6 @@ SOURCES += \
 HEADERS += \
         mainwindow.h \
     model.h \
-    model.h \
     canvas.h \
     frame.h \
     tool.h
