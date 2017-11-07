@@ -206,7 +206,9 @@ void MainWindow::loadAction()
         }
         if (heightCounter == sizeY - 1){
             addFramePreview(i,sizeX,sizeY);
-            scenes.at(imageCounter)->redraw(singleMap, 0);
+            scenes.at(imageCounter)->redraw(singleMap,0);
+            scenes.at(imageCounter)->currentState = singleMap;
+            singleMap.clear();
             imageCounter++;
         }
         if (testCount == sizeY - 1){
