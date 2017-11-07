@@ -22,7 +22,7 @@ private:
     std::unordered_map<std::string, QColor> currentCirc;
     QGraphicsRectItem *rect[128][128];
     QPen *pen;
-    qreal lastx,lasty;
+    int lastx,lasty;
     int sizex = 32;
     int sizey = 32;
     QImage *data;

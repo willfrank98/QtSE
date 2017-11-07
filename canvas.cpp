@@ -18,6 +18,8 @@ Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 
 Canvas::Canvas(QImage i, int sizex, int sizey,  int frame, QObject *parent) : QGraphicsScene(parent)
 {
+    lastx = -1;
+    lasty = -1; //set this so that lastx won't equal thisx in the move method the first time.
     drawMode = 0;
     QPixmap *pix = new QPixmap(QPixmap::fromImage(i));
     //graphicspixmap->paint(painter, );
@@ -34,9 +36,6 @@ Canvas::Canvas(QImage i, int sizex, int sizey,  int frame, QObject *parent) : QG
     this->pixSize = 1;
     this->data = new QImage(sizex, sizey, QImage::Format_RGB32);
     drawGrid();
-    QPainter *painter = new QPainter(pix);
-    QRect r(0,0,3,2);
-    painter->drawRect(r);
     QGraphicsPixmapItem *graphicspixmap = new QGraphicsPixmapItem(*pix);
     addItem(graphicspixmap);
 }
@@ -54,6 +53,7 @@ void Canvas::redraw(std::unordered_map<std::string, QColor> points, int mode) {
         QPointF temp;
         int x1 = std::stoi(s1);
         int y1 = std::stoi(s2);
+        cout<<x1<<" "<<y1<<endl;
         if (x1 < 0 | x1 > sizex | y1 < 0 | y1 > sizey)
             return;
         qreal qx1 = static_cast<qreal>(x1);
@@ -96,14 +96,20 @@ void Canvas::putPixel(QPointF point, QColor color) {
         removeItem(rect[x][y]);
         rect[x][y]==NULL;
     }
-
     rect[x][y] = addRect(pixSize*x,pixSize*y,pixSize,pixSize,*pen,*brush);
     data->setPixel(x, y, Canvas::brush->color().rgb());
     std::string newkey = key.toStdString();
     currentState.try_emplace(newkey, color);
 }
 
-
+std::unordered_map<std::string, QColor> copyMap(std::unordered_map<std::string, QColor> points){
+    std::unordered_map<std::string, QColor> newmap;
+    for (std::pair<std::string, QColor> element : points)
+    {
+        newmap.try_emplace(element.first, element.second);
+    }
+    return newmap;
+}
 //starting point is saved in startingPoint private member. endingPoint is the current point the cursor is over.
 std::unordered_map<std::string, QColor> Canvas::getRectPoints(QPointF endingPoint, QColor color){
     std::unordered_map<std::string, QColor> vals;
@@ -196,8 +202,9 @@ void Canvas::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
 void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (buttonHeld){
-        if(lastx != floor(mouseEvent->scenePos().x()/pixSize) && lasty != mouseEvent->scenePos().y()/pixSize){
-
+        int thisx = floor(mouseEvent->scenePos().x()/pixSize);
+        int thisy = floor(mouseEvent->scenePos().y()/pixSize);
+        if((lastx != thisx) || (lasty != thisy)){
             if (mouseEvent->buttons() & Qt::LeftButton){
                 if (drawMode == 0)
                     putPixel(mouseEvent->scenePos(), Canvas::c1);
@@ -218,26 +225,26 @@ void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
                 else if (drawMode == 3)
                     drawRect(mouseEvent->scenePos(), Canvas::c2);
             }
+            lastx = thisx;
+            lasty = thisy;
         }
     }
-    lastx = floor(mouseEvent->scenePos().x()/pixSize);
-    lasty = floor(mouseEvent->scenePos().y()/pixSize);
-//    qDebug() << mouseEvent->scenePos();
 }
 
 void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     startingPoint = mouseEvent->scenePos();
     buttonHeld = true;
-    previousState = currentState;
+    previousState.insert(currentState.begin(), currentState.end());
+    redraw(previousState,0);
     if (mouseEvent->buttons() & Qt::LeftButton){
-        if (drawMode == 0 | drawMode==3)
+        if (drawMode == 0 | drawMode==3| drawMode==2)
             putPixel(mouseEvent->scenePos(), Canvas::c1);
         else if (drawMode ==1 )
             deletePixel(mouseEvent->scenePos(), Canvas::c1);
     }
     else if(mouseEvent->buttons() & Qt::RightButton){
-        if (drawMode == 0 | drawMode==3)
+        if (drawMode == 0 | drawMode==3| drawMode==2)
             putPixel(mouseEvent->scenePos(), Canvas::c2);
         else if (drawMode ==1)
             deletePixel(mouseEvent->scenePos(), Canvas::c2);
@@ -250,13 +257,13 @@ void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     buttonHeld = false;
 //    qDebug() << mouseEvent->scenePos();
     if (drawMode == 3){
-        previousState.insert(currentRect.begin(), currentRect.end());
+        //previousState.insert(currentRect.begin(), currentRect.end());
     }
     if (drawMode == 2){
-        previousState.insert(currentCirc.begin(), currentCirc.end());
+        //previousState.insert(currentCirc.begin(), currentCirc.end());
     }
-    currentState = previousState;
-    redraw(currentState, 0);
+    ///currentState = previousState;
+    ///redraw(currentState, 0);
 }
 
 void Canvas::undo(){
