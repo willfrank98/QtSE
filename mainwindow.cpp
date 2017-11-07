@@ -92,13 +92,56 @@ MainWindow::~MainWindow()
 //is called immediately after the save button is called to get a file path
 void MainWindow::saveAction()
 {
-    QString filename = QFileDialog::getSaveFileName();
-    QFile f( filename );    // store data in f
-    //emit MainWindow::createSaveFile(fileName);
-    f.open(QIODevice::WriteOnly);
-    QDataStream out(&f);   // we will serialize the data into the file
-    out << QImage();
-    f.close();
+    QString filename = "1.ssp";
+    QFile file(filename);
+    file.open(QFile::WriteOnly);
+    QStringList list;
+    QString xS = QString::number(sizeY);
+    QString yS = QString::number(sizeX);
+    QString numFrames = QString::number(scenes.size());
+    list.push_back(xS + " " + yS); //push line 1
+    list.push_back(numFrames); //push line 2
+    const QChar delimeter = '\n';
+    for (int z = 0; z< scenes.size(); z++){
+        QString arst[128][128];
+        std::unordered_map<std::string, QColor> temp = scenes.at(z)->currentState;
+        for (std::pair<std::string, QColor> element : temp)
+        {
+            std::string delimiter = ".";
+            std::string s1  = element.first.substr(0, element.first.find(delimiter));
+            std::string s2  = element.first.substr(element.first.find(delimiter)+1, element.first.size());
+            int x1 = std::stoi(s1);
+            int y1 = std::stoi(s2);
+            QColor tempCol = element.second;
+            int r = tempCol.red();
+            int g = tempCol.green();
+            int b = tempCol.blue();
+            int a = tempCol.alpha();
+            arst[x1][y1] = QString::number(r)+ " " + QString::number(g) + " " + QString::number(b) + " " + QString::number(a);
+        }
+        for (int x = 0; x< sizeY; x++){
+            QString line;
+            for (int y = 0; y < sizeX; y++){
+                if(arst[x][y] == "")
+                    line = line + "0 0 0 0";
+                else
+                    line = line + arst[x][y];
+                line = line + " ";
+            }
+            list.push_back(line);
+        }
+    }
+    QTextStream outstream(&file);
+    outstream << list.join(delimeter) << "\n";
+    //this is for demo purposes but can later be used in the export
+    //QByteArray ba;
+    //QBuffer buffer(&ba);
+    //buffer.open(QIODevice::WriteOnly);
+    //i.save(&buffer, "PNG"); // writes image into ba in PNG formal. output bool if save was succes.
+    //QFile filez("a.png"); //write into the debug folder
+    //filez.open(QIODevice::WriteOnly);
+    //filez.write(ba);
+    //filez.close();
 }
 
 void MainWindow::custom_clicked()
@@ -134,7 +177,6 @@ void MainWindow::loadAction()
     imageHeight = sizeY * pixSize;
     int testCount = 0;
     while (!in.atEnd()) {
-
         heightCounter = lineCounter % sizeY;
         line = in.readLine();
         query = line.split(rx);
@@ -175,16 +217,6 @@ void MainWindow::loadAction()
     }
 
     f.close();
-
-    //this is for demo purposes but can later be used in the save method.
-    QByteArray ba;
-    QBuffer buffer(&ba);
-    buffer.open(QIODevice::WriteOnly);
-    i.save(&buffer, "PNG"); // writes image into ba in PNG formal. output bool if save was succes.
-    QFile filez("a.png"); //write into the debug folder
-    filez.open(QIODevice::WriteOnly);
-    filez.write(ba);
-    filez.close();
 }
 
 void MainWindow::createCanvas(int sizex, int sizey)
@@ -292,7 +324,6 @@ void MainWindow::updateAnimation(){
 
 void MainWindow::on_spinBoxSpeed_valueChanged(int arg1)
 {
-    cout<<arg1<<endl;
     //set the initial delay to 1 fps(setting 1) and increase by 1 fps for each additional speed.
     if (arg1 == 0){
         timer->stop();

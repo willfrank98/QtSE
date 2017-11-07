@@ -17,7 +17,6 @@ signals:
     void clickToGV(QGraphicsSceneMouseEvent*, int frameNum);
 private:
     std::unordered_map<std::string, QColor> previousState;
-    std::unordered_map<std::string, QColor> currentState;
     std::unordered_map<std::string, QColor> currentRect;
     std::unordered_map<std::string, QColor> currentCirc;
     QGraphicsRectItem *rect[128][128];
@@ -41,6 +40,7 @@ private:
 
 
 public:
+    std::unordered_map<std::string, QColor> currentState;
     QPainter painter;
     QGraphicsPixmapItem *graphicspixmap;
     void setMap();

@@ -70,7 +70,6 @@ void Canvas::putPixel(QPointF point, QColor color) {
     // don't place pixels outside the grid
     if (x < 0 || x >= sizex || y < 0 || y >= sizey) return;
     if (rect[x][y] != NULL){
-        cout<<x<<" "<<y<<" "<<endl;
         removeItem(rect[x][y]);
         rect[x][y]==NULL;
         currentState.erase(key.toStdString());

@@ -48,7 +48,7 @@ signals:
 
 
 public:
-    std::vector <QGraphicsScene*> scenes;
+    std::vector <Canvas*> scenes;
     Canvas *canvas;
     explicit MainWindow(Model *model, QWidget *parent = 0);
     ~MainWindow();
