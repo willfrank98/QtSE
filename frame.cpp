@@ -3,88 +3,82 @@
 
 Frame::Frame(){
 
+}
 
+Frame::Frame(Frame& f) {
+    this->image = f.image;
+    this->undoStack = f.undoStack;
+    this->redoStack = f.redoStack;
+    painter = new QPainter(&image);
 }
 
 Frame::Frame(int dimension) {
     image = QImage(dimension, dimension, QImage::Format_ARGB32);
     image.fill(QColor(0, 0, 0, 0));  // gets rid of weird artifacts that appear on creation
-    painter.begin(&image);
+    undoStack.push(image);
+    painter = new QPainter(&image);
+    painter->setBackgroundMode(Qt::TransparentMode);
 }
 
-void Frame::drawEllipse(QVector<int> pixels) {
-    int width = abs(pixels[0] - pixels[2]);
-    int height = abs(pixels[1] - pixels[3]);
-
-    int x, y;
-    if(pixels[0] < pixels[2]) {
-        x = pixels[0];
-    }
-    else {
-        x = pixels[2];
-    }
-    if (pixels[1] < pixels[3]) {
-        y = pixels[1];
-    }
-    else {
-        y = pixels[3];
-    }
-
-    painter.drawEllipse(x, y, width, height);
+Frame::~Frame() {
+    painter->end();
+    undoStack.clear();
+    redoStack.clear();
+    pixelStack.clear();
 }
 
-void Frame::drawMirrorPen(QVector<int> pixels) {
+void Frame::drawEllipse(QRect area, QColor line, QColor fill) {
+    painter->setPen(line);
+    painter->setBrush(fill);
+
+    painter->drawEllipse(area);
+}
+
+void Frame::drawMirrorPen(QPoint point, QColor color) {
 
 }
 
-void Frame::drawPen(QVector<QPoint> pixels, QColor color) {
-    painter.setPen(color);
-    for (QPoint point : pixels) {
-        painter.drawPoint(point);
-    }
+void Frame::drawPen(QPoint point, QColor color) {
+    painter->setPen(color);
+    painter->setBrush(QColor(0, 0, 0, 0));
+
+    painter->drawPoint(point);
 }
 
-void Frame::drawRectangle(QVector<int> pixels) {
-    int width = abs(pixels[0] - pixels[2]);
-    int height = abs(pixels[1] - pixels[3]);
+void Frame::drawRectangle(QRect area, QColor line, QColor fill) {
+    painter->setPen(line);
+    painter->setBrush(fill);
 
-    int x, y;
-    if(pixels[0] < pixels[2]) {
-        x = pixels[0];
-    }
-    else {
-        x = pixels[2];
-    }
-    if (pixels[1] < pixels[3]) {
-        y = pixels[1];
-    }
-    else {
-        y = pixels[3];
-    }
-
-    painter.drawRect(x, y, width, height);
+    painter->drawRect(area);
 }
 
-void Frame::erase(QVector<int> pixels) {
+void Frame::drawLine(QPoint start, QPoint end, QColor color) {
+    painter->setPen(color);
+    painter->setBrush(QColor(0, 0, 0, 0));
+
+    painter->drawLine(start, end);
+}
+
+void Frame::erase(QPoint point) {
+    image.setPixelColor(point, QColor(0, 0, 0, 0));
+}
+
+void Frame::bucketFill(QPoint startPoint, QColor fill) {
 
 }
 
-void Frame::bucketFill(QVector<int> pixels) {
+void Frame::drawDither(QPoint point, QColor color1, QColor color2) {
 
 }
 
-void Frame::drawDither(QVector<int> pixels) {
-    for (int i = 0; i < pixels.size(); i + 2) {
-        if((pixels[i] + pixels[i+1]) % 2 != 0) {
-            painter.drawPoint(pixels[i], pixels[i+1]);
-        }
-    }
-}
+void Frame::colorSwap(QPoint startPoint, QColor color) {
+    QColor oldColor = image.pixelColor(startPoint);
 
-void Frame::setPixels(QImage newImage){
-    painter.end();
-    image = newImage;
-    painter.begin(&image);
+    // the below link really helped here
+    // https://forum.qt.io/topic/32039/pixmap-mask-not-coloring-over-the-image/2
+    QBitmap mask = QPixmap::fromImage(image).createMaskFromColor(oldColor.rgb(), Qt::MaskOutColor);
+    painter->setPen(color);
+    painter->drawPixmap(image.rect(), mask, mask.rect());
 }
 
 void Frame::undo() {
