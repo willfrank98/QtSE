@@ -44,29 +44,6 @@ void Canvas::setBG(){
 
 }
 
-void Canvas::redraw(std::unordered_map<std::string, QColor> points, int mode) {
-    for (std::pair<std::string, QColor> element : points)
-    {
-        std::string delimiter = ".";
-        std::string s1  = element.first.substr(0, element.first.find(delimiter));
-        std::string s2  = element.first.substr(element.first.find(delimiter)+1, element.first.size());
-        QPointF temp;
-        int x1 = std::stoi(s1);
-        int y1 = std::stoi(s2);
-        cout<<x1<<" "<<y1<<endl;
-        if (x1 < 0 | x1 > sizex | y1 < 0 | y1 > sizey)
-            return;
-        qreal qx1 = static_cast<qreal>(x1);
-        qreal qy1 = static_cast<qreal>(y1);
-        temp.setX(qx1*pixSize);
-        temp.setY(qy1*pixSize);
-        if (mode == 0)
-            putPixel(temp, element.second);
-        else if (mode == 1)
-            deletePixel(temp, element.second);
-    }
-}
-
 void Canvas::drawGrid() {
     pen->setWidthF(0);
     for (qreal y = 0; y < sizey; y++) {
@@ -93,23 +70,17 @@ void Canvas::putPixel(QPointF point, QColor color) {
     // don't place pixels outside the grid
     if (x < 0 || x >= sizex || y < 0 || y >= sizey) return;
     if (rect[x][y] != NULL){
+        cout<<x<<" "<<y<<" "<<endl;
         removeItem(rect[x][y]);
         rect[x][y]==NULL;
+        currentState.erase(key.toStdString());
     }
     rect[x][y] = addRect(pixSize*x,pixSize*y,pixSize,pixSize,*pen,*brush);
-    data->setPixel(x, y, Canvas::brush->color().rgb());
+    //data->setPixel(x, y, Canvas::brush->color().rgb());
     std::string newkey = key.toStdString();
     currentState.try_emplace(newkey, color);
 }
 
-std::unordered_map<std::string, QColor> copyMap(std::unordered_map<std::string, QColor> points){
-    std::unordered_map<std::string, QColor> newmap;
-    for (std::pair<std::string, QColor> element : points)
-    {
-        newmap.try_emplace(element.first, element.second);
-    }
-    return newmap;
-}
 //starting point is saved in startingPoint private member. endingPoint is the current point the cursor is over.
 std::unordered_map<std::string, QColor> Canvas::getRectPoints(QPointF endingPoint, QColor color){
     std::unordered_map<std::string, QColor> vals;
@@ -147,12 +118,35 @@ std::unordered_map<std::string, QColor> Canvas::getRectPoints(QPointF endingPoin
     return vals;
 }
 
+void Canvas::redraw(std::unordered_map<std::string, QColor> points, int mode) {
+    for (std::pair<std::string, QColor> element : points)
+    {
+        std::string delimiter = ".";
+        std::string s1  = element.first.substr(0, element.first.find(delimiter));
+        std::string s2  = element.first.substr(element.first.find(delimiter)+1, element.first.size());
+        QPointF temp;
+        int x1 = std::stoi(s1);
+        int y1 = std::stoi(s2);
+        if (x1 < 0 | x1 > sizex | y1 < 0 | y1 > sizey)
+            return;
+        qreal qx1 = static_cast<qreal>(x1);
+        qreal qy1 = static_cast<qreal>(y1);
+        temp.setX(qx1*pixSize);
+        temp.setY(qy1*pixSize);
+        if (mode == 0)
+            putPixel(temp, element.second);
+        else if (mode == 1)
+            deletePixel(temp, element.second);
+    }
+}
 
 void Canvas::drawRect(QPointF point, QColor color){
     int x = floor(point.x() / pixSize);
     int y = floor(point.y() / pixSize);
     if (x < 0 || x >= sizex || y < 0 || y >= sizey) return;
-    redraw(currentRect, 1);  //mode 1 for erase mode 0 for draw
+    if (currentRect.size() > 0){
+        redraw(currentRect, 1); //mode 1 for erase mode 0 for draw
+    }
     currentRect = getRectPoints(point,color);
     redraw(previousState, 0);
     redraw(currentRect, 0);
@@ -175,7 +169,6 @@ std::unordered_map<std::string, QColor> Canvas::getCircPoints(QPointF endingPoin
     int endy = floor(endingPoint.y()/pixSize)*pixSize;
     double endXMid = endx + pixSize/2;
     double endYMid = endy + pixSize/2;
-    cout<<startx <<" "<<starty <<" "<<pixSize<<endl;
     qreal xmid = (startXMid + endXMid) /2;
     qreal ymid = (startYMid + endYMid) /2;
     qreal pi = atan(1)*4;
@@ -233,10 +226,10 @@ void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
 void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
+    currentRect.clear();
     startingPoint = mouseEvent->scenePos();
     buttonHeld = true;
-    previousState.insert(currentState.begin(), currentState.end());
-    redraw(previousState,0);
+    previousState = currentState;
     if (mouseEvent->buttons() & Qt::LeftButton){
         if (drawMode == 0 | drawMode==3| drawMode==2)
             putPixel(mouseEvent->scenePos(), Canvas::c1);
