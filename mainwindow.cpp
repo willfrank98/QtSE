@@ -7,6 +7,7 @@
 #include <QVector>
 #include <QObject>
 #include <QFileDialog>
+#include <QShortcut>
 
 MainWindow::MainWindow(Model &model, QWidget *parent) :
 	QMainWindow(parent),
@@ -21,6 +22,8 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 
     // this feels hacky; if anyone can get the connections to work without this, that'd be great
     this->model = &model;
+
+    //To make iterating easy, i gave each an unique ID.
     ui->paletteButtons->addButton(ui->palette1, 0);
     ui->paletteButtons->addButton(ui->palette2, 1);
     ui->paletteButtons->addButton(ui->palette3, 2);
@@ -37,10 +40,6 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     ui->paletteButtons->addButton(ui->palette14, 13);
     ui->paletteButtons->addButton(ui->palette15, 14);
     ui->paletteButtons->addButton(ui->palette16, 15);
-
-
-
-
 
 
     QColorDialog *colorPicker1 = new QColorDialog();
@@ -70,8 +69,12 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
         ui->color2Box->setStyleSheet(newStyle);
     });
 
-    // Connects the toolButtons
+    // Connects the Shortcut Keys
+    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+1"), ui->centralWidget);
+    connect(shortcut, SIGNAL(activated()), ui->penToolButton, SLOT(clicked()));
 
+    // Connects the toolButtons
+    //connect(ui->toolButtons, SIGNAL(buttonClicked(int)), &model, SLOT(changeTool(int)));
 
     // Connects the colorPaletteHistory
     connect(ui->paletteButtons, SIGNAL(buttonClicked(int)), this, SLOT(paletteClicked(int)));
