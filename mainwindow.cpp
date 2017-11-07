@@ -156,19 +156,18 @@ void MainWindow::loadAction()
     QFile f( filename );
     f.open(QIODevice::ReadOnly);
     QTextStream in(&f);
-    QRegExp rx("(\\ )"); //RegEx  ' '
-    int lineCounter, numberOfFrames, heightCounter;
+    QRegExp rx("(\\ )"); //RegEx split empty space ' '
+    int lineCounter, numberOfFrames, heightCounter, imageCounter;
     lineCounter = 0;
     heightCounter = 0;
-    //read the first line
-    QString line = in.readLine();
+    imageCounter = 0;
+    QString line = in.readLine();    //read the first line
     QStringList query = line.split(rx);
     QString qs = query.at(0);
     sizeY = qs.toInt();
     qs = query.at(1);
     sizeX = qs.toInt();
-    //read the 2nd line
-    line = in.readLine();
+    line = in.readLine();     //read the 2nd line
     query = line.split(rx);
     numberOfFrames = line.toInt();
     QImage i(sizeX, sizeY, QImage::Format_ARGB32);
@@ -188,7 +187,6 @@ void MainWindow::loadAction()
                 int val = qs.toInt();
                 QPoint qp;
                 qp.setX(widthCounter);
-
                 QString str;
                 if (x2==0)
                     r = val;
@@ -204,9 +202,12 @@ void MainWindow::loadAction()
             QBrush brush(color, Qt::SolidPattern);
             i.setPixel(x1, heightCounter, brush.color().rgb());
             std::string temp = std::to_string(x1)+"."+std::to_string(heightCounter);
+            singleMap.try_emplace(temp, color);
         }
         if (heightCounter == sizeY - 1){
             addFramePreview(i,sizeX,sizeY);
+            scenes.at(imageCounter)->redraw(singleMap, 0);
+            imageCounter++;
         }
         if (testCount == sizeY - 1){
             iCanvas = QImage(i);
@@ -215,7 +216,6 @@ void MainWindow::loadAction()
         heightCounter++;
         testCount++;
     }
-
     f.close();
 }
 

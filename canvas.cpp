@@ -37,7 +37,7 @@ Canvas::Canvas(QImage i, int sizex, int sizey,  int frame, QObject *parent) : QG
     this->data = new QImage(sizex, sizey, QImage::Format_RGB32);
     drawGrid();
     QGraphicsPixmapItem *graphicspixmap = new QGraphicsPixmapItem(*pix);
-    addItem(graphicspixmap);
+    //addItem(graphicspixmap);
 }
 
 void Canvas::setBG(){
