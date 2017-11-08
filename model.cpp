@@ -10,7 +10,7 @@ using namespace Magick;
 Model::Model(QObject *parent) : QObject(parent)
 {
     // Make Magick look in the current directory for the library files.
-    Magick::InitializeMagick(".");
+//    Magick::InitializeMagick(".");
 
     // TODO: hook up a timer to the previewFrame signal
 }
@@ -94,20 +94,20 @@ void Model::redo() {
 }
 
 void Model::saveAnimatedGIF(QString filename) {
-    if (!filename.toLower().endsWith(".gif")) filename.append(".gif");
+//    if (!filename.toLower().endsWith(".gif")) filename.append(".gif");
 
-    QString tempFile = QString(filename).replace(".gif", ".png");
-    QList<Image> newFrames;
-    for (int i = 0; i < frames.size(); i++) {
-        Magick::Image f;
-        frames.at(i)->pixels().save(tempFile);
-        f.read(tempFile.toStdString());
-        f.animationDelay(previewAnimTimer.interval() / 10);
-        f.gifDisposeMethod(3);  // disposes previous frame
-        newFrames.push_back(f);
-        QFile(tempFile).remove();
-    }
-    writeImages(newFrames.begin(), newFrames.end(), filename.toStdString());
+//    QString tempFile = QString(filename).replace(".gif", ".png");
+//    QList<Image> newFrames;
+//    for (int i = 0; i < frames.size(); i++) {
+//        Magick::Image f;
+//        frames.at(i)->pixels().save(tempFile);
+//        f.read(tempFile.toStdString());
+//        f.animationDelay(previewAnimTimer.interval() / 10);
+//        f.gifDisposeMethod(3);  // disposes previous frame
+//        newFrames.push_back(f);
+//        QFile(tempFile).remove();
+//    }
+//    writeImages(newFrames.begin(), newFrames.end(), filename.toStdString());
 }
 
 void Model::saveFrameToPNG(QString filename) {

@@ -45,4 +45,4 @@ RESOURCES += \
 
 
 # Link GraphicsMagick stuff
-LIBS += -L./GraphicsMagick/lib -lGraphicsMagick -lGraphicsMagick++
+#LIBS += -L./GraphicsMagick/lib -lGraphicsMagick -lGraphicsMagick++
