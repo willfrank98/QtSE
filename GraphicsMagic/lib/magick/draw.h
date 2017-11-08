@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 
-#include "magick/render.h"
+#include "render.h"
 
 
 typedef struct _DrawContext *DrawContext;

@@ -19,10 +19,10 @@ extern "C" {
 /*
   Include declarations.
 */
-#include "magick/forward.h"
-#include "magick/colorspace.h"
-#include "magick/error.h"
-#include "magick/timer.h"
+#include "forward.h"
+#include "colorspace.h"
+#include "error.h"
+#include "timer.h"
 
 /*
   Define declarations.

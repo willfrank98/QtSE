@@ -274,7 +274,7 @@ extern MagickExport WarningHandler
   Exception define definitions.
 */
 
-#include <magick/log.h>
+#include "log.h"
 
 #if defined(MAGICK_IMPLEMENTATION)
 #  if defined(MAGICK_IDBASED_MESSAGES)

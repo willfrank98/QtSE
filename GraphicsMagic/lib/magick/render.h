@@ -11,7 +11,7 @@
 #ifndef _MAGICK_RENDER_H
 #define _MAGICK_RENDER_H
 
-#include "magick/type.h"
+#include "type.h"
 
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {

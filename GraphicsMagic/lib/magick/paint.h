@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 
-#include "magick/render.h"
+#include "render.h"
 
 extern MagickExport unsigned int
   ColorFloodfillImage(Image *,const DrawInfo *,const PixelPacket,const long,

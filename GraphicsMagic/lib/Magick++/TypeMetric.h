@@ -10,7 +10,7 @@
 #if !defined (Magick_TypeMetric_header)
 #define Magick_TypeMetric_header
 
-#include "Magick++/Include.h"
+#include "../Magick++/Include.h"
 
 namespace Magick
 {

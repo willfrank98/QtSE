@@ -31,6 +31,7 @@ public slots:
     void saveFrameToPNG(QString filename);
     void saveFrameSequence(QString dir);
     void setPreviewFPS(int secs);
+    void previewDisplay();
     void setActiveFrame(int index);
     void save();
     void load();
