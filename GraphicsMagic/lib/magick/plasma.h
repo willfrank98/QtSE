@@ -19,7 +19,7 @@ extern "C" {
 /*
   Include declarations.
 */
-#include "magick/image.h"
+#include "image.h"
 
 extern MagickExport MagickPassFail
 PlasmaImage(Image *image,const SegmentInfo *segment,

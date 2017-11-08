@@ -11,7 +11,7 @@
 #ifndef _MAGICK_GEM_H
 #define _MAGICK_GEM_H
 
-#include "magick/random.h"
+#include "random.h"
 
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {

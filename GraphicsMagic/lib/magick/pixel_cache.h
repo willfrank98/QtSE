@@ -11,7 +11,7 @@
 #ifndef _MAGICK_CACHE_H
 #define _MAGICK_CACHE_H
 
-#include "magick/forward.h"
+#include "forward.h"
 
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {

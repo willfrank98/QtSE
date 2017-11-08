@@ -15,7 +15,7 @@
 extern "C" {
 #endif /* defined(__cplusplus) || defined(c_plusplus) */
 
-#include "magick/image.h"
+#include "image.h"
 
 typedef struct _ImageCharacteristics
 {

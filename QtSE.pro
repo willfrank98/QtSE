@@ -45,4 +45,5 @@ RESOURCES += \
 
 
 # Link GraphicsMagick stuff
-LIBS += -L./GraphicsMagick/lib -lGraphicsMagick -lGraphicsMagick++
+INCLUDEPATH += ./GraphicsMagic/lib/Magick++
+LIBS += -L./GraphicsMagic/lib -L./GraphicsMagic/lib/magick -lGraphicsMagick -lGraphicsMagick++

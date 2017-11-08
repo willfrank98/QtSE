@@ -10,7 +10,7 @@
 #if !defined (Magick_CoderInfo_header)
 #define Magick_CoderInfo_header
 
-#include "Magick++/Include.h"
+#include "../Magick++/Include.h"
 #include <string>
 
 namespace Magick

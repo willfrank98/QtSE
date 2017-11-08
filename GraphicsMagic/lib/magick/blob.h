@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 
-#include "magick/image.h"
+#include "image.h"
 
   /*
     Minimum input file size before considering for memory map.

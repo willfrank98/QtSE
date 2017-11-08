@@ -19,8 +19,8 @@ extern "C" {
 /*
   Include declarations.
 */
-#include "magick/image.h"
-#include "magick/error.h"
+#include "image.h"
+#include "error.h"
 
 extern MagickExport Image
   *ConstituteTextureImage(const unsigned long columns,const unsigned long rows,

@@ -10,7 +10,7 @@
 #if !defined(_MAGICK_CONFIG_H)
 # define _MAGICK_CONFIG_H
 # if !defined(vms) && !defined(macintosh)
-#  include "magick/magick_config.h"
+#  include <GraphicsMagic/lib/magick/magick_config.h>
 # else
 #  include "magick_config.h"
 # endif
@@ -39,7 +39,7 @@
 //
 namespace MagickLib
 {
-#include <magick/api.h>
+#include <GraphicsMagic/lib/magick/api.h>
 #undef inline // Remove possible definition from config.h
 
 #undef class
