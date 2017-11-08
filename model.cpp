@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <QFile>
 
-#include <Magick++.h>
+#include <GraphicsMagic/lib/Magick++.h>
 using namespace Magick;
 
 Model::Model(QObject *parent) : QObject(parent)

@@ -6,9 +6,9 @@
 // Inclusion of this header is sufficient to use all Magick++ APIs.
 //
 #ifndef MagickPlusPlus_Header
-#include <Magick++/Include.h>
-#include <Magick++/Image.h>
-#include <Magick++/Pixels.h>
-#include <Magick++/STL.h>
+#include <GraphicsMagic/lib/Magick++/Include.h>
+#include <GraphicsMagic/lib/Magick++/Image.h>
+#include <GraphicsMagic/lib/Magick++/Pixels.h>
+#include <GraphicsMagic/lib/Magick++/STL.h>
 #define MagickPlusPlus_Header
 #endif // MagickPlusPlus_Header
