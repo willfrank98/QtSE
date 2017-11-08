@@ -42,3 +42,7 @@ FORMS += \
 
 RESOURCES += \
     resources.qrc
+
+
+# Link GraphicsMagick stuff
+LIBS += -L./GraphicsMagick/lib -lGraphicsMagick -lGraphicsMagick++

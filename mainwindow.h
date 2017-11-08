@@ -6,7 +6,8 @@
 #include "model.h"
 #include "canvas.h"
 #include <QColorDialog>
-#include <QVector>
+#include <QToolButton>
+#include <QButtonGroup>
 
 namespace Ui {
 class MainWindow;
@@ -16,17 +17,11 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 signals:
-    void toolSelection();
-    void updateColor(QColor);
+    void resetCanvas();
 
 public:
     explicit MainWindow(Model& model, QWidget *parent = 0);
-    void addFramePreview(QList<Frame>);
     ~MainWindow();
-
-private slots:
-    void paletteClicked(int buttonID);
-    void updateHistory(QColor);
 
 private:
     Model *model;
@@ -34,10 +29,15 @@ private:
     Ui::MainWindow *ui;
     int canvasSize;
     qreal pixelSize;
-    QVector<QColor> colorHistory;
+    QList<QToolButton*> paletteButtons;
+    QVector<QColor> paletteHistory;
+    int paletteHistoryIndex = 0;
+    QButtonGroup frameButtons;
 
-    QString convertRgbToString(int red, int green, int blue);
-    int frameNum;
+    QString colorToString(QColor color);
+    void updatePaletteHistory();
+    void newFrame(int index);
+    void newCanvas(int dimension);
 };
 
 #endif // MAINWINDOW_H

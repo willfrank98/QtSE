@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>671</width>
+    <width>691</width>
     <height>662</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>671</width>
+    <width>691</width>
     <height>662</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>671</width>
+    <width>691</width>
     <height>662</height>
    </size>
   </property>
@@ -33,9 +33,9 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>120</y>
-      <width>481</width>
-      <height>481</height>
+      <y>100</y>
+      <width>501</width>
+      <height>501</height>
      </rect>
     </property>
     <property name="cursor" stdset="0">
@@ -61,7 +61,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>120</y>
+      <y>100</y>
       <width>161</width>
       <height>201</height>
      </rect>
@@ -72,10 +72,39 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QGraphicsView" name="graphicsViewPreview">
-     <property name="enabled">
-      <bool>false</bool>
+    <widget class="QSpinBox" name="spinBoxSpeed">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>170</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
      </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="value">
+      <number>5</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelSpeed">
+     <property name="geometry">
+      <rect>
+       <x>68</x>
+       <y>170</y>
+       <width>31</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>FPS:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelPreview">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -84,31 +113,39 @@
        <height>161</height>
       </rect>
      </property>
-    </widget>
-    <widget class="QSpinBox" name="spinBoxSpeed">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>170</y>
-       <width>47</width>
-       <height>21</height>
-      </rect>
+     <property name="styleSheet">
+      <string notr="true">background-image: url(:/transparency.png);</string>
      </property>
-    </widget>
-    <widget class="QLabel" name="labelSpeed">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>170</y>
-       <width>59</width>
-       <height>21</height>
-      </rect>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="text">
-      <string>Speed:</string>
+      <string/>
+     </property>
+     <property name="scaledContents">
+      <bool>false</bool>
      </property>
      <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="zoomLevelCheckbox">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>170</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text">
+      <string>1:1</string>
+     </property>
+     <property name="tristate">
+      <bool>false</bool>
      </property>
     </widget>
    </widget>
@@ -145,7 +182,7 @@ image: url(:/tool_icons/eraser_tool_icon.png);
       <string/>
      </property>
      <property name="checkable">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="checked">
       <bool>false</bool>
@@ -176,6 +213,9 @@ image: url(:/tool_icons/mirror_pen_tool_icon.png);</string>
        <height>64</height>
       </size>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
      <attribute name="buttonGroup">
       <string notr="true">toolButtons</string>
      </attribute>
@@ -195,6 +235,9 @@ background-image: url(:/tool_icons/black_background.png);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">toolButtons</string>
@@ -222,6 +265,9 @@ background-image: url(:/tool_icons/black_background.png);</string>
        <height>32</height>
       </size>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
      <attribute name="buttonGroup">
       <string notr="true">toolButtons</string>
      </attribute>
@@ -248,6 +294,9 @@ background-image: url(:/tool_icons/black_background.png);</string>
        <height>32</height>
       </size>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
      <attribute name="buttonGroup">
       <string notr="true">toolButtons</string>
      </attribute>
@@ -267,6 +316,9 @@ background-image: url(:/tool_icons/black_background.png);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">toolButtons</string>
@@ -288,6 +340,9 @@ image: url(:/tool_icons/rectangle_tool_icon.png);</string>
      <property name="text">
       <string/>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
      <attribute name="buttonGroup">
       <string notr="true">toolButtons</string>
      </attribute>
@@ -307,6 +362,9 @@ image: url(:/tool_icons/rectangle_tool_icon.png);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QToolButton" name="penToolButton">
@@ -346,10 +404,17 @@ image: url(:/tool_icons/pen_tool_icon.png);
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 255, 255);</string>
+      <string notr="true">background-color: rgb(255, 255, 255);
+border-color: rgb(61, 171, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoExclusive">
+      <bool>false</bool>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QToolButton" name="rectangularSelectionToolButton">
@@ -367,6 +432,9 @@ image: url(:/tool_icons/rectangular_selection_tool_icon.png);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">toolButtons</string>
@@ -388,6 +456,9 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
      <property name="text">
       <string/>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
      <attribute name="buttonGroup">
       <string notr="true">toolButtons</string>
      </attribute>
@@ -401,11 +472,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -420,11 +494,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -439,11 +516,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -458,11 +538,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -477,11 +560,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -496,11 +582,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -515,11 +604,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -534,11 +626,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -553,11 +648,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -572,11 +670,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -591,11 +692,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -610,11 +714,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -629,11 +736,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -648,11 +758,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -667,11 +780,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
@@ -686,16 +802,39 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
        <height>21</height>
       </rect>
      </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">paletteButtons</string>
      </attribute>
     </widget>
+    <widget class="QToolButton" name="swapColors">
+     <property name="geometry">
+      <rect>
+       <x>83</x>
+       <y>242</y>
+       <width>21</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>L</string>
+     </property>
+     <property name="autoRaise">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <zorder>swapColors</zorder>
     <zorder>eraserToolButton</zorder>
     <zorder>mirrorPenToolButton</zorder>
     <zorder>ditheringPenToolButton</zorder>
@@ -730,47 +869,69 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>651</width>
-      <height>101</height>
+      <width>671</width>
+      <height>81</height>
      </rect>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
     </property>
     <property name="widgetResizable">
      <bool>true</bool>
     </property>
-    <widget class="QWidget" name="scrollAreaContents">
+    <widget class="QWidget" name="frameContainer">
      <property name="geometry">
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>649</width>
-       <height>99</height>
+       <width>669</width>
+       <height>79</height>
       </rect>
      </property>
-     <widget class="QWidget" name="horizontalLayoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>621</width>
-        <height>101</height>
-       </rect>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>2</number>
       </property>
-      <layout class="QHBoxLayout" name="frameContainer"/>
-     </widget>
-     <widget class="QPushButton" name="pushButtonAddFrame">
-      <property name="geometry">
-       <rect>
-        <x>620</x>
-        <y>0</y>
-        <width>31</width>
-        <height>31</height>
-       </rect>
+      <property name="topMargin">
+       <number>2</number>
       </property>
-      <property name="text">
-       <string>+</string>
+      <property name="rightMargin">
+       <number>2</number>
       </property>
-     </widget>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="pushButtonAddFrame">
+    <property name="geometry">
+     <rect>
+      <x>656</x>
+      <y>11</y>
+      <width>24</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>+</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -778,8 +939,8 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>671</width>
-     <height>22</height>
+     <width>691</width>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -848,24 +1009,15 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
    <property name="text">
     <string>Save</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
-   </property>
   </action>
   <action name="actionLoad">
    <property name="text">
     <string>Load</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
-   </property>
   </action>
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionAnimated_GIF">
@@ -892,16 +1044,10 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
    <property name="text">
     <string>Undo</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+Z</string>
-   </property>
   </action>
   <action name="actionRedo">
    <property name="text">
     <string>Redo</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+X</string>
    </property>
   </action>
   <action name="actionResize_Canvase">
@@ -939,7 +1085,7 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="toolButtons"/>
   <buttongroup name="paletteButtons"/>
+  <buttongroup name="toolButtons"/>
  </buttongroups>
 </ui>

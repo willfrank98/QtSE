@@ -5,164 +5,214 @@
 #include <QGraphicsRectItem>
 #include <QDebug>
 #include <QVector>
-#include <QObject>
-#include <QFileDialog>
 #include <QShortcut>
+#include <QFileDialog>
 
 MainWindow::MainWindow(Model &model, QWidget *parent) :
 	QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    model.createFrame(32);
+    this->model = &model;
+
+    // setup the main graphics view
     ui->graphicsViewCanvas->setScene(canvas);
     ui->graphicsViewCanvas->scene()->setSceneRect(ui->graphicsViewCanvas->rect());  // scales the canvas to the QGraphicsView
     ui->graphicsViewCanvas->setEnabled(true);
-
-
-    // this feels hacky; if anyone can get the connections to work without this, that'd be great
-    this->model = &model;
-
-    //To make iterating easy, i gave each an unique ID.
-    ui->paletteButtons->setId(ui->palette1, 0);
-    ui->paletteButtons->setId(ui->palette2, 1);
-    ui->paletteButtons->setId(ui->palette3, 2);
-    ui->paletteButtons->setId(ui->palette4, 3);
-    ui->paletteButtons->setId(ui->palette5, 4);
-    ui->paletteButtons->setId(ui->palette6, 5);
-    ui->paletteButtons->setId(ui->palette7, 6);
-    ui->paletteButtons->setId(ui->palette8, 7);
-    ui->paletteButtons->setId(ui->palette9, 8);
-    ui->paletteButtons->setId(ui->palette10, 9);
-    ui->paletteButtons->setId(ui->palette11, 10);
-    ui->paletteButtons->setId(ui->palette12, 11);
-    ui->paletteButtons->setId(ui->palette13, 12);
-    ui->paletteButtons->setId(ui->palette14, 13);
-    ui->paletteButtons->setId(ui->palette15, 14);
-    ui->paletteButtons->setId(ui->palette16, 15);
-
 
     QColorDialog *colorPicker1 = new QColorDialog();
     QColorDialog *colorPicker2 = new QColorDialog();
     colorPicker1->setOption(QColorDialog::ShowAlphaChannel, true);
     colorPicker2->setOption(QColorDialog::ShowAlphaChannel, true);
 
-    // connects the color selection buttons
+    // adds palette buttons to a list (ordered)
+    for (int i = 0; i < ui->paletteButtons->buttons().count(); i++) {
+        QString name = QString("palette"+QString::number(i + 1));
+        QToolButton *button = ui->frameToolsAndPalette->findChild<QToolButton*>(name);
+        paletteHistory.append(QColor(255, 255, 255, 255));
+
+        connect(button, &QToolButton::clicked, this, [=]() {
+            canvas->setPrimaryColor(paletteHistory.at(i));
+            ui->color1Box->setStyleSheet(colorToString(paletteHistory.at(i)));
+        });
+
+        paletteButtons.append(button);
+    }
+
+    // Connects primary and secondary color boxes, palette history, and other color things
     connect(ui->color1Box, &QToolButton::clicked, canvas, [=](){ colorPicker1->show(); });
     connect(colorPicker1, &QColorDialog::colorSelected, canvas, &Canvas::setPrimaryColor);
-    connect(colorPicker1, &QColorDialog::colorSelected, this, &MainWindow::updateHistory);
     connect(ui->color2Box, &QToolButton::clicked, canvas, [=](){ colorPicker2->show(); });
     connect(colorPicker2, &QColorDialog::colorSelected, canvas, &Canvas::setSecondaryColor);
-    connect(colorPicker2, &QColorDialog::colorSelected, this, &MainWindow::updateHistory);
     connect(colorPicker1, &QColorDialog::colorSelected, ui->color1Box, [=](QColor color){
-        QString newStyle = "background-color: rgb(" +
-                QString::number(color.red()) + "," +
-                QString::number(color.green()) + "," +
-                QString::number(color.blue()) + ");";
+        QString newStyle = colorToString(color);
         ui->color1Box->setStyleSheet(newStyle);
+        if (paletteHistory.size() == ui->paletteButtons->buttons().count()) paletteHistory.replace(paletteHistoryIndex, color);
+        else paletteHistory.insert(paletteHistoryIndex, color);
+        updatePaletteHistory();
     });
     connect(colorPicker2, &QColorDialog::colorSelected, ui->color2Box, [=](QColor color){
-        QString newStyle = "background-color: rgb(" +
-                QString::number(color.red()) + "," +
-                QString::number(color.green()) + "," +
-                QString::number(color.blue()) + ");";
+        QString newStyle = colorToString(color);
         ui->color2Box->setStyleSheet(newStyle);
+        if (paletteHistory.size() == ui->paletteButtons->buttons().count()) paletteHistory.replace(paletteHistoryIndex, color);
+        else paletteHistory.insert(paletteHistoryIndex, color);
+        updatePaletteHistory();
     });
+    connect(ui->swapColors, &QToolButton::clicked, this, [=](){
+        QString temp = ui->color1Box->styleSheet();
+        ui->color1Box->setStyleSheet(ui->color2Box->styleSheet());
+        ui->color2Box->setStyleSheet(temp);
+        canvas->swapColors();
+    });
+
+    // Connects the toolButtons
+    connect(ui->penToolButton, &QToolButton::clicked, canvas, [=](){ canvas->setTool(PenTool); });
+    connect(ui->mirrorPenToolButton, &QToolButton::clicked, canvas, [=](){ canvas->setTool(MirrorPenTool); });
+    connect(ui->eraserToolButton, &QToolButton::clicked, canvas, [=](){ canvas->setTool(EraserTool); });
+    connect(ui->ditheringPenToolButton, &QToolButton::clicked, canvas, [=](){ canvas->setTool(DitheringTool); });
+    connect(ui->rectangleToolButton, &QToolButton::clicked, canvas, [=](){ canvas->setTool(RectangleTool); });
+    connect(ui->bucketPenToolButton, &QToolButton::clicked, canvas, [=](){ canvas->setTool(BucketFillTool); });
+    connect(ui->colorFillToolButton, &QToolButton::clicked, canvas, [=](){ canvas->setTool(ColorFillTool); });
+    connect(ui->ellipseToolButton, &QToolButton::clicked, canvas, [=](){ canvas->setTool(EllipseTool); });
+    connect(ui->rectangularSelectionToolButton, &QToolButton::clicked, canvas, [=](){ canvas->setTool(RectSelectTool); });
+    connect(ui->lineToolButton, &QToolButton::clicked, canvas, [=](){ canvas->setTool(LineTool); });
+
+    // Connects the undo/redo actions
+    connect(ui->actionUndo, &QAction::triggered, &model, &Model::undo);
+    connect(ui->actionRedo, &QAction::triggered, &model, &Model::redo);
+    connect(canvas, &Canvas::pixelsModified, &model, &Model::updateUndoRedo);
+    connect(&model, &Model::frameUpdated, canvas, &Canvas::setFrame);
+
+    // Connects the File>New actions
+    connect(ui->action8x8, &QAction::triggered, this, [=](){ newCanvas(8); });
+    connect(ui->action16x16, &QAction::triggered, this, [=](){ newCanvas(16); });
+    connect(ui->action32x32, &QAction::triggered, this, [=](){ newCanvas(32); });
+    connect(ui->action64x64, &QAction::triggered, this, [=](){ newCanvas(64); });
+
+    // Connects the drawing surfaces (main drawing area, preview area, FPS, etc.)
+    connect(ui->spinBoxSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), &model, &Model::setPreviewFPS);
+    connect(&model, &Model::frameUpdated, canvas, &Canvas::setFrame);
+    connect(&model, &Model::previewFrame, this, [=](QImage image) {
+        // TODO: do something with the image from previewFrame
+    });
+    connect(ui->zoomLevelCheckbox, &QCheckBox::toggled, this, [=](bool toggled){
+        // TODO: handle the zoom toggle
+    });
+    connect(canvas, &Canvas::frameUpdated, this, [=](Frame *frame){
+        QLabel *l = frameButtons.checkedButton()->parent()->findChild<QLabel *>("view");
+        l->setPixmap(QPixmap::fromImage(frame->pixels().scaled(l->size())));
+    });
+
+    // connects the File>Export actions
+    connect(ui->actionCurrentFrame, &QAction::triggered, this, [=]() {
+        QString filename = QFileDialog::getSaveFileName(this, "Export to .PNG", "./", "PNG Files (.png)");
+        this->model->saveFrameToPNG(filename);
+    });
+    connect(ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
+        QString filename = QFileDialog::getSaveFileName(this, "Export to animated .GIF", "./", "GIF Files (.gif)");
+        this->model->saveAnimatedGIF(filename);
+    });
+
+    // connects the File>Exit action
+    connect(ui->actionExit, &QAction::triggered, &model, &Model::exit);
+
+    connect(ui->pushButtonAddFrame, &QPushButton::clicked, &model, &Model::createFrame);
+    connect(&model, &Model::frameCreated, this, [=](int i){ newFrame(i); });
 
     // Connects the Shortcut Keys
     QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+1"), ui->centralWidget);
     connect(shortcut, SIGNAL(activated()), ui->penToolButton, SLOT(clicked()));
 
-    // Connects the toolButtons
-    //connect(ui->toolButtons, SIGNAL(buttonClicked(int)), &model, SLOT(changeTool(int)));
+    // I kind of like these one-liner shortcut things better, but we can use whatever
+//    ui->penToolButton->setShortcut(Qt::CTRL | Qt::Key_1);
+//    ui->actionUndo->setShortcut(Qt::CTRL | Qt::Key_Z);
+//    ui->actionRedo->setShortcut(Qt::CTRL | Qt::Key_R);
 
-    // Connects the colorPaletteHistory
-    connect(ui->paletteButtons, SIGNAL(buttonClicked(int)), this, SLOT(paletteClicked(int)));
-    connect(this, SIGNAL(updateColor(QColor)), canvas, SLOT(setPrimaryColor(QColor)));
-
-    // connects the undo/redo buttons
-    connect(ui->actionUndo, &QAction::triggered, this, [=](){this->model->undo();});
-    connect(ui->actionRedo, &QAction::triggered, this, [=](){this->model->redo();});
-
-    // connects the File>New actions
-    connect(ui->action8x8, &QAction::triggered, this, [=](){ this->model->createFrame(8); });
-    connect(ui->action16x16, &QAction::triggered, this, [=](){ this->model->createFrame(16); });
-    connect(ui->action32x32, &QAction::triggered, this, [=](){ this->model->createFrame(32); });
-    connect(ui->action64x64, &QAction::triggered, this, [=](){ this->model->createFrame(64); });
-
-    // I think something like this is what you wanted? Sorry if I still didn't get it right.
-    connect(canvas, &Canvas::modifiedPixels, &model, &Model::modifyFrame);
-    connect(&model, &Model::frameUpdated, canvas, &Canvas::displayImage);
-
-    // connects the File>Export actions
-    connect(ui->actionCurrentFrame, &QAction::triggered, this, [=](){
-        QString filename = QFileDialog::getSaveFileName(this, tr("Export to .PNG"), "./", tr("PNG Files (.png)"));
-        this->model->saveCurrentFrameToPNG(filename);
-    });
-    connect(ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
-        /*
-         * Gonna likely replace this with gif.h
-         */
-//        FreeImage_Initialise();
-//        qDebug() << "Initialized FreeImage " << FreeImage_GetVersion();
-//        FreeImage_DeInitialise();
-    });
-
-    connect(&model, &Model::framePreview, this, [=](){ &MainWindow::addFramePreview; });
-
-    // connects the File>Exit action
-    connect(ui->actionExit, &QAction::triggered, &model, &Model::exit);
-}
-
-void MainWindow::paletteClicked(int buttonID){
-    if (colorHistory.size() - buttonID > 0){
-        QColor newColor = colorHistory[colorHistory.size() - buttonID - 1];
-        QString newStyle = convertRgbToString(newColor.red(),newColor.green(),newColor.blue());
-        ui->color1Box->setStyleSheet(newStyle);
-        emit updateColor(newColor);
-    }
-}
-
-void MainWindow::updateHistory(QColor newColor){
-    colorHistory.append(newColor);
-    for(int i = 0, j = colorHistory.size(); i < 16 && j > 0;i++, j--){
-        QString temp = convertRgbToString(colorHistory[j-1].red(), colorHistory[j-1].green(), colorHistory[j-1].blue());
-        ui->paletteButtons->button(i)->setStyleSheet(temp);
-    }
-
-}
-
-QString MainWindow::convertRgbToString(int red, int green, int blue){
-    QString output = "background-color: rgb(" +
-            QString::number(red) + "," +
-            QString::number(green) + "," +
-            QString::number(blue) + ");";
-    return output;
+    model.newSurface(32);
 }
 
 MainWindow::~MainWindow()
 {
-
 	delete ui;
 }
 
+QString MainWindow::colorToString(QColor color) {
+    return "background-color: rgb(" +
+            QString::number(color.red()) + "," +
+            QString::number(color.green()) + "," +
+            QString::number(color.blue()) + ");";
+}
 
-void MainWindow::addFramePreview(QList<Frame> frames){
+void MainWindow::updatePaletteHistory() {
+    QString newStyle;
+    newStyle = colorToString(paletteHistory.at(paletteHistoryIndex));
+    paletteButtons.at(paletteHistoryIndex)->setStyleSheet(newStyle);
+    paletteHistoryIndex++;
 
-    //QWidget *window = new QWidget;
-    QHBoxLayout *layout = new QHBoxLayout;
-    QString name = "";
+    if (paletteHistoryIndex == ui->paletteButtons->buttons().count()) paletteHistoryIndex = 0;
+}
 
-    for (int i = 0; i< frames.size(); i++)
-    {
-    name = "Frame " + i;
-    QLabel *name = new QLabel();
-    name-> setFrameStyle(QLabel::Sunken | QLabel::Box);
-    //name->setPixmap(&QPixmap::fromImage(&frames.at(i).pixels()));    //This line needs work
-    name->setVisible(true);
-    layout->addWidget(name);
-    }
+// These signals and slots are getting ridiculous.
+void MainWindow::newCanvas(int dimension) {
+    emit resetCanvas();
+    this->disconnect();
+    model->newSurface(dimension);
+}
 
-    ui->frameContainer->addLayout(layout);
+void MainWindow::newFrame(int index) {
+    QFrame *newFrame = new QFrame();
+    newFrame->setGeometry(0, 0, 75, 75);
+    newFrame->setMinimumWidth(75);
+    newFrame->setMinimumHeight(75);
+    newFrame->setMaximumWidth(75);
+    newFrame->setMaximumHeight(75);
+    connect(this, &MainWindow::resetCanvas, this, [=]() {
+        newFrame->hide();
+        ui->frameContainer->layout()->removeWidget(newFrame);
+        newFrame->setParent(nullptr);
+        delete newFrame;
+    });
 
+    QLabel *framePreview = new QLabel();
+    framePreview->setGeometry(0, 0, 75, 75);
+    framePreview->setObjectName("view");
+    framePreview->setMinimumWidth(75);
+    framePreview->setMinimumHeight(75);
+    framePreview->setMaximumWidth(75);
+    framePreview->setMaximumHeight(75);
+    framePreview->setAttribute(Qt::WA_TransparentForMouseEvents);
+
+    QPushButton *frameSelected = new QPushButton(newFrame);
+    frameSelected->setGeometry(0, 0, 75, 75);
+    frameSelected->setObjectName("button");
+    frameSelected->setCheckable(true);
+    frameButtons.addButton(frameSelected, index);
+    connect(frameSelected, &QPushButton::clicked, model, [=](){
+        int frameNum = ui->frameContainer->layout()->indexOf(newFrame);
+        model->setActiveFrame(frameNum);
+    });
+    framePreview->setParent(newFrame);
+
+    QToolButton *dupeFrame = new QToolButton(newFrame);
+    dupeFrame->setGeometry(55, 55, 20, 20);
+    dupeFrame->setAutoRaise(true);
+    dupeFrame->setObjectName("dupe");
+    dupeFrame->setText("D");
+    connect(dupeFrame, &QToolButton::clicked, model, [=](){
+        int frameNum = ui->frameContainer->layout()->indexOf(newFrame);
+        frameSelected->setChecked(true);
+        model->setActiveFrame(frameNum);
+        model->dupeFrame(frameButtons.id(frameButtons.checkedButton()));
+    });
+
+
+    // remove the spacer
+    ui->frameContainer->layout()->removeItem(ui->frameContainer->layout()->itemAt(ui->frameContainer->layout()->count()-1));
+
+    // add the newFrame
+    ui->frameContainer->findChild<QHBoxLayout *>("horizontalLayout")->insertWidget(index, newFrame);
+    newFrame->findChild<QPushButton *>("button")->setChecked(true);
+
+    // re-add a horizontal spacer
+    ui->frameContainer->layout()->addItem(new QSpacerItem(10, 10, QSizePolicy::Expanding));
 }

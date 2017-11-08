@@ -12,6 +12,7 @@ class Canvas : public QGraphicsScene
     Q_OBJECT
 signals:
     void frameUpdated(Frame *frame);
+    void pixelsModified(QImage);
 
 public slots:
     void setPrimaryColor(QColor color);
@@ -40,7 +41,6 @@ public:
     void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent * mouseEvent);
-
 };
 
 #endif // CANVAS_H

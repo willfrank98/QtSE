@@ -29,6 +29,8 @@ public:
     void bucketFill(QPoint startPoint, QColor fill);
     void colorSwap(QPoint startPoint, QColor color);
     void drawDither(QPoint point, QColor color1, QColor color2);
+
+    void setPixels(QImage newImage);
     QImage pixels();
     QSize size();
 };

@@ -126,7 +126,6 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
     buttonHeld = mouseEvent->button();
     rect = QRectF(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 0, 0);
-    frame->storeUndoImage();
     draw(mouseEvent->scenePos());
 }
 
@@ -136,8 +135,7 @@ void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
     buttonHeld = Qt::NoButton;
     if (tool == RectangleTool || tool == EllipseTool || tool == LineTool) refresh();
-    frame->storeUndoImage();
+    emit pixelsModified(frame->pixels());
 
 //    qDebug() << mouseEvent->scenePos();
 }
-

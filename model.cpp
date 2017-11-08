@@ -2,77 +2,136 @@
 #include <QtGlobal>
 #include <QApplication>
 #include <QDebug>
+#include <QFile>
+
+#include <Magick++.h>
+using namespace Magick;
 
 Model::Model(QObject *parent) : QObject(parent)
 {
+    // Make Magick look in the current directory for the library files.
+    Magick::InitializeMagick(".");
 
+    // TODO: hook up a timer to the previewFrame signal
 }
 
-void Model::createFrame(int dimension) {
-    Frame *newFrame;
-//    if (frames.count() > 0) newFrame = new Frame(frames.first()->size().width());
-    newFrame = new Frame(dimension);
-    currentFrame = newFrame;
-    frames.append(currentFrame);
-    selectedTool = PenTool;
-    emit framePreview(frames);
-    emit frameUpdated(currentFrame->pixels());
+void Model::setPreviewFPS(int secs) {
+    // TODO
 }
 
-void Model::modifyFrame(QVector<QPoint> pixels, QColor color) {
-    currentFrame->drawPen(pixels, color);
-    emit framePreview(frames);
-    //New changes clear the redo stack but not undo stack.
-    if(!redoStack.isEmpty()){
-        QStack<QImage> temp;
-        redoStack = temp;
+void Model::setActiveFrame(int index) {
+    qDebug() << "hit";
+    currentFrame = frames.at(index);
+    emit frameUpdated(currentFrame);
+}
+
+void Model::newSurface(int dimension) {
+    if (!isSaved) {
+        // emit a signal that prompts to save or something
     }
-    undoStack.push(currentFrame->pixels());
-    emit frameUpdated(currentFrame->pixels());
+
+    previewAnimTimer.stop();
+
+    Frame *newFrame = new Frame(dimension);
+    frames.clear();
+    frames.append(newFrame);
+    currentFrame = newFrame;
+    emit frameCreated(frames.indexOf(currentFrame));
+    emit frameUpdated(currentFrame);
+
+    previewAnimIndex = 0;
+    previewAnimTimer.start(previewAnimTimer.interval());
 }
 
-void Model::undo(){
-    if(!undoStack.isEmpty()){
+void Model::createFrame() {
+    Frame *newFrame = new Frame(frames.first()->size().width());
+    frames.insert(frames.indexOf(currentFrame)+1, newFrame);
+    currentFrame = newFrame;
+    emit frameCreated(frames.indexOf(currentFrame));
+    emit frameUpdated(currentFrame);
+}
+
+void Model::dupeFrame(int index) {
+    Frame *newFrame = new Frame(*frames.at(index));
+    frames.insert(frames.indexOf(currentFrame)+1, newFrame);
+    currentFrame = newFrame;
+    emit frameCreated(frames.indexOf(currentFrame));
+    emit frameUpdated(currentFrame);
+}
+
+void Model::deleteFrame(int index) {
+    if (index < frames.size()) frames.removeAt(index);
+    if (index < frames.size() - 1) currentFrame = frames.last();
+    else currentFrame = frames.at(index+1);
+    emit frameUpdated(currentFrame);
+}
+
+void Model::updateUndoRedo(QImage newImage) {
+    if (!redoStack.isEmpty()) {
+        redoStack = QStack<QImage>();
+    }
+    undoStack.push(newImage);
+}
+
+void Model::undo() {
+    qDebug() << undoStack;
+    if (!undoStack.isEmpty()) {
         redoStack.push(currentFrame->pixels());
         tempImage = undoStack.pop();
         currentFrame->setPixels(tempImage);
-        emit frameUpdated(currentFrame->pixels());
+        emit frameUpdated(currentFrame);
     }
 }
 
-void Model::redo(){
-    if(!redoStack.isEmpty()){
+void Model::redo() {
+    qDebug() << redoStack;
+    if (!redoStack.isEmpty()) {
         undoStack.push(currentFrame->pixels());
         tempImage = redoStack.pop();
         currentFrame->setPixels(tempImage);
-        emit frameUpdated(currentFrame->pixels());
+        emit frameUpdated(currentFrame);
     }
-
 }
 
-void Model::setTool(Tool tool) {
-    selectedTool = tool;
+void Model::saveAnimatedGIF(QString filename) {
+    if (!filename.toLower().endsWith(".gif")) filename.append(".gif");
+
+    QString tempFile = QString(filename).replace(".gif", ".png");
+    QList<Image> newFrames;
+    for (int i = 0; i < frames.size(); i++) {
+        Magick::Image f;
+        frames.at(i)->pixels().save(tempFile);
+        f.read(tempFile.toStdString());
+        f.animationDelay(previewAnimTimer.interval() / 10);
+        f.gifDisposeMethod(3);  // disposes previous frame
+        newFrames.push_back(f);
+        QFile(tempFile).remove();
+    }
+    writeImages(newFrames.begin(), newFrames.end(), filename.toStdString());
 }
 
-void Model::saveCurrentFrameToPNG(QString filename) {
-    if (!filename.endsWith(".png") || !filename.endsWith(".PNG")) filename.append(".png");
+void Model::saveFrameToPNG(QString filename) {
+    if (!filename.toLower().endsWith(".png")) filename.append(".png");
     currentFrame->pixels().save(filename);
 }
 
+void Model::saveFrameSequence(QString dir) {
+    // TODO
+}
+
 void Model::exit() {
-    if (isSaved) QApplication::exit();
-    else promptSave();
+    if (isSaved) {
+        QApplication::exit();
+    }
+    else {
+        // emit a signal that triggers a dialog that asks if the user would like to save (or something)
+    }
 }
 
-void Model::promptSave() {
-    // TODO: prompt if the user wants to save the project or something
-    qDebug() << "prompt to save";
+void Model::save() {
+    // TODO
 }
 
-
-void Model::setActiveFrame(int index){
-    currentFrame = frames.at(index);
-}
-void Model::removeFrame(int index){
-    frames.removeOne(frames.at(index));
+void Model::load() {
+    // TODO
 }

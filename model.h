@@ -1,46 +1,50 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <frame.h>
 #include <QObject>
-#include <tool.h>
 #include <QStack>
+#include <QTimer>
+#include <frame.h>
+#include <tool.h>
 
 class Model : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit Model(QObject *parent = nullptr);
-    void createFrame(int dimension);
-    QSize frameDimensions();
-
-signals:
-    void frameUpdated(QImage);
-    void framePreview(QList<Frame*>);
-
-public slots:
-    void modifyFrame(QVector<QPoint>, QColor);
+	explicit Model(QObject *parent = nullptr);
+    void newSurface(int dimension);
+    void createFrame();
+    void dupeFrame(int index);
+    void deleteFrame(int index);
     void undo();
     void redo();
-    void setTool(Tool _tool);
-    void setActiveFrame(int);
-    void removeFrame(int);
-    void saveCurrentFrameToPNG(QString filename);
+
+signals:
+    void frameCreated(int);
+    void frameUpdated(Frame*);
+    void previewFrame(QImage);
+
+public slots:
+    void updateUndoRedo(QImage);
+    void saveAnimatedGIF(QString filename);
+    void saveFrameToPNG(QString filename);
+    void saveFrameSequence(QString dir);
+    void setPreviewFPS(int secs);
+    void setActiveFrame(int index);
+    void save();
+    void load();
     void exit();    // a better name might be needed
 
 private:
-    bool isSaved = false;   // toggle to true when saved, make false after changes are made
+    bool isSaved = true;   // toggle to true when saved, make false after changes are made
     QList<Frame*> frames = QList<Frame*>();
     Frame *currentFrame;
-    int currIndex = 0;
-    Tool selectedTool;
+    QTimer previewAnimTimer;
+    int previewAnimIndex = 0;
     QImage tempImage;
     QStack<QImage> undoStack;
     QStack<QImage> redoStack;
-    void promptSave();
-
-
 };
 
 #endif // MODEL_H

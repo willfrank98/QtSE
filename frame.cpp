@@ -1,7 +1,9 @@
 #include "frame.h"
 #include <QDebug>
+#include <QBitmap>
+#include <QStack>
 
-Frame::Frame(){
+Frame::Frame() {
 
 }
 
@@ -35,7 +37,7 @@ void Frame::drawEllipse(QRect area, QColor line, QColor fill) {
 }
 
 void Frame::drawMirrorPen(QPoint point, QColor color) {
-
+    // TODO
 }
 
 void Frame::drawPen(QPoint point, QColor color) {
@@ -64,13 +66,14 @@ void Frame::erase(QPoint point) {
 }
 
 void Frame::bucketFill(QPoint startPoint, QColor fill) {
-
+    // TODO
 }
 
 void Frame::drawDither(QPoint point, QColor color1, QColor color2) {
-
+    // TODO
 }
 
+// This is the color-fill tool.  We might want to rename it to better reflect that.
 void Frame::colorSwap(QPoint startPoint, QColor color) {
     QColor oldColor = image.pixelColor(startPoint);
 
@@ -79,6 +82,12 @@ void Frame::colorSwap(QPoint startPoint, QColor color) {
     QBitmap mask = QPixmap::fromImage(image).createMaskFromColor(oldColor.rgb(), Qt::MaskOutColor);
     painter->setPen(color);
     painter->drawPixmap(image.rect(), mask, mask.rect());
+}
+
+void Frame::setPixels(QImage newImage) {
+    painter->end();
+    image = newImage;
+    painter->begin(&image);
 }
 
 QImage Frame::pixels() {
