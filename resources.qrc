@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>erase.jpg</file>
-        <file>pentool.svg</file>
         <file>Checkered.png</file>
         <file>tool_icons/bucket_fill_tool_icon.png</file>
         <file>tool_icons/color_fill_tool_icon.png</file>
