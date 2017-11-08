@@ -5,8 +5,8 @@
 #include <QFile>
 
 
-#include <GraphicsMagic/lib/Magick++.h>
-using namespace Magick;
+//#include <Magick++.h>
+//using namespace Magick;
 
 
 Model::Model(QObject *parent) : QObject(parent)
@@ -16,7 +16,7 @@ Model::Model(QObject *parent) : QObject(parent)
 
     // TODO: hook up a timer to the previewFrame signal
     previewAnimTimer.setInterval(200);
-    connect(previewAnimTimer, SIGNAL(timeout()), this, SLOT(previewDisplay());
+    connect(&previewAnimTimer, SIGNAL(timeout()), this, SLOT(previewDisplay()));
     previewAnimTimer.start();
 }
 
