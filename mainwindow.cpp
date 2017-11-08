@@ -244,6 +244,7 @@ void MainWindow::addFramePreview(QImage image, int x, int y){
     gv->setScene(c);
     gv->setEnabled(true);
     gv->show();
+    frames.push_back(gv);
     ui->frameContainer->layout()->addWidget(gv);
     connect(c, SIGNAL(clickToGV(QGraphicsSceneMouseEvent*,int)), gv, SLOT(mousePressEvent(QGraphicsSceneMouseEvent*,int)));
     connect(gv, &Frame::updateGV, this, &MainWindow::updateFocus);
@@ -254,6 +255,13 @@ void MainWindow::addFramePreview(QImage image, int x, int y){
 }
 void MainWindow::updateFocus(int frameNum){
     ui->graphicsViewCanvas->setScene(scenes.at(frameNum));
+    for (int i = 0; i < frames.size(); i++){
+        if (frameNum == i){
+            frames.at(frameNum)->setStyleSheet("border: 4px solid black;");
+        }
+        else
+            frames.at(i)->setStyleSheet("border: 0px solid black;");
+    }
 }
 void MainWindow::colorBox1Clicked(){
     Canvas::c1 = QColor(cd->getColor());

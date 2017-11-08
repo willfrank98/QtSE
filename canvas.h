@@ -40,6 +40,7 @@ private:
 
 
 public:
+    bool isMainCanvas;
     std::unordered_map<std::string, QColor> currentState;
     QPainter painter;
     QGraphicsPixmapItem *graphicspixmap;

@@ -49,6 +49,7 @@ signals:
 
 public:
     std::vector <Canvas*> scenes;
+    std::vector <Frame*> frames;
     Canvas *canvas;
     explicit MainWindow(Model *model, QWidget *parent = 0);
     ~MainWindow();

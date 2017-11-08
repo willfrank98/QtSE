@@ -18,6 +18,7 @@ Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 
 Canvas::Canvas(QImage i, int sizex, int sizey,  int frame, QObject *parent) : QGraphicsScene(parent)
 {
+    isMainCanvas = false;
     lastx = -1;
     lasty = -1; //set this so that lastx won't equal thisx in the move method the first time.
     drawMode = 0;
@@ -193,54 +194,57 @@ void Canvas::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
 void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    if (buttonHeld){
-        int thisx = floor(mouseEvent->scenePos().x()/pixSize);
-        int thisy = floor(mouseEvent->scenePos().y()/pixSize);
-        if((lastx != thisx) || (lasty != thisy)){
-            if (mouseEvent->buttons() & Qt::LeftButton){
-                if (drawMode == 0)
-                    putPixel(mouseEvent->scenePos(), Canvas::c1);
-                else if (drawMode == 1)
-                    deletePixel(mouseEvent->scenePos(), Canvas::c1);
-                else if (drawMode == 2)
-                    drawCirc(mouseEvent->scenePos(), Canvas::c1);
-                else if (drawMode == 3)
-                    drawRect(mouseEvent->scenePos(), Canvas::c1);
+        if (buttonHeld){
+            int thisx = floor(mouseEvent->scenePos().x()/pixSize);
+            int thisy = floor(mouseEvent->scenePos().y()/pixSize);
+            if((lastx != thisx) || (lasty != thisy)){
+                if (mouseEvent->buttons() & Qt::LeftButton){
+                    if (drawMode == 0)
+                        putPixel(mouseEvent->scenePos(), Canvas::c1);
+                    else if (drawMode == 1)
+                        deletePixel(mouseEvent->scenePos(), Canvas::c1);
+                    else if (drawMode == 2)
+                        drawCirc(mouseEvent->scenePos(), Canvas::c1);
+                    else if (drawMode == 3)
+                        drawRect(mouseEvent->scenePos(), Canvas::c1);
+                }
+                else if(mouseEvent->buttons() & Qt::RightButton){
+                    if (drawMode == 0)
+                        putPixel(mouseEvent->scenePos(), Canvas::c2);
+                    else if (drawMode == 1)
+                        deletePixel(mouseEvent->scenePos(), Canvas::c2);
+                    else if (drawMode == 2)
+                        drawCirc(mouseEvent->scenePos(), Canvas::c1);
+                    else if (drawMode == 3)
+                        drawRect(mouseEvent->scenePos(), Canvas::c2);
+                }
+                lastx = thisx;
+                lasty = thisy;
             }
-            else if(mouseEvent->buttons() & Qt::RightButton){
-                if (drawMode == 0)
-                    putPixel(mouseEvent->scenePos(), Canvas::c2);
-                else if (drawMode == 1)
-                    deletePixel(mouseEvent->scenePos(), Canvas::c2);
-                else if (drawMode == 2)
-                    drawCirc(mouseEvent->scenePos(), Canvas::c1);
-                else if (drawMode == 3)
-                    drawRect(mouseEvent->scenePos(), Canvas::c2);
-            }
-            lastx = thisx;
-            lasty = thisy;
         }
-    }
 }
 
 void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    currentRect.clear();
-    startingPoint = mouseEvent->scenePos();
-    buttonHeld = true;
-    previousState = currentState;
-    if (mouseEvent->buttons() & Qt::LeftButton){
-        if (drawMode == 0 | drawMode==3| drawMode==2)
-            putPixel(mouseEvent->scenePos(), Canvas::c1);
-        else if (drawMode ==1 )
-            deletePixel(mouseEvent->scenePos(), Canvas::c1);
+    if (isMainCanvas == true){
+        currentRect.clear();
+        startingPoint = mouseEvent->scenePos();
+        buttonHeld = true;
+        previousState = currentState;
+        if (mouseEvent->buttons() & Qt::LeftButton){
+            if (drawMode == 0 | drawMode==3| drawMode==2)
+                putPixel(mouseEvent->scenePos(), Canvas::c1);
+            else if (drawMode ==1 )
+                deletePixel(mouseEvent->scenePos(), Canvas::c1);
+        }
+        else if(mouseEvent->buttons() & Qt::RightButton){
+            if (drawMode == 0 | drawMode==3| drawMode==2)
+                putPixel(mouseEvent->scenePos(), Canvas::c2);
+            else if (drawMode ==1)
+                deletePixel(mouseEvent->scenePos(), Canvas::c2);
+        }
     }
-    else if(mouseEvent->buttons() & Qt::RightButton){
-        if (drawMode == 0 | drawMode==3| drawMode==2)
-            putPixel(mouseEvent->scenePos(), Canvas::c2);
-        else if (drawMode ==1)
-            deletePixel(mouseEvent->scenePos(), Canvas::c2);
-    }
+    isMainCanvas = true;
     emit clickToGV(mouseEvent, frameNumber);
 }
 
