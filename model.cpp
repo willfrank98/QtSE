@@ -4,8 +4,10 @@
 #include <QDebug>
 #include <QFile>
 
-//#include <Magick++.h>
-//using namespace Magick;
+
+#include <GraphicsMagic/lib/Magick++.h>
+using namespace Magick;
+
 
 Model::Model(QObject *parent) : QObject(parent)
 {
