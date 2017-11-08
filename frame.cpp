@@ -65,8 +65,28 @@ void Frame::erase(QPoint point) {
     image.setPixelColor(point, QColor(0, 0, 0, 0));
 }
 
-void Frame::bucketFill(QPoint startPoint, QColor fill) {
-    // TODO
+void Frame::bucketFill(QPoint startPoint, QColor initialColor, QColor replacementColor) {
+    // Fill behavior is undefined if you click the same color as you want to fill so we do nothing.
+    if(initialColor == replacementColor){
+        return;
+    }
+    if(image.pixelColor(startPoint) != initialColor){
+        return;
+    }
+    image.setPixelColor(startPoint, replacementColor);
+    //We recursively look in cardinal directions (up, down, left, right).
+    if(startPoint.y()+1 < size().height()){
+        bucketFill(QPoint(startPoint.x(), startPoint.y()+1), initialColor, replacementColor);
+    }
+    if(startPoint.y()-1 >= 0){
+        bucketFill(QPoint(startPoint.x(), startPoint.y()-1), initialColor, replacementColor);
+    }
+    if(startPoint.x()-1 >= 0){
+        bucketFill(QPoint(startPoint.x()-1, startPoint.y()), initialColor, replacementColor);
+    }
+    if(startPoint.x()+1 < size().width()){
+        bucketFill(QPoint(startPoint.x()+1, startPoint.y()), initialColor, replacementColor);
+    }
 }
 
 void Frame::drawDither(QPoint point, QColor color1, QColor color2) {

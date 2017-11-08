@@ -26,7 +26,7 @@ public:
     void drawRectangle(QRect area, QColor line, QColor fill);
     void drawLine(QPoint start, QPoint end, QColor color);
     void erase(QPoint point);
-    void bucketFill(QPoint startPoint, QColor fill);
+    void bucketFill(QPoint startPoint, QColor initialColor, QColor replacementColor);
     void colorSwap(QPoint startPoint, QColor color);
     void drawDither(QPoint point, QColor color1, QColor color2);
 

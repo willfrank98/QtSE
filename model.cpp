@@ -4,13 +4,13 @@
 #include <QDebug>
 #include <QFile>
 
-#include <Magick++.h>
-using namespace Magick;
+//#include <Magick++.h>
+//using namespace Magick;
 
 Model::Model(QObject *parent) : QObject(parent)
 {
     // Make Magick look in the current directory for the library files.
-    Magick::InitializeMagick(".");
+    //Magick::InitializeMagick(".");
 
     // TODO: hook up a timer to the previewFrame signal
 }
@@ -94,6 +94,7 @@ void Model::redo() {
 }
 
 void Model::saveAnimatedGIF(QString filename) {
+    /*
     if (!filename.toLower().endsWith(".gif")) filename.append(".gif");
 
     QString tempFile = QString(filename).replace(".gif", ".png");
@@ -108,6 +109,7 @@ void Model::saveAnimatedGIF(QString filename) {
         QFile(tempFile).remove();
     }
     writeImages(newFrames.begin(), newFrames.end(), filename.toStdString());
+    */
 }
 
 void Model::saveFrameToPNG(QString filename) {
