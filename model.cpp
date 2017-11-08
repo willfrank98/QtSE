@@ -15,10 +15,24 @@ Model::Model(QObject *parent) : QObject(parent)
     //Magick::InitializeMagick(".");
 
     // TODO: hook up a timer to the previewFrame signal
+    previewAnimTimer.setInterval(200);
+    connect(previewAnimTimer, SIGNAL(timeout()), this, SLOT(previewDisplay());
+    previewAnimTimer.start();
+}
+
+void Model::previewDisplay(){
+    emit previewFrame(frames.at(previewAnimIndex)->pixels());
+    if(previewAnimIndex + 1 == frames.size()){
+        previewAnimIndex = 0;
+    }
+    else{
+        previewAnimIndex++;
+    }
 }
 
 void Model::setPreviewFPS(int secs) {
     // TODO
+    previewAnimTimer.setInterval(1000/secs);
 }
 
 void Model::setActiveFrame(int index) {

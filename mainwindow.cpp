@@ -94,6 +94,7 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(&model, &Model::frameUpdated, canvas, &Canvas::setFrame);
     connect(&model, &Model::previewFrame, this, [=](QImage image) {
         // TODO: do something with the image from previewFrame
+        ui->labelPreview->setPixmap(QPixmap::fromImage(image.scaled(ui->labelPreview->size())));
     });
     connect(ui->zoomLevelCheckbox, &QCheckBox::toggled, this, [=](bool toggled){
         // TODO: handle the zoom toggle
