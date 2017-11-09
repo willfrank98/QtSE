@@ -19,7 +19,7 @@ class Canvas : public QGraphicsScene
 {
     Q_OBJECT
 signals:
-    void frameUpdated(Frame *frame);
+    void frameUpdated(Frame *_frame);
     void pixelsModified(QImage);
 
 public slots:
@@ -27,7 +27,7 @@ public slots:
     void setSecondaryColor(QColor color);
     void swapColors();
     void setTool(Tool _tool);
-    void setFrame(Frame *frame);
+    void setFrame(Frame *_frame);
 
 private:
     QColor primaryColor = QColor(0, 0, 0, 255);
@@ -35,17 +35,17 @@ private:
     QVector<QPoint> points = QVector<QPoint>();
     Qt::MouseButton buttonHeld = Qt::NoButton;
     QSizeF pixSize = QSizeF(32, 32);
-    Frame *frame;
-    Tool tool;
-    QRectF rect;
-    bool mouseEnabled = true;
+    Frame *_frame;
+    Tool _tool;
+    QRectF _rect;
+    bool _mouseEnabled = true;
 
     void draw(QPointF point);
     void refresh();
 
 public:
     explicit Canvas(QObject *parent = nullptr);
-    void setDisableMouse(bool val) { mouseEnabled = !val; }
+    void setDisableMouse(bool val) { _mouseEnabled = !val; }
     void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent * mouseEvent);

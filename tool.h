@@ -3,7 +3,7 @@
  * CS3505 - A7: Sprite Editor
  * tool.h
  *
- * An enum of drawing tools that are used in the QtSE
+ * An enumeration of drawing tools that are used in the QtSE Sprite Editor
  */
 
 #ifndef TOOL_H

@@ -28,19 +28,19 @@ signals:
     void resetCanvas();
 
 public:
-    explicit MainWindow(Model& model, QWidget *parent = 0);
+    explicit MainWindow(Model& _model, QWidget *parent = 0);
     ~MainWindow();
 
 private:
-    Model *model;
-    Canvas *canvas = new Canvas();
-    Ui::MainWindow *ui;
-    int canvasSize;
-    qreal pixelSize;
-    QList<QToolButton*> paletteButtons;
-    QVector<QColor> paletteHistory;
-    int paletteHistoryIndex = 0;
-    QButtonGroup frameButtons;
+    Model *_model;
+    Canvas *_canvas = new Canvas();
+    Ui::MainWindow *_ui;
+    int _canvasSize;
+    qreal _pixelSize;
+    QList<QToolButton*> _paletteButtons;
+    QVector<QColor> _paletteHistory;
+    int _paletteHistoryIndex = 0;
+    QButtonGroup _frameButtons;
 
     QString colorToString(QColor color);
     void updatePaletteHistory();

@@ -23,97 +23,97 @@ Model::Model(QObject *parent) : QObject(parent)
     //Magick::InitializeMagick(".");
 
     // TODO: hook up a timer to the previewFrame signal
-    previewAnimTimer.setInterval(200);
-    connect(&previewAnimTimer, SIGNAL(timeout()), this, SLOT(previewDisplay()));
-    previewAnimTimer.start();
+    _previewAnimTimer.setInterval(200);
+    connect(&_previewAnimTimer, SIGNAL(timeout()), this, SLOT(previewDisplay()));
+    _previewAnimTimer.start();
 }
 
 void Model::previewDisplay(){
-    emit previewFrame(frames.at(previewAnimIndex)->pixels());
-    if(previewAnimIndex + 1 == frames.size()){
-        previewAnimIndex = 0;
+    emit previewFrame(_frames.at(_previewAnimIndex)->pixels());
+    if(_previewAnimIndex + 1 == _frames.size()){
+        _previewAnimIndex = 0;
     }
     else{
-        previewAnimIndex++;
+        _previewAnimIndex++;
     }
 }
 
 void Model::setPreviewFPS(int secs) {
     // TODO
-    previewAnimTimer.setInterval(1000/secs);
+    _previewAnimTimer.setInterval(1000/secs);
 }
 
 void Model::setActiveFrame(int index) {
     qDebug() << "hit";
-    currentFrame = frames.at(index);
-    emit frameUpdated(currentFrame);
+    _currentFrame = _frames.at(index);
+    emit frameUpdated(_currentFrame);
 }
 
 void Model::newSurface(int dimension) {
-    if (!isSaved) {
+    if (!_isSaved) {
         // emit a signal that prompts to save or something
     }
 
-    previewAnimTimer.stop();
+    _previewAnimTimer.stop();
 
     Frame *newFrame = new Frame(dimension);
-    frames.clear();
-    frames.append(newFrame);
-    currentFrame = newFrame;
-    emit frameCreated(frames.indexOf(currentFrame));
-    emit frameUpdated(currentFrame);
+    _frames.clear();
+    _frames.append(newFrame);
+    _currentFrame = newFrame;
+    emit frameCreated(_frames.indexOf(_currentFrame));
+    emit frameUpdated(_currentFrame);
 
-    previewAnimIndex = 0;
-    previewAnimTimer.start(previewAnimTimer.interval());
+    _previewAnimIndex = 0;
+    _previewAnimTimer.start(_previewAnimTimer.interval());
 }
 
 void Model::createFrame() {
-    Frame *newFrame = new Frame(frames.first()->size().width());
-    frames.insert(frames.indexOf(currentFrame)+1, newFrame);
-    currentFrame = newFrame;
-    emit frameCreated(frames.indexOf(currentFrame));
-    emit frameUpdated(currentFrame);
+    Frame *newFrame = new Frame(_frames.first()->size().width());
+    _frames.insert(_frames.indexOf(_currentFrame)+1, newFrame);
+    _currentFrame = newFrame;
+    emit frameCreated(_frames.indexOf(_currentFrame));
+    emit frameUpdated(_currentFrame);
 }
 
 void Model::dupeFrame(int index) {
-    Frame *newFrame = new Frame(*frames.at(index));
-    frames.insert(frames.indexOf(currentFrame)+1, newFrame);
-    currentFrame = newFrame;
-    emit frameCreated(frames.indexOf(currentFrame));
-    emit frameUpdated(currentFrame);
+    Frame *newFrame = new Frame(*_frames.at(index));
+    _frames.insert(_frames.indexOf(_currentFrame)+1, newFrame);
+    _currentFrame = newFrame;
+    emit frameCreated(_frames.indexOf(_currentFrame));
+    emit frameUpdated(_currentFrame);
 }
 
 void Model::deleteFrame(int index) {
-    if (index < frames.size()) frames.removeAt(index);
-    if (index < frames.size() - 1) currentFrame = frames.last();
-    else currentFrame = frames.at(index+1);
-    emit frameUpdated(currentFrame);
+    if (index < _frames.size()) _frames.removeAt(index);
+    if (index < _frames.size() - 1) _currentFrame = _frames.last();
+    else _currentFrame = _frames.at(index+1);
+    emit frameUpdated(_currentFrame);
 }
 
 void Model::updateUndoRedo(QImage newImage) {
-    if (!redoStack.isEmpty()) {
-        redoStack = QStack<QImage>();
+    if (!_redoStack.isEmpty()) {
+        _redoStack = QStack<QImage>();
     }
-    undoStack.push(newImage);
+    _undoStack.push(newImage);
 }
 
 void Model::undo() {
-    qDebug() << undoStack;
-    if (!undoStack.isEmpty()) {
-        redoStack.push(currentFrame->pixels());
-        tempImage = undoStack.pop();
-        currentFrame->setPixels(tempImage);
-        emit frameUpdated(currentFrame);
+    qDebug() << _undoStack;
+    if (!_undoStack.isEmpty()) {
+        _redoStack.push(_currentFrame->pixels());
+        _tempImage = _undoStack.pop();
+        _currentFrame->setPixels(_tempImage);
+        emit frameUpdated(_currentFrame);
     }
 }
 
 void Model::redo() {
-    qDebug() << redoStack;
-    if (!redoStack.isEmpty()) {
-        undoStack.push(currentFrame->pixels());
-        tempImage = redoStack.pop();
-        currentFrame->setPixels(tempImage);
-        emit frameUpdated(currentFrame);
+    qDebug() << _redoStack;
+    if (!_redoStack.isEmpty()) {
+        _undoStack.push(_currentFrame->pixels());
+        _tempImage = _redoStack.pop();
+        _currentFrame->setPixels(_tempImage);
+        emit frameUpdated(_currentFrame);
     }
 }
 
@@ -138,7 +138,7 @@ void Model::saveAnimatedGIF(QString filename) {
 
 void Model::saveFrameToPNG(QString filename) {
     if (!filename.toLower().endsWith(".png")) filename.append(".png");
-    currentFrame->pixels().save(filename);
+    _currentFrame->pixels().save(filename);
 }
 
 void Model::saveFrameToFile(QString filename)
@@ -152,15 +152,15 @@ void Model::saveFrameToFile(QString filename)
 	file.open(QFile::WriteOnly);
 	QTextStream outstream(&file);
 
-	int sizeX = currentFrame->size().rwidth();
-	int sizeY = currentFrame->size().rheight();
+    int sizeX = _currentFrame->size().rwidth();
+    int sizeY = _currentFrame->size().rheight();
 	outstream << sizeX << " " << sizeY << endl; //prints x and y dimensions
 
-	outstream << frames.size() << endl; //prints number of frames
+    outstream << _frames.size() << endl; //prints number of frames
 
-	for (int i = 0; i < frames.size(); i++)
+    for (int i = 0; i < _frames.size(); i++)
 	{
-		QImage frame = frames.at(i)->pixels();
+        QImage frame = _frames.at(i)->pixels();
 
 		for (int y = 0; y < sizeY; y++)
 		{
@@ -266,7 +266,7 @@ void Model::saveFrameSequence(QString dir) {
 }
 
 void Model::exit() {
-    if (isSaved) {
+    if (_isSaved) {
         QApplication::exit();
     }
     else {
