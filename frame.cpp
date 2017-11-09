@@ -105,14 +105,9 @@ void Frame::drawDither(QPoint point, QColor color1, QColor color2) {
     // TODO
 }
 
-<<<<<<< HEAD
 // This is the color-fill tool.  We might want to rename it to better reflect that.
 void Frame::colorSwap(QPoint startPoint, QColor color) {
     QColor oldColor = _image.pixelColor(startPoint);
-=======
-void Frame::colorFill(QPoint startPoint, QColor color) {
-    QColor oldColor = image.pixelColor(startPoint);
->>>>>>> a394067f08ff8e4e05e134410c0c48303cf83801
 
     // the below link really helped here
     // https://forum.qt.io/topic/32039/pixmap-mask-not-coloring-over-the-image/2

@@ -152,19 +152,11 @@ void Model::saveToFile(QString filename)
 	file.open(QFile::WriteOnly);
 	QTextStream out(&file);
 
-<<<<<<< HEAD
     int sizeX = _currentFrame->size().rwidth();
     int sizeY = _currentFrame->size().rheight();
 	outstream << sizeX << " " << sizeY << endl; //prints x and y dimensions
 
     outstream << _frames.size() << endl; //prints number of frames
-=======
-	int sizeX = currentFrame->size().rwidth();
-	int sizeY = currentFrame->size().rheight();
-	out << sizeX << " " << sizeY << endl; //prints x and y dimensions
-
-	out << frames.size() << endl; //prints number of frames
->>>>>>> a394067f08ff8e4e05e134410c0c48303cf83801
 
     for (int i = 0; i < _frames.size(); i++)
 	{

@@ -66,13 +66,8 @@ void Canvas::draw(QPointF point) {
             if (_buttonHeld == Qt::RightButton) _frame->bucketFill(convertedPoint,_frame->pixels().pixelColor(convertedPoint)  , _secondaryColor);
             break;
         case ColorFillTool:
-<<<<<<< HEAD
             if (_buttonHeld == Qt::LeftButton) _frame->colorSwap(convertedPoint, _primaryColor);
             if (_buttonHeld == Qt::RightButton) _frame->colorSwap(convertedPoint, _secondaryColor);
-=======
-            if (_buttonHeld == Qt::LeftButton) frame->colorFill(convertedPoint, _primaryColor);
-            if (_buttonHeld == Qt::RightButton) frame->colorFill(convertedPoint, _secondaryColor);
->>>>>>> a394067f08ff8e4e05e134410c0c48303cf83801
             break;
         default:
             break;
