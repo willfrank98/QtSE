@@ -37,7 +37,11 @@ void Frame::drawEllipse(QRect area, QColor line, QColor fill) {
 }
 
 void Frame::drawMirrorPen(QPoint point, QColor color) {
-    // TODO
+	painter->setPen(color);
+	painter->setBrush(QColor(0, 0, 0, 0));
+
+	painter->drawPoint(point);
+	painter->drawPoint(-point.x() + image.size().width() - 1, point.y());
 }
 
 void Frame::drawPen(QPoint point, QColor color) {

@@ -153,7 +153,10 @@ void Model::saveFrameToFile(QString filename)
 	for (int i = 0; i < frames.size(); i++)
 	{
 		int currentPixel = 0;
-		QVector<QRgb> pixels = frames.at(i)->pixels().colorTable(); //returns a list of all pixels as a vector of QRgb's
+
+		QImage frame = frames.at(i)->pixels();
+
+		QVector<QRgb> pixels = frame.colorTable(); //returns a list of all pixels as a vector of QRgb's
 
 		foreach (QRgb pixel, pixels)
 		{
