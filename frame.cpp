@@ -105,8 +105,7 @@ void Frame::drawDither(QPoint point, QColor color1, QColor color2) {
     // TODO
 }
 
-// This is the color-fill tool.  We might want to rename it to better reflect that.
-void Frame::colorSwap(QPoint startPoint, QColor color) {
+void Frame::colorFill(QPoint startPoint, QColor color) {
     QColor oldColor = image.pixelColor(startPoint);
 
     // the below link really helped here

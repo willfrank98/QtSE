@@ -141,7 +141,7 @@ void Model::saveFrameToPNG(QString filename) {
     currentFrame->pixels().save(filename);
 }
 
-void Model::saveFrameToFile(QString filename)
+void Model::saveToFile(QString filename)
 {
 	if (!filename.toLower().endsWith(".ssp"))
 	{
@@ -176,7 +176,7 @@ void Model::saveFrameToFile(QString filename)
 	file.close();
 }
 
-void Model::loadFrameFromFile(QString filename)
+void Model::loadFromFile(QString filename)
 {
 	QFile f(filename);
 	f.open(QIODevice::ReadOnly);
@@ -200,16 +200,18 @@ void Model::loadFrameFromFile(QString filename)
 	for (int f = 1; f <= frames; f++)
 	{
 		QImage tempImage;
-		for (int x = 0; x < sizeX; x++)
+		for (int y = 0; y < sizeY; y++)
 		{
-			for (int y = 0; y < sizeY; ++y)
+			for (int x = 0; x < sizeX; x++)
 			{
+				//reads in the next 4 values and creates a color
 				QColor color(list.at(listIter++), list.at(listIter++), list.at(listIter++), list.at(listIter++));
 				tempImage.setPixel(x, y, color);
 			}
 		}
 		currentFrame->setPixels(tempImage);
 
+		//if necessary creates a new frame
 		if (f < frames)
 		{
 			createFrame();

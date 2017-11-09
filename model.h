@@ -38,8 +38,8 @@ public slots:
     void saveAnimatedGIF(QString filename);
     void saveFrameToPNG(QString filename);
     void saveFrameSequence(QString dir);
-	void saveFrameToFile(QString filename);
-	void loadFrameFromFile(QString filename);
+	void saveToFile(QString filename);
+	void loadFromFile(QString filename);
     void setPreviewFPS(int secs);
     void previewDisplay();
     void setActiveFrame(int index);
