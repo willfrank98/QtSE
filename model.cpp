@@ -178,7 +178,7 @@ void Model::saveToFile(QString filename)
 
 void Model::loadFromFile(QString filename)
 {
-	QFile f(filename);
+    QFile f(filename);
 	f.open(QIODevice::ReadOnly);
 	QTextStream in(&f);
 

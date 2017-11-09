@@ -130,11 +130,11 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 
 	//	connects File>Save and >Load
         connect(_ui->actionSave, &QAction::triggered, this, [=]() {
-			QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), "./", tr("Sprites (.ssp)"));
+            QString filename = QFileDialog::getSaveFileName(this, "Save File", "./", "Sprites (.ssp)");
             this->_model->saveToFile(filename);
 		});
         connect(_ui->actionLoad, &QAction::triggered, this, [=]() {
-			QString filename = QFileDialog::getOpenFileName(this, tr("Load File"), "./", tr("Sprites (.ssp)"));
+            QString filename = QFileDialog::getOpenFileName(this, "Load File", "./", "Sprites (.ssp)");
             this->_model->loadFromFile(filename);
 		});
 
