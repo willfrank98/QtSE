@@ -1,3 +1,11 @@
+/*
+ * Team Deathstar IT
+ * CS3505 - A7: Sprite Editor
+ * model.cpp
+ *
+ *
+ */
+
 #include "model.h"
 #include <QtGlobal>
 #include <QApplication>

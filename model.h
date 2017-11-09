@@ -1,3 +1,11 @@
+/*
+ * Team Deathstar IT
+ * CS3505 - A7: Sprite Editor
+ * model.h
+ *
+ *
+ */
+
 #ifndef MODEL_H
 #define MODEL_H
 

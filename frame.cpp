@@ -1,3 +1,11 @@
+/*
+ * Team Deathstar IT
+ * CS3505 - A7: Sprite Editor
+ * frame.cpp
+ *
+ *
+ */
+
 #include "frame.h"
 #include <QDebug>
 #include <QBitmap>

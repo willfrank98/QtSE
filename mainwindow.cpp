@@ -1,3 +1,11 @@
+/*
+ * Team Deathstar IT
+ * CS3505 - A7: Sprite Editor
+ * mainwindow.cpp
+ *
+ *
+ */
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "canvas.h"
