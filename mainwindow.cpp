@@ -120,6 +120,16 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(ui->pushButtonAddFrame, &QPushButton::clicked, &model, &Model::createFrame);
     connect(&model, &Model::frameCreated, this, [=](int i){ newFrame(i); });
 
+	//	connects File>Save and >Load
+		connect(ui->actionSave, &QAction::triggered, this, [=]() {
+			QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), "./", tr("Sprites (.ssp)"));
+			this->model->saveFrameToFile(filename);
+		});
+		connect(ui->actionLoad, &QAction::triggered, this, [=]() {
+			QString filename = QFileDialog::getOpenFileName(this, tr("Load File"), "./", tr("Sprites (.ssp)"));
+			this->model->loadFrameFromFile(filename);
+		});
+
     // Connects the Shortcut Keys
     QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+1"), ui->centralWidget);
     connect(shortcut, SIGNAL(activated()), ui->penToolButton, SLOT(clicked()));
