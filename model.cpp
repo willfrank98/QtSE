@@ -150,7 +150,7 @@ void Model::saveToFile(QString filename)
 
 	QFile file(filename);
 	file.open(QFile::WriteOnly);
-	QTextStream out(&file);
+    QTextStream outstream(&file);
 
     int sizeX = _currentFrame->size().rwidth();
     int sizeY = _currentFrame->size().rheight();
@@ -167,9 +167,9 @@ void Model::saveToFile(QString filename)
 			for (int x = 0; x < sizeX; x++)
 			{
 				QRgb pixel = frame.pixel(x, y);
-				out << qRed(pixel) << " " << qGreen(pixel) << " " << qBlue(pixel) << " " << qAlpha(pixel) << " ";
+                outstream << qRed(pixel) << " " << qGreen(pixel) << " " << qBlue(pixel) << " " << qAlpha(pixel) << " ";
 			}
-			out << endl;
+            outstream << endl;
 		}
 	}
 
@@ -206,10 +206,10 @@ void Model::loadFromFile(QString filename)
 			{
 				//reads in the next 4 values and creates a color
 				QColor color(list.at(listIter++), list.at(listIter++), list.at(listIter++), list.at(listIter++));
-				tempImage.setPixel(x, y, color);
+                tempImage.setPixel(x, y, color.rgba());
 			}
 		}
-		currentFrame->setPixels(tempImage);
+        _currentFrame->setPixels(tempImage);
 
 		//if necessary creates a new frame
 		if (f < frames)
