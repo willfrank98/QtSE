@@ -216,6 +216,18 @@ void MainWindow::newFrame(int index) {
         model->dupeFrame(frameButtons.id(frameButtons.checkedButton()));
     });
 
+    QToolButton *removeFrame = new QToolButton(newFrame);
+    removeFrame->setGeometry(6, 6, 13, 13);
+    removeFrame->setAutoRaise(true);
+    removeFrame->setObjectName("remove");
+    removeFrame->setText("X");
+//   connect(removeFrame, &QToolButton::clicked, model, [=](){
+//       int frameNum = ui->frameContainer->layout()->indexOf(newFrame);
+//        frameSelected->setChecked(true);
+//        model->setActiveFrame(frameNum);
+//        model->deleteFrame(frameButtons.id(frameButtons.checkedButton()));
+//    });
+
 
     // remove the spacer
     ui->frameContainer->layout()->removeItem(ui->frameContainer->layout()->itemAt(ui->frameContainer->layout()->count()-1));
