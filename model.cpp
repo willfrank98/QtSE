@@ -141,7 +141,7 @@ void Model::saveFrameToPNG(QString filename) {
     _currentFrame->pixels().save(filename);
 }
 
-void Model::saveFrameToFile(QString filename)
+void Model::saveToFile(QString filename)
 {
 	if (!filename.toLower().endsWith(".ssp"))
 	{
@@ -150,13 +150,21 @@ void Model::saveFrameToFile(QString filename)
 
 	QFile file(filename);
 	file.open(QFile::WriteOnly);
-	QTextStream outstream(&file);
+	QTextStream out(&file);
 
+<<<<<<< HEAD
     int sizeX = _currentFrame->size().rwidth();
     int sizeY = _currentFrame->size().rheight();
 	outstream << sizeX << " " << sizeY << endl; //prints x and y dimensions
 
     outstream << _frames.size() << endl; //prints number of frames
+=======
+	int sizeX = currentFrame->size().rwidth();
+	int sizeY = currentFrame->size().rheight();
+	out << sizeX << " " << sizeY << endl; //prints x and y dimensions
+
+	out << frames.size() << endl; //prints number of frames
+>>>>>>> a394067f08ff8e4e05e134410c0c48303cf83801
 
     for (int i = 0; i < _frames.size(); i++)
 	{
@@ -167,98 +175,58 @@ void Model::saveFrameToFile(QString filename)
 			for (int x = 0; x < sizeX; x++)
 			{
 				QRgb pixel = frame.pixel(x, y);
-				outstream << qRed(pixel) << " " << qGreen(pixel) << " " << qBlue(pixel) << " " << qAlpha(pixel) << " ";
+				out << qRed(pixel) << " " << qGreen(pixel) << " " << qBlue(pixel) << " " << qAlpha(pixel) << " ";
 			}
-			outstream << endl;
+			out << endl;
 		}
-
-//		QVector<QRgb> pixels = frame.colorTable(); //returns a list of all pixels as a vector of QRgb's
-
-//		foreach (QRgb pixel, pixels)
-//		{
-//			outstream << qRed(pixel) << " " << qGreen(pixel) << " " << qBlue(pixel) << " " << qAlpha(pixel) << " ";
-//			currentPixel++;
-//			if (currentPixel%sizeX == 0)
-//			{
-//				outstream << endl;
-//			}
-//		}
 	}
 
 	file.close();
 }
 
-void Model::loadFrameFromFile(QString filename)
+void Model::loadFromFile(QString filename)
 {
-//	QFile f(filename);
-//	f.open(QIODevice::ReadOnly);
-//	QTextStream in(&f);
-//	QRegExp rx("(\\ )"); //RegEx split empty space ' '
-//	int lineCounter, numberOfFrames, heightCounter, imageCounter;
-//	lineCounter = 0;
-//	heightCounter = 0;
-//	imageCounter = 0;
-//	QString line = in.readLine();    //read the first line
-//	QStringList query = line.split(rx);
-//	QString qs = query.at(0);
-//	int sizeY = qs.toInt();
-//	qs = query.at(1);
-//	int sizeX = qs.toInt();
-//	line = in.readLine();     //read the 2nd line
-//	query = line.split(rx);
-//	numberOfFrames = line.toInt();
-//	QImage i(sizeX, sizeY, QImage::Format_ARGB32);
-//	QImage iCanvas(sizeX, sizeY, QImage::Format_ARGB32);
-//	setPixSize(sizeX, sizeY, ui->graphicsViewCanvas->height());
-//	imageHeight = sizeY * pixSize;
-//	int testCount = 0;
-//	while (!in.atEnd())
-//	{
-//		heightCounter = lineCounter % sizeY;
-//		line = in.readLine();
-//		query = line.split(rx);
-//		int widthCounter = 0;
-//		for(int x1 = 0; x1 < sizeX; x1++) {
-//			int r,g,b,a;
-//			for (int x2 = 0; x2< 4; x2++){
-//				qs = query.at(x1*4+x2);
-//				int val = qs.toInt();
-//				QPoint qp;
-//				qp.setX(widthCounter);
-//				QString str;
-//				if (x2==0)
-//					r = val;
-//				if (x2==1)
-//					g = val;
-//				if (x2==2)
-//					b = val;
-//				if (x2==3)
-//					a = val;
-//			}
-//			QColor color;
-//			color.setRgb(r,g,b,a);
-//			QBrush brush(color, Qt::SolidPattern);
-//			i.setPixel(x1, heightCounter, brush.color().rgb());
-//			std::string temp = std::to_string(x1)+"."+std::to_string(heightCounter);
-//			singleMap.try_emplace(temp, color);
-//		}
-//		if (heightCounter == sizeY - 1)
-//		{
-//			addFramePreview(i,sizeX,sizeY);
-//			scenes.at(imageCounter)->redraw(singleMap,0);
-//			scenes.at(imageCounter)->currentState = singleMap;
-//			singleMap.clear();
-//			imageCounter++;
-//		}
-//		if (testCount == sizeY - 1)
-//		{
-//			iCanvas = QImage(i);
-//		}
-//		lineCounter++;
-//		heightCounter++;
-//		testCount++;
-//	}
-//	f.close();
+	QFile f(filename);
+	f.open(QIODevice::ReadOnly);
+	QTextStream in(&f);
+
+	QList<int> list;
+	while (!in.atEnd())
+	{
+		int x;
+		in >> x;
+		list.append(x);
+	}
+
+	int sizeX = list.at(0);
+	int sizeY = list.at(1);
+	int frames = list.at(2);
+
+	newSurface(sizeX);
+
+	int listIter = 3;
+	for (int f = 1; f <= frames; f++)
+	{
+		QImage tempImage;
+		for (int y = 0; y < sizeY; y++)
+		{
+			for (int x = 0; x < sizeX; x++)
+			{
+				//reads in the next 4 values and creates a color
+				QColor color(list.at(listIter++), list.at(listIter++), list.at(listIter++), list.at(listIter++));
+				tempImage.setPixel(x, y, color);
+			}
+		}
+		currentFrame->setPixels(tempImage);
+
+		//if necessary creates a new frame
+		if (f < frames)
+		{
+			createFrame();
+		}
+	}
+
+	f.close();
 }
 
 void Model::saveFrameSequence(QString dir) {

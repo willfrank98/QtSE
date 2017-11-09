@@ -17,17 +17,17 @@ Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 }
 
 void Canvas::setPrimaryColor(QColor color) {
-    primaryColor = color;
+    _primaryColor = color;
 }
 
 void Canvas::setSecondaryColor(QColor color) {
-    secondaryColor = color;
+    _secondaryColor = color;
 }
 
 void Canvas::swapColors() {
-    QColor temp = secondaryColor;
-    secondaryColor = primaryColor;
-    primaryColor = temp;
+    QColor temp = _secondaryColor;
+    _secondaryColor = _primaryColor;
+    _primaryColor = temp;
 }
 
 void Canvas::setTool(Tool tool) {
@@ -41,9 +41,9 @@ void Canvas::setFrame(Frame *frame) {
 }
 
 void Canvas::draw(QPointF point) {
-    if (buttonHeld != Qt::NoButton) {
-        QPoint convertedPoint = QPoint(point.x() / pixSize.width(), point.y() / pixSize.height());
-        QColor color = (buttonHeld == Qt::LeftButton) ? primaryColor : secondaryColor;
+    if (_buttonHeld != Qt::NoButton) {
+        QPoint convertedPoint = QPoint(point.x() / _pixSize.width(), point.y() / _pixSize.height());
+        QColor color = (_buttonHeld == Qt::LeftButton) ? _primaryColor : _secondaryColor;
 
         switch (_tool) {
         case PenTool:
@@ -56,18 +56,23 @@ void Canvas::draw(QPointF point) {
             _frame->erase(convertedPoint);
             break;
         case DitheringTool:
-            if (convertedPoint.x() % 2 == 0 && convertedPoint.y() % 2 == 0) _frame->drawPen(convertedPoint, primaryColor);
-            else if (convertedPoint.x() % 2 == 1 && convertedPoint.y() % 2 == 1) _frame->drawPen(convertedPoint, primaryColor);
-            else if (convertedPoint.x() % 2 == 1 && convertedPoint.y() % 2 == 0) _frame->drawPen(convertedPoint, secondaryColor);
-            else if (convertedPoint.x() % 2 == 0 && convertedPoint.y() % 2 == 1) _frame->drawPen(convertedPoint, secondaryColor);
+            if (convertedPoint.x() % 2 == 0 && convertedPoint.y() % 2 == 0) _frame->drawPen(convertedPoint, _primaryColor);
+            else if (convertedPoint.x() % 2 == 1 && convertedPoint.y() % 2 == 1) _frame->drawPen(convertedPoint, _primaryColor);
+            else if (convertedPoint.x() % 2 == 1 && convertedPoint.y() % 2 == 0) _frame->drawPen(convertedPoint, _secondaryColor);
+            else if (convertedPoint.x() % 2 == 0 && convertedPoint.y() % 2 == 1) _frame->drawPen(convertedPoint, _secondaryColor);
             break;
         case BucketFillTool:
-            if (buttonHeld == Qt::LeftButton) _frame->bucketFill(convertedPoint,_frame->pixels().pixelColor(convertedPoint) , primaryColor);
-            if (buttonHeld == Qt::RightButton) _frame->bucketFill(convertedPoint,_frame->pixels().pixelColor(convertedPoint)  , secondaryColor);
+            if (_buttonHeld == Qt::LeftButton) _frame->bucketFill(convertedPoint,_frame->pixels().pixelColor(convertedPoint) , _primaryColor);
+            if (_buttonHeld == Qt::RightButton) _frame->bucketFill(convertedPoint,_frame->pixels().pixelColor(convertedPoint)  , _secondaryColor);
             break;
         case ColorFillTool:
-            if (buttonHeld == Qt::LeftButton) _frame->colorSwap(convertedPoint, primaryColor);
-            if (buttonHeld == Qt::RightButton) _frame->colorSwap(convertedPoint, secondaryColor);
+<<<<<<< HEAD
+            if (_buttonHeld == Qt::LeftButton) _frame->colorSwap(convertedPoint, _primaryColor);
+            if (_buttonHeld == Qt::RightButton) _frame->colorSwap(convertedPoint, _secondaryColor);
+=======
+            if (_buttonHeld == Qt::LeftButton) frame->colorFill(convertedPoint, _primaryColor);
+            if (_buttonHeld == Qt::RightButton) frame->colorFill(convertedPoint, _secondaryColor);
+>>>>>>> a394067f08ff8e4e05e134410c0c48303cf83801
             break;
         default:
             break;
@@ -77,25 +82,25 @@ void Canvas::draw(QPointF point) {
 }
 
 void Canvas::refresh() {
-    pixSize = QSizeF(sceneRect().width() / (qreal)_frame->size().width(),
+    _pixSize = QSizeF(sceneRect().width() / (qreal)_frame->size().width(),
                      sceneRect().height() / (qreal)_frame->size().width());
-    QRect convertedRect = QRect(_rect.x() / pixSize.width(), _rect.y() / pixSize.height(),
-                                _rect.size().width() / pixSize.width(), _rect.size().height() / pixSize.height());
+    QRect convertedRect = QRect(_rect.x() / _pixSize.width(), _rect.y() / _pixSize.height(),
+                                _rect.size().width() / _pixSize.width(), _rect.size().height() / _pixSize.height());
     clear();
 
     // Need special handling for ellipses and rectangles
     QPen pen;
     pen.setCapStyle(Qt::FlatCap);
-    pen.setWidth(pixSize.width());
-    pen.setColor(primaryColor);
+    pen.setWidth(_pixSize.width());
+    pen.setColor(_primaryColor);
     switch (_tool) {
     case RectangleTool:
-        if (buttonHeld != Qt::NoButton) addRect(_rect, pen)->setZValue(1);
-        else _frame->drawRectangle(convertedRect, primaryColor, QColor(0, 0, 0, 0));
+        if (_buttonHeld != Qt::NoButton) addRect(_rect, pen)->setZValue(1);
+        else _frame->drawRectangle(convertedRect, _primaryColor, QColor(0, 0, 0, 0));
         break;
     case EllipseTool:
-        if (buttonHeld != Qt::NoButton) addEllipse(_rect, pen)->setZValue(1);
-        else _frame->drawEllipse(convertedRect, primaryColor, QColor(0, 0, 0, 0));
+        if (_buttonHeld != Qt::NoButton) addEllipse(_rect, pen)->setZValue(1);
+        else _frame->drawEllipse(convertedRect, _primaryColor, QColor(0, 0, 0, 0));
         break;
     case RectSelectTool:
         // I don't really know what we want to be doing here...
@@ -105,10 +110,10 @@ void Canvas::refresh() {
         pen.setStyle(Qt::SolidLine);
         break;
     case LineTool:
-        if (buttonHeld != Qt::NoButton) addLine(_rect.x(), _rect.y(), _rect.x() + _rect.width(), _rect.y() + _rect.height(), pen)->setZValue(1);
+        if (_buttonHeld != Qt::NoButton) addLine(_rect.x(), _rect.y(), _rect.x() + _rect.width(), _rect.y() + _rect.height(), pen)->setZValue(1);
         else if (convertedRect != QRect()) _frame->drawLine(QPoint(convertedRect.x(), convertedRect.y()),
                              QPoint(convertedRect.x() + convertedRect.width(), convertedRect.y() + convertedRect.height()),
-                             primaryColor);
+                             _primaryColor);
         break;
     default:
         break;
@@ -132,7 +137,7 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (!_mouseEnabled) return;
 
-    buttonHeld = mouseEvent->button();
+    _buttonHeld = mouseEvent->button();
     _rect = QRectF(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 0, 0);
     draw(mouseEvent->scenePos());
 }
@@ -141,7 +146,7 @@ void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (!_mouseEnabled) return;
 
-    buttonHeld = Qt::NoButton;
+    _buttonHeld = Qt::NoButton;
     if (_tool == RectangleTool || _tool == EllipseTool || _tool == LineTool) refresh();
     emit pixelsModified(_frame->pixels());
 

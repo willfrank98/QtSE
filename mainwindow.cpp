@@ -131,11 +131,19 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 	//	connects File>Save and >Load
         connect(_ui->actionSave, &QAction::triggered, this, [=]() {
 			QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), "./", tr("Sprites (.ssp)"));
+<<<<<<< HEAD
             this->_model->saveFrameToFile(filename);
+=======
+			this->model->saveToFile(filename);
+>>>>>>> a394067f08ff8e4e05e134410c0c48303cf83801
 		});
         connect(_ui->actionLoad, &QAction::triggered, this, [=]() {
 			QString filename = QFileDialog::getOpenFileName(this, tr("Load File"), "./", tr("Sprites (.ssp)"));
+<<<<<<< HEAD
             this->_model->loadFrameFromFile(filename);
+=======
+			this->model->loadFromFile(filename);
+>>>>>>> a394067f08ff8e4e05e134410c0c48303cf83801
 		});
 
     // Connects the Shortcut Keys

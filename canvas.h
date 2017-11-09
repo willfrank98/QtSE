@@ -26,15 +26,15 @@ public slots:
     void setPrimaryColor(QColor color);
     void setSecondaryColor(QColor color);
     void swapColors();
-    void setTool(Tool _tool);
-    void setFrame(Frame *_frame);
+    void setTool(Tool tool);
+    void setFrame(Frame *frame);
 
 private:
-    QColor primaryColor = QColor(0, 0, 0, 255);
-    QColor secondaryColor = QColor(255, 255, 255, 255);
-    QVector<QPoint> points = QVector<QPoint>();
-    Qt::MouseButton buttonHeld = Qt::NoButton;
-    QSizeF pixSize = QSizeF(32, 32);
+    QColor _primaryColor = QColor(0, 0, 0, 255);
+    QColor _secondaryColor = QColor(255, 255, 255, 255);
+    QVector<QPoint> _points = QVector<QPoint>();
+    Qt::MouseButton _buttonHeld = Qt::NoButton;
+    QSizeF _pixSize = QSizeF(32, 32);
     Frame *_frame;
     Tool _tool;
     QRectF _rect;
