@@ -1,3 +1,11 @@
+/*
+ * Team Deathstar IT
+ * CS3505 - A7: Sprite Editor
+ * canvas.cpp
+ *
+ *
+ */
+
 #include "canvas.h"
 #include <QDebug>
 #include <QGraphicsPixmapItem>

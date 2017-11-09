@@ -1,3 +1,11 @@
+/*
+ * Team Deathstar IT
+ * CS3505 - A7: Sprite Editor
+ * mainwindow.h
+ *
+ *
+ */
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 

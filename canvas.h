@@ -1,3 +1,11 @@
+/*
+ * Team Deathstar IT
+ * CS3505 - A7: Sprite Editor
+ * canvas.h
+ *
+ *
+ */
+
 #ifndef CANVAS_H
 #define CANVAS_H
 #include <QGraphicsScene>

@@ -1,3 +1,11 @@
+/*
+ * Team Deathstar IT
+ * CS3505 - A7: Sprite Editor
+ * main.cpp
+ *
+ *
+ */
+
 #include "mainwindow.h"
 #include <QApplication>
 #include <QDebug>

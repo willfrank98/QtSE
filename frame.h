@@ -1,3 +1,11 @@
+/*
+ * Team Deathstar IT
+ * CS3505 - A7: Sprite Editor
+ * frame.h
+ *
+ *
+ */
+
 #ifndef FRAME_H
 #define FRAME_H
 
