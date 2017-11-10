@@ -1,3 +1,11 @@
+/*
+ * Team Deathstar IT
+ * CS3505 - A7: Sprite Editor
+ * frame.h
+ *
+ *
+ */
+
 #ifndef FRAME_H
 #define FRAME_H
 
@@ -9,11 +17,11 @@
 class Frame
 {
 private:
-    QImage image;
-    QPainter *painter;
-    QStack<QPoint> pixelStack;
-    QStack<QImage> undoStack;
-    QStack<QImage> redoStack;
+    QImage _image;
+    QPainter *_painter;
+    QStack<QPoint> _pixelStack;
+    QStack<QImage> _undoStack;
+    QStack<QImage> _redoStack;
 
 public:
     Frame();

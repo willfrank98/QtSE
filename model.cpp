@@ -1,3 +1,11 @@
+/*
+ * Team Deathstar IT
+ * CS3505 - A7: Sprite Editor
+ * model.cpp
+ *
+ *
+ */
+
 #include "model.h"
 #include <QtGlobal>
 #include <QApplication>
@@ -15,67 +23,68 @@ Model::Model(QObject *parent) : QObject(parent)
     //Magick::InitializeMagick(".");
 
     // TODO: hook up a timer to the previewFrame signal
-    previewAnimTimer.setInterval(200);
-    connect(&previewAnimTimer, SIGNAL(timeout()), this, SLOT(previewDisplay()));
-    previewAnimTimer.start();
+    _previewAnimTimer.setInterval(200);
+    connect(&_previewAnimTimer, SIGNAL(timeout()), this, SLOT(previewDisplay()));
+    _previewAnimTimer.start();
 }
 
 void Model::previewDisplay(){
-    emit previewFrame(frames.at(previewAnimIndex)->pixels());
-    if(previewAnimIndex + 1 == frames.size()){
-        previewAnimIndex = 0;
+    emit previewFrame(_frames.at(_previewAnimIndex)->pixels());
+    if(_previewAnimIndex + 1 == _frames.size()){
+        _previewAnimIndex = 0;
     }
     else{
-        previewAnimIndex++;
+        _previewAnimIndex++;
     }
 }
 
 void Model::setPreviewFPS(int secs) {
     // TODO
-    previewAnimTimer.setInterval(1000/secs);
+    _previewAnimTimer.setInterval(1000/secs);
 }
 
 void Model::setActiveFrame(int index) {
     qDebug() << "hit";
-    currentFrame = frames.at(index);
-    emit frameUpdated(currentFrame);
+    _currentFrame = _frames.at(index);
+    emit frameUpdated(_currentFrame);
 }
 
 void Model::newSurface(int dimension) {
-    if (!isSaved) {
+    if (!_isSaved) {
         // emit a signal that prompts to save or something
     }
 
-    previewAnimTimer.stop();
+    _previewAnimTimer.stop();
 
     Frame *newFrame = new Frame(dimension);
-    frames.clear();
-    frames.append(newFrame);
-    currentFrame = newFrame;
-    emit frameCreated(frames.indexOf(currentFrame));
-    emit frameUpdated(currentFrame);
+    _frames.clear();
+    _frames.append(newFrame);
+    _currentFrame = newFrame;
+    emit frameCreated(_frames.indexOf(_currentFrame));
+    emit frameUpdated(_currentFrame);
 
-    previewAnimIndex = 0;
-    previewAnimTimer.start(previewAnimTimer.interval());
+    _previewAnimIndex = 0;
+    _previewAnimTimer.start(_previewAnimTimer.interval());
 }
 
 void Model::createFrame() {
-    Frame *newFrame = new Frame(frames.first()->size().width());
-    frames.insert(frames.indexOf(currentFrame)+1, newFrame);
-    currentFrame = newFrame;
-    emit frameCreated(frames.indexOf(currentFrame));
-    emit frameUpdated(currentFrame);
+    Frame *newFrame = new Frame(_frames.first()->size().width());
+    _frames.insert(_frames.indexOf(_currentFrame)+1, newFrame);
+    _currentFrame = newFrame;
+    emit frameCreated(_frames.indexOf(_currentFrame));
+    emit frameUpdated(_currentFrame);
 }
 
 void Model::dupeFrame(int index) {
-    Frame *newFrame = new Frame(*frames.at(index));
-    frames.insert(frames.indexOf(currentFrame)+1, newFrame);
-    currentFrame = newFrame;
-    emit frameCreated(frames.indexOf(currentFrame));
-    emit frameUpdated(currentFrame);
+    Frame *newFrame = new Frame(*_frames.at(index));
+    _frames.insert(_frames.indexOf(_currentFrame)+1, newFrame);
+    _currentFrame = newFrame;
+    emit frameCreated(_frames.indexOf(_currentFrame));
+    emit frameUpdated(_currentFrame);
 }
 
 void Model::deleteFrame(int index) {
+<<<<<<< HEAD
     if (frames.size()<=1)
     {
         return;
@@ -95,29 +104,29 @@ void Model::deleteFrame(int index) {
 }
 
 void Model::updateUndoRedo(QImage newImage) {
-    if (!redoStack.isEmpty()) {
-        redoStack = QStack<QImage>();
+    if (!_redoStack.isEmpty()) {
+        _redoStack = QStack<QImage>();
     }
-    undoStack.push(newImage);
+    _undoStack.push(newImage);
 }
 
 void Model::undo() {
-    qDebug() << undoStack;
-    if (!undoStack.isEmpty()) {
-        redoStack.push(currentFrame->pixels());
-        tempImage = undoStack.pop();
-        currentFrame->setPixels(tempImage);
-        emit frameUpdated(currentFrame);
+    qDebug() << _undoStack;
+    if (!_undoStack.isEmpty()) {
+        _redoStack.push(_currentFrame->pixels());
+        _tempImage = _undoStack.pop();
+        _currentFrame->setPixels(_tempImage);
+        emit frameUpdated(_currentFrame);
     }
 }
 
 void Model::redo() {
-    qDebug() << redoStack;
-    if (!redoStack.isEmpty()) {
-        undoStack.push(currentFrame->pixels());
-        tempImage = redoStack.pop();
-        currentFrame->setPixels(tempImage);
-        emit frameUpdated(currentFrame);
+    qDebug() << _redoStack;
+    if (!_redoStack.isEmpty()) {
+        _undoStack.push(_currentFrame->pixels());
+        _tempImage = _redoStack.pop();
+        _currentFrame->setPixels(_tempImage);
+        emit frameUpdated(_currentFrame);
     }
 }
 
@@ -142,10 +151,10 @@ void Model::saveAnimatedGIF(QString filename) {
 
 void Model::saveFrameToPNG(QString filename) {
     if (!filename.toLower().endsWith(".png")) filename.append(".png");
-    currentFrame->pixels().save(filename);
+    _currentFrame->pixels().save(filename);
 }
 
-void Model::saveFrameToFile(QString filename)
+void Model::saveToFile(QString filename)
 {
 	if (!filename.toLower().endsWith(".ssp"))
 	{
@@ -154,115 +163,75 @@ void Model::saveFrameToFile(QString filename)
 
 	QFile file(filename);
 	file.open(QFile::WriteOnly);
-	QTextStream outstream(&file);
+    QTextStream outstream(&file);
 
-	int sizeX = currentFrame->size().rwidth();
-	int sizeY = currentFrame->size().rheight();
+    int sizeX = _currentFrame->size().rwidth();
+    int sizeY = _currentFrame->size().rheight();
 	outstream << sizeX << " " << sizeY << endl; //prints x and y dimensions
 
-	outstream << frames.size() << endl; //prints number of frames
+    outstream << _frames.size() << endl; //prints number of frames
 
-	for (int i = 0; i < frames.size(); i++)
+    for (int i = 0; i < _frames.size(); i++)
 	{
-		QImage frame = frames.at(i)->pixels();
+        QImage frame = _frames.at(i)->pixels();
 
 		for (int y = 0; y < sizeY; y++)
 		{
 			for (int x = 0; x < sizeX; x++)
 			{
 				QRgb pixel = frame.pixel(x, y);
-				outstream << qRed(pixel) << " " << qGreen(pixel) << " " << qBlue(pixel) << " " << qAlpha(pixel) << " ";
+                outstream << qRed(pixel) << " " << qGreen(pixel) << " " << qBlue(pixel) << " " << qAlpha(pixel) << " ";
 			}
-			outstream << endl;
+            outstream << endl;
 		}
-
-//		QVector<QRgb> pixels = frame.colorTable(); //returns a list of all pixels as a vector of QRgb's
-
-//		foreach (QRgb pixel, pixels)
-//		{
-//			outstream << qRed(pixel) << " " << qGreen(pixel) << " " << qBlue(pixel) << " " << qAlpha(pixel) << " ";
-//			currentPixel++;
-//			if (currentPixel%sizeX == 0)
-//			{
-//				outstream << endl;
-//			}
-//		}
 	}
 
 	file.close();
 }
 
-void Model::loadFrameFromFile(QString filename)
+void Model::loadFromFile(QString filename)
 {
-//	QFile f(filename);
-//	f.open(QIODevice::ReadOnly);
-//	QTextStream in(&f);
-//	QRegExp rx("(\\ )"); //RegEx split empty space ' '
-//	int lineCounter, numberOfFrames, heightCounter, imageCounter;
-//	lineCounter = 0;
-//	heightCounter = 0;
-//	imageCounter = 0;
-//	QString line = in.readLine();    //read the first line
-//	QStringList query = line.split(rx);
-//	QString qs = query.at(0);
-//	int sizeY = qs.toInt();
-//	qs = query.at(1);
-//	int sizeX = qs.toInt();
-//	line = in.readLine();     //read the 2nd line
-//	query = line.split(rx);
-//	numberOfFrames = line.toInt();
-//	QImage i(sizeX, sizeY, QImage::Format_ARGB32);
-//	QImage iCanvas(sizeX, sizeY, QImage::Format_ARGB32);
-//	setPixSize(sizeX, sizeY, ui->graphicsViewCanvas->height());
-//	imageHeight = sizeY * pixSize;
-//	int testCount = 0;
-//	while (!in.atEnd())
-//	{
-//		heightCounter = lineCounter % sizeY;
-//		line = in.readLine();
-//		query = line.split(rx);
-//		int widthCounter = 0;
-//		for(int x1 = 0; x1 < sizeX; x1++) {
-//			int r,g,b,a;
-//			for (int x2 = 0; x2< 4; x2++){
-//				qs = query.at(x1*4+x2);
-//				int val = qs.toInt();
-//				QPoint qp;
-//				qp.setX(widthCounter);
-//				QString str;
-//				if (x2==0)
-//					r = val;
-//				if (x2==1)
-//					g = val;
-//				if (x2==2)
-//					b = val;
-//				if (x2==3)
-//					a = val;
-//			}
-//			QColor color;
-//			color.setRgb(r,g,b,a);
-//			QBrush brush(color, Qt::SolidPattern);
-//			i.setPixel(x1, heightCounter, brush.color().rgb());
-//			std::string temp = std::to_string(x1)+"."+std::to_string(heightCounter);
-//			singleMap.try_emplace(temp, color);
-//		}
-//		if (heightCounter == sizeY - 1)
-//		{
-//			addFramePreview(i,sizeX,sizeY);
-//			scenes.at(imageCounter)->redraw(singleMap,0);
-//			scenes.at(imageCounter)->currentState = singleMap;
-//			singleMap.clear();
-//			imageCounter++;
-//		}
-//		if (testCount == sizeY - 1)
-//		{
-//			iCanvas = QImage(i);
-//		}
-//		lineCounter++;
-//		heightCounter++;
-//		testCount++;
-//	}
-//	f.close();
+    QFile f(filename);
+	f.open(QIODevice::ReadOnly);
+	QTextStream in(&f);
+
+	QList<int> list;
+	while (!in.atEnd())
+	{
+		int x;
+		in >> x;
+		list.append(x);
+	}
+
+	int sizeX = list.at(0);
+	int sizeY = list.at(1);
+	int frames = list.at(2);
+
+	newSurface(sizeX);
+
+	int listIter = 3;
+	for (int f = 1; f <= frames; f++)
+	{
+		QImage tempImage;
+		for (int y = 0; y < sizeY; y++)
+		{
+			for (int x = 0; x < sizeX; x++)
+			{
+				//reads in the next 4 values and creates a color
+				QColor color(list.at(listIter++), list.at(listIter++), list.at(listIter++), list.at(listIter++));
+                tempImage.setPixel(x, y, color.rgba());
+			}
+		}
+        _currentFrame->setPixels(tempImage);
+
+		//if necessary creates a new frame
+		if (f < frames)
+		{
+			createFrame();
+		}
+	}
+
+	f.close();
 }
 
 void Model::saveFrameSequence(QString dir) {
@@ -270,7 +239,7 @@ void Model::saveFrameSequence(QString dir) {
 }
 
 void Model::exit() {
-    if (isSaved) {
+    if (_isSaved) {
         QApplication::exit();
     }
     else {
