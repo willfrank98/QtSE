@@ -102,31 +102,23 @@ void Model::deleteFrame(int index) {
     emit frameUpdated(_currentFrame);
 }
 
+// When a new change is made we push image into undoStack and clear redoStack
 void Model::updateUndoRedo(QImage newImage) {
-    if (!_redoStack.isEmpty()) {
-        _redoStack = QStack<QImage>();
-    }
-    _undoStack.push(newImage);
+    _currentFrame->updateUndoRedo(newImage);
 }
 
+// Tells the currentframe to run an undo command.
 void Model::undo() {
     qDebug() << _undoStack;
-    if (!_undoStack.isEmpty()) {
-        _redoStack.push(_currentFrame->pixels());
-        _tempImage = _undoStack.pop();
-        _currentFrame->setPixels(_tempImage);
-        emit frameUpdated(_currentFrame);
-    }
+    _currentFrame->undo();
+    emit frameUpdated(_currentFrame);
 }
 
+// Tells the current frame to run a redo command.
 void Model::redo() {
     qDebug() << _redoStack;
-    if (!_redoStack.isEmpty()) {
-        _undoStack.push(_currentFrame->pixels());
-        _tempImage = _redoStack.pop();
-        _currentFrame->setPixels(_tempImage);
-        emit frameUpdated(_currentFrame);
-    }
+    _currentFrame->redo();
+    emit frameUpdated(_currentFrame);
 }
 
 // So, gif.h ignores transparency unless we use GifWriteFrame8.

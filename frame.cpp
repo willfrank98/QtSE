@@ -79,24 +79,30 @@ void Frame::erase(QPoint point) {
 
 void Frame::bucketFill(QPoint startPoint, QColor initialColor, QColor replacementColor) {
     // Fill behavior is undefined if you click the same color as you want to fill so we do nothing.
-    if(initialColor == replacementColor){
+    if(initialColor == replacementColor)
+    {
         return;
     }
-    if(_image.pixelColor(startPoint) != initialColor){
+    if(_image.pixelColor(startPoint) != initialColor)
+    {
         return;
     }
     _image.setPixelColor(startPoint, replacementColor);
     //We recursively look in cardinal directions (up, down, left, right).
-    if(startPoint.y()+1 < size().height()){
+    if(startPoint.y()+1 < size().height())
+    {
         bucketFill(QPoint(startPoint.x(), startPoint.y()+1), initialColor, replacementColor);
     }
-    if(startPoint.y()-1 >= 0){
+    if(startPoint.y()-1 >= 0)
+    {
         bucketFill(QPoint(startPoint.x(), startPoint.y()-1), initialColor, replacementColor);
     }
-    if(startPoint.x()-1 >= 0){
+    if(startPoint.x()-1 >= 0)
+    {
         bucketFill(QPoint(startPoint.x()-1, startPoint.y()), initialColor, replacementColor);
     }
-    if(startPoint.x()+1 < size().width()){
+    if(startPoint.x()+1 < size().width())
+    {
         bucketFill(QPoint(startPoint.x()+1, startPoint.y()), initialColor, replacementColor);
     }
 }
@@ -114,6 +120,33 @@ void Frame::colorSwap(QPoint startPoint, QColor color) {
     QBitmap mask = QPixmap::fromImage(_image).createMaskFromColor(oldColor.rgb(), Qt::MaskOutColor);
     _painter->setPen(color);
     _painter->drawPixmap(_image.rect(), mask, mask.rect());
+}
+
+void Frame::undo(){
+    if (!_undoStack.isEmpty()) {
+        _redoStack.push(_image);
+        _tempImage = _undoStack.pop();
+        _painter->end();
+        _image = _tempImage;
+        _painter->begin(& _image);
+    }
+}
+
+void Frame::redo(){
+    if (!_redoStack.isEmpty()) {
+        _undoStack.push(_image);
+        _tempImage = _redoStack.pop();
+        _painter->end();
+        _image = _tempImage;
+        _painter->begin(& _image);
+    }
+}
+
+void Frame::updateUndoRedo(QImage newImage){
+    if (!_redoStack.isEmpty()) {
+        _redoStack = QStack<QImage>();
+    }
+    _undoStack.push(newImage);
 }
 
 void Frame::setPixels(QImage newImage) {

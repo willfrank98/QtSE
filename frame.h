@@ -18,6 +18,7 @@ class Frame
 {
 private:
     QImage _image;
+    QImage _tempImage;
     QPainter *_painter;
     QStack<QPoint> _pixelStack;
     QStack<QImage> _undoStack;
@@ -38,6 +39,9 @@ public:
     void colorSwap(QPoint startPoint, QColor color);
     void drawDither(QPoint point, QColor color1, QColor color2);
 
+    void undo();
+    void redo();
+    void updateUndoRedo(QImage newImage);
     void setPixels(QImage newImage);
     QImage pixels();
     QSize size();
