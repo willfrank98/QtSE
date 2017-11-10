@@ -11,16 +11,17 @@
 #include <QApplication>
 #include <QDebug>
 #include <QFile>
+#include <gif.h>
 
 
-#include <Magick++.h>
-using namespace Magick;
+//#include <Magick++.h>
+//using namespace Magick;
 
 
 Model::Model(QObject *parent) : QObject(parent)
 {
     // Make Magick look in the current directory for the library files.
-    Magick::InitializeMagick(NULL);
+//    Magick::InitializeMagick(NULL);
 
     // TODO: hook up a timer to the previewFrame signal
     _previewAnimTimer.setInterval(200);
@@ -128,7 +129,41 @@ void Model::redo() {
     }
 }
 
+// So, gif.h ignores transparency unless we use GifWriteFrame8.
+// However, I can not seem to get that to work.  If someone else wants to try, feel free.
 void Model::saveAnimatedGIF(QString filename) {
+    int frameWidth = _frames.first()->pixels().width();
+    int frameHeight = _frames.first()->pixels().height();
+
+    GifWriter *writer = new GifWriter();
+    GifBegin(writer, fopen(filename.toLatin1().constData(), "w"), frameWidth, frameHeight, _previewAnimTimer.interval(), true);
+    QImage img;
+    for (int i = 0; i < _frames.size(); i++)
+    {
+        img = _frames.at(i)->pixels();
+        uint8_t *bitsArr = img.bits();
+        int index = 0;
+        while (index < frameWidth * frameHeight * 4)
+        {
+            // Since gif.h ignores transparency, just make transparent pixels white
+            if (bitsArr[index+3] == 0)
+            {
+                bitsArr[index++] = 255;
+                bitsArr[index++] = 255;
+                bitsArr[index++] = 255;
+                bitsArr[index++] = 255;
+            }
+            else
+            {
+                index += 4;
+            }
+        }
+        GifWriteFrame(writer, bitsArr, frameWidth, frameHeight, _previewAnimTimer.interval() / 10);
+//        GifWriteFrame8(writer, bitsArr, frameWidth, frameHeight, _previewAnimTimer.interval() / 10);
+    }
+    GifEnd(writer);
+
+    /*
     if (!filename.toLower().endsWith(".gif")) filename.append(".gif");
 
     QString tempFile = QString(filename).replace(".gif", ".png");
@@ -143,6 +178,7 @@ void Model::saveAnimatedGIF(QString filename) {
         QFile(tempFile).remove();
     }
     writeImages(newFrames.begin(), newFrames.end(), filename.toStdString());
+    */
 }
 
 void Model::saveFrameToPNG(QString filename) {
