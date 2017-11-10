@@ -139,10 +139,6 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 		});
 
     // Connects the Shortcut Keys
-//    QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+1"), _ui->centralWidget);
-//    connect(shortcut, SIGNAL(activated()), _ui->penToolButton, SLOT(clicked()));
-
-    // I kind of like these one-liner shortcut things better, but we can use whatever
     _ui->penToolButton->setShortcut(Qt::CTRL | Qt::Key_1);
 
     model.newSurface(32);
