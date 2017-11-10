@@ -170,6 +170,7 @@ void MainWindow::newCanvas(int dimension) {
     model->newSurface(dimension);
 }
 
+
 void MainWindow::newFrame(int index) {
     QFrame *newFrame = new QFrame();
     newFrame->setGeometry(0, 0, 75, 75);
@@ -206,7 +207,6 @@ void MainWindow::newFrame(int index) {
 
     QToolButton *dupeFrame = new QToolButton(newFrame);
     dupeFrame->setGeometry(55, 55, 20, 20);
-    dupeFrame->setAutoRaise(true);
     dupeFrame->setObjectName("dupe");
     dupeFrame->setText("D");
     connect(dupeFrame, &QToolButton::clicked, model, [=](){
@@ -218,15 +218,14 @@ void MainWindow::newFrame(int index) {
 
     QToolButton *removeFrame = new QToolButton(newFrame);
     removeFrame->setGeometry(6, 6, 13, 13);
-    removeFrame->setAutoRaise(true);
     removeFrame->setObjectName("remove");
     removeFrame->setText("X");
-//   connect(removeFrame, &QToolButton::clicked, model, [=](){
-//       int frameNum = ui->frameContainer->layout()->indexOf(newFrame);
-//        frameSelected->setChecked(true);
-//        model->setActiveFrame(frameNum);
-//        model->deleteFrame(frameButtons.id(frameButtons.checkedButton()));
-//    });
+   connect(removeFrame, &QToolButton::clicked, model, [=](){
+       int frameNum = ui->frameContainer->layout()->indexOf(newFrame);
+        frameSelected->setChecked(true);
+        model->setActiveFrame(frameNum);
+        model->deleteFrame(frameButtons.id(frameButtons.checkedButton()));
+    });
 
 
     // remove the spacer
@@ -239,3 +238,4 @@ void MainWindow::newFrame(int index) {
     // re-add a horizontal spacer
     ui->frameContainer->layout()->addItem(new QSpacerItem(10, 10, QSizePolicy::Expanding));
 }
+

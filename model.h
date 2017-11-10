@@ -15,8 +15,6 @@ public:
 	explicit Model(QObject *parent = nullptr);
     void newSurface(int dimension);
     void createFrame();
-    void dupeFrame(int index);
-    void deleteFrame(int index);
     void undo();
     void redo();
 
@@ -35,6 +33,8 @@ public slots:
     void setPreviewFPS(int secs);
     void previewDisplay();
     void setActiveFrame(int index);
+    void dupeFrame(int index);
+    void deleteFrame(int index);
     void save();
     void load();
     void exit();    // a better name might be needed

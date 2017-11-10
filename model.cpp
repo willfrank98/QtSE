@@ -76,9 +76,21 @@ void Model::dupeFrame(int index) {
 }
 
 void Model::deleteFrame(int index) {
-    if (index < frames.size()) frames.removeAt(index);
-    if (index < frames.size() - 1) currentFrame = frames.last();
-    else currentFrame = frames.at(index+1);
+    if (frames.size()<=1)
+    {
+        return;
+    }
+    if (index = 1)
+    {
+
+        frames.removeAt(0);
+        currentFrame = frames.first();
+    }
+    else
+    {
+        frames.removeAt(index-1);
+        currentFrame = frames.at(index-2);
+    }
     emit frameUpdated(currentFrame);
 }
 
