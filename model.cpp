@@ -13,14 +13,14 @@
 #include <QFile>
 
 
-//#include <Magick++.h>
-//using namespace Magick;
+#include <Magick++.h>
+using namespace Magick;
 
 
 Model::Model(QObject *parent) : QObject(parent)
 {
     // Make Magick look in the current directory for the library files.
-    //Magick::InitializeMagick(".");
+    Magick::InitializeMagick(NULL);
 
     // TODO: hook up a timer to the previewFrame signal
     _previewAnimTimer.setInterval(200);
@@ -44,7 +44,6 @@ void Model::setPreviewFPS(int secs) {
 }
 
 void Model::setActiveFrame(int index) {
-    qDebug() << "hit";
     _currentFrame = _frames.at(index);
     emit frameUpdated(_currentFrame);
 }
@@ -84,23 +83,22 @@ void Model::dupeFrame(int index) {
 }
 
 void Model::deleteFrame(int index) {
-<<<<<<< HEAD
-    if (frames.size()<=1)
+    if (_frames.size()<=1)
     {
         return;
     }
     if (index = 1)
     {
 
-        frames.removeAt(0);
-        currentFrame = frames.first();
+        _frames.removeAt(0);
+        _currentFrame = _frames.first();
     }
     else
     {
-        frames.removeAt(index-1);
-        currentFrame = frames.at(index-2);
+        _frames.removeAt(index-1);
+        _currentFrame = _frames.at(index-2);
     }
-    emit frameUpdated(currentFrame);
+    emit frameUpdated(_currentFrame);
 }
 
 void Model::updateUndoRedo(QImage newImage) {
@@ -131,22 +129,20 @@ void Model::redo() {
 }
 
 void Model::saveAnimatedGIF(QString filename) {
-    /*
     if (!filename.toLower().endsWith(".gif")) filename.append(".gif");
 
     QString tempFile = QString(filename).replace(".gif", ".png");
     QList<Image> newFrames;
-    for (int i = 0; i < frames.size(); i++) {
+    for (int i = 0; i < _frames.size(); i++) {
         Magick::Image f;
-        frames.at(i)->pixels().save(tempFile);
+        _frames.at(i)->pixels().save(tempFile);
         f.read(tempFile.toStdString());
-        f.animationDelay(previewAnimTimer.interval() / 10);
-        f.gifDisposeMethod(3);  // disposes previous frame
+        f.animationDelay(_previewAnimTimer.interval() / 10);
+        f.gifDisposeMethod(Magick::PreviousDispose);  // disposes previous frame
         newFrames.push_back(f);
         QFile(tempFile).remove();
     }
     writeImages(newFrames.begin(), newFrames.end(), filename.toStdString());
-    */
 }
 
 void Model::saveFrameToPNG(QString filename) {

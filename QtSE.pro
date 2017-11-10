@@ -45,4 +45,26 @@ RESOURCES += \
 
 
 # Link GraphicsMagick stuff
-#LIBS += -L./GraphicsMagick/lib -lGraphicsMagick -lGraphicsMagick++
+unix: {
+    LIBS += -L/usr/lib -lMagick -lMagick++
+    INCLUDEPATH += /usr/include
+}
+else:unix:!macx {
+    # If linking doesn't work on your Mac, just replace these with what you did last time.
+    LIBS += -L/usr/lib -lMagick -lMagick++
+    INCLUDEPATH += /usr/include
+}
+else:win32:contains(QT_ARCH, x86_64) {
+    LIBS += -L$$PWD/ImageMagick/win64/lib -lCORE_RL_MagickCore_ -lCORE_RL_Magick++_
+    INCLUDEPATH += $$PWD/ImageMagick/win64/include
+    DEPENDPATH += $$PWD/ImageMagick/win64/lib
+    PRE_TARGETDEPS += $$PWD/ImageMagick/win64/lib/CORE_RL_MagickCore_.lib $$PWD/ImageMagick/win64/lib/CORE_RL_Magick++_.lib
+    QMAKE_POST_LINK = xcopy /d \"$$PWD/ImageMagick/win64/bin\" \"$$OUT_PWD\"
+}
+else:win32:contains(QT_ARCH, i386) {
+    LIBS += -L$$PWD/ImageMagick/win32/lib -lCORE_RL_MagickCore_ -lCORE_RL_Magick++_
+    INCLUDEPATH += $$PWD/ImageMagick/win32/include
+    DEPENDPATH += $$PWD/ImageMagick/win32/lib
+    PRE_TARGETDEPS += $$PWD/ImageMagick/win32/lib/CORE_RL_MagickCore_.lib $$PWD/ImageMagick/win32/lib/CORE_RL_Magick++_.lib
+    QMAKE_POST_LINK = xcopy /d \"$$PWD/ImageMagick/win32/bin\" \"$$OUT_PWD\"
+}
