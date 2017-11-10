@@ -84,8 +84,11 @@
      <property name="minimum">
       <number>1</number>
      </property>
+     <property name="maximum">
+      <number>24</number>
+     </property>
      <property name="value">
-      <number>5</number>
+      <number>12</number>
      </property>
     </widget>
     <widget class="QLabel" name="labelSpeed">
@@ -940,7 +943,7 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
      <x>0</x>
      <y>0</y>
      <width>691</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

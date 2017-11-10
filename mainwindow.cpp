@@ -228,11 +228,11 @@ void MainWindow::newFrame(int index) {
     removeFrame->setGeometry(6, 6, 13, 13);
     removeFrame->setObjectName("remove");
     removeFrame->setText("X");
-   connect(removeFrame, &QToolButton::clicked, model, [=](){
-       int frameNum = ui->frameContainer->layout()->indexOf(newFrame);
+   connect(removeFrame, &QToolButton::clicked, _model, [=](){
+       int frameNum = _ui->frameContainer->layout()->indexOf(newFrame);
         frameSelected->setChecked(true);
-        model->setActiveFrame(frameNum);
-        model->deleteFrame(frameButtons.id(frameButtons.checkedButton()));
+        _model->setActiveFrame(frameNum);
+        _model->deleteFrame(_frameButtons.id(_frameButtons.checkedButton()));
     });
 
 

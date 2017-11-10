@@ -84,23 +84,22 @@ void Model::dupeFrame(int index) {
 }
 
 void Model::deleteFrame(int index) {
-<<<<<<< HEAD
-    if (frames.size()<=1)
+    if (_frames.size()<=1)
     {
         return;
     }
     if (index = 1)
     {
 
-        frames.removeAt(0);
-        currentFrame = frames.first();
+        _frames.removeAt(0);
+        _currentFrame = _frames.first();
     }
     else
     {
-        frames.removeAt(index-1);
-        currentFrame = frames.at(index-2);
+        _frames.removeAt(index-1);
+        _currentFrame = _frames.at(index-2);
     }
-    emit frameUpdated(currentFrame);
+    emit frameUpdated(_currentFrame);
 }
 
 void Model::updateUndoRedo(QImage newImage) {
