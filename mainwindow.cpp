@@ -114,11 +114,11 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 
     // connects the File>Export actions
     connect(_ui->actionCurrentFrame, &QAction::triggered, this, [=]() {
-        QString filename = QFileDialog::getSaveFileName(this, "Export to .PNG", "./", "PNG Files (.png)");
+        QString filename = QFileDialog::getSaveFileName(this, "Export to .PNG", "./", "PNG Files (*.png)");
         this->_model->saveFrameToPNG(filename);
     });
     connect(_ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
-        QString filename = QFileDialog::getSaveFileName(this, "Export to animated .GIF", "./", "GIF Files (.gif)");
+        QString filename = QFileDialog::getSaveFileName(this, "Export to animated .GIF", "./", "GIF Files (*.gif)");
         this->_model->saveAnimatedGIF(filename);
     });
 
@@ -130,11 +130,11 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 
 	//	connects File>Save and >Load
         connect(_ui->actionSave, &QAction::triggered, this, [=]() {
-            QString filename = QFileDialog::getSaveFileName(this, "Save File", "./", "Sprites (.ssp)");
+            QString filename = QFileDialog::getSaveFileName(this, "Save File", "./", "Sprites (*.ssp)");
             this->_model->saveToFile(filename);
 		});
         connect(_ui->actionLoad, &QAction::triggered, this, [=]() {
-            QString filename = QFileDialog::getOpenFileName(this, "Load File", "./", "Sprites (.ssp)");
+            QString filename = QFileDialog::getOpenFileName(this, "Load File", "./", "Sprites (*.ssp)");
             this->_model->loadFromFile(filename);
 		});
 
@@ -144,8 +144,6 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 
     // I kind of like these one-liner shortcut things better, but we can use whatever
     _ui->penToolButton->setShortcut(Qt::CTRL | Qt::Key_1);
-    _ui->actionUndo->setShortcut(Qt::CTRL | Qt::Key_Z);
-    _ui->actionRedo->setShortcut(Qt::CTRL | Qt::Key_R);
 
     model.newSurface(32);
 }
