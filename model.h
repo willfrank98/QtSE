@@ -36,6 +36,7 @@ public slots:
     void saveAnimatedGIF(QString filename);
     void saveFrameToPNG(QString filename);
     void saveFrameSequence(QString dir);
+    void saveSpritesheet(QString filename);
 	void saveToFile(QString filename);
 	void loadFromFile(QString filename);
     void setPreviewFPS(int secs);
@@ -43,8 +44,6 @@ public slots:
     void setActiveFrame(int index);
     void dupeFrame(int index);
     void deleteFrame(int index);
-    void save();
-    void load();
     void exit();    // a better name might be needed
 
 private:

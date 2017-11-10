@@ -7,10 +7,12 @@
  */
 
 #include "model.h"
+#include <math.h>
 #include <QtGlobal>
 #include <QApplication>
 #include <QDebug>
 #include <QFile>
+#include <QDir>
 #include <gif.h>
 
 
@@ -173,9 +175,62 @@ void Model::saveAnimatedGIF(QString filename) {
     */
 }
 
+// Save the currently active frame to a PNG
 void Model::saveFrameToPNG(QString filename) {
     if (!filename.toLower().endsWith(".png")) filename.append(".png");
     _currentFrame->pixels().save(filename);
+}
+
+// Save the frames as a sequence of PNG images
+// E.g. 3 frames get saved to 'dir' with the names: frame_1.png, frame_2.png, frame_3.png
+void Model::saveFrameSequence(QString dir) {
+
+    // Create the directory if it does not exist.
+    if (!QDir(dir).exists())
+    {
+        QDir().mkdir(dir);
+    }
+
+    // Save a PNG to the directory for each frame.
+    QString filename;
+    for (int i = 0; i < _frames.count(); i++)
+    {
+        filename = dir + QDir::separator() + "frame_" + QString::number(i) + ".png";
+        _frames.at(i)->pixels().save(filename);
+    }
+}
+
+// Saves all the frames to a (somewhat) traditional style sprite sheet.
+void Model::saveSpritesheet(QString filename) {
+    if (!filename.toLower().endsWith(".png")) filename.append(".png");
+
+    QSize spriteSize = _frames.first()->pixels().size();
+
+    // The ceil floor is to try to limit the amount of blank space in the resulting image.
+    int width = ceil(sqrt(_frames.count()));
+    int height = floor(sqrt(_frames.count()));
+    QImage sheet = QImage(QSize(width * spriteSize.width(), height * spriteSize.height()), QImage::Format_ARGB32);
+
+    // Gets rid of image artifacts that are present on creation for some reason.
+    sheet.fill(QColor(0, 0, 0, 0));
+
+    int frameIndex = 0;
+    QPainter *painter = new QPainter(&sheet);
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            // Stop trying to add frames to the image if none are left.
+            if (frameIndex >= _frames.count()) break;
+
+            // Add the frame to the sprite sheet
+            painter->drawImage(x * spriteSize.width(), y * spriteSize.height(), _frames.at(frameIndex++)->pixels());
+        }
+    }
+    painter->end();
+
+    // Save the sprite sheet.
+    sheet.save(filename);
 }
 
 void Model::saveToFile(QString filename)
@@ -258,10 +313,6 @@ void Model::loadFromFile(QString filename)
 	f.close();
 }
 
-void Model::saveFrameSequence(QString dir) {
-    // TODO
-}
-
 void Model::exit() {
     if (_isSaved) {
         QApplication::exit();
@@ -269,12 +320,4 @@ void Model::exit() {
     else {
         // emit a signal that triggers a dialog that asks if the user would like to save (or something)
     }
-}
-
-void Model::save() {
-    // TODO
-}
-
-void Model::load() {
-    // TODO
 }

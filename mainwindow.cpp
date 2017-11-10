@@ -117,6 +117,14 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
         QString filename = QFileDialog::getSaveFileName(this, "Export to .PNG", "./", "PNG Files (*.png)");
         this->_model->saveFrameToPNG(filename);
     });
+    connect(_ui->actionAll_Frames, &QAction::triggered, this, [=]() {
+        QString dirname = QFileDialog::getExistingDirectory(this, "Export frames to directory.", "./");
+        this->_model->saveFrameSequence(dirname);
+    });
+    connect(_ui->actionSprite_Sheet, &QAction::triggered, this, [=]() {
+        QString filename = QFileDialog::getSaveFileName(this, "Export frames to PNG spritesheet.", "./", "PNG Files (*.png)");
+        this->_model->saveSpritesheet(filename);
+    });
     connect(_ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
         QString filename = QFileDialog::getSaveFileName(this, "Export to animated .GIF", "./", "GIF Files (*.gif)");
         this->_model->saveAnimatedGIF(filename);
