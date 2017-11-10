@@ -11,6 +11,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QFile>
+#include <gif.h>
 
 
 //#include <Magick++.h>
@@ -20,7 +21,7 @@
 Model::Model(QObject *parent) : QObject(parent)
 {
     // Make Magick look in the current directory for the library files.
-    //Magick::InitializeMagick(".");
+//    Magick::InitializeMagick(NULL);
 
     // TODO: hook up a timer to the previewFrame signal
     _previewAnimTimer.setInterval(200);
@@ -44,7 +45,6 @@ void Model::setPreviewFPS(int secs) {
 }
 
 void Model::setActiveFrame(int index) {
-    qDebug() << "hit";
     _currentFrame = _frames.at(index);
     emit frameUpdated(_currentFrame);
 }
@@ -121,18 +121,51 @@ void Model::redo() {
     emit frameUpdated(_currentFrame);
 }
 
+// So, gif.h ignores transparency unless we use GifWriteFrame8.
+// However, I can not seem to get that to work.  If someone else wants to try, feel free.
 void Model::saveAnimatedGIF(QString filename) {
+    int frameWidth = _frames.first()->pixels().width();
+    int frameHeight = _frames.first()->pixels().height();
+
+    GifWriter *writer = new GifWriter();
+    GifBegin(writer, fopen(filename.toLatin1().constData(), "w"), frameWidth, frameHeight, _previewAnimTimer.interval(), true);
+    QImage img;
+    for (int i = 0; i < _frames.size(); i++)
+    {
+        img = _frames.at(i)->pixels();
+        uint8_t *bitsArr = img.bits();
+        int index = 0;
+        while (index < frameWidth * frameHeight * 4)
+        {
+            // Since gif.h ignores transparency, just make transparent pixels white
+            if (bitsArr[index+3] == 0)
+            {
+                bitsArr[index++] = 255;
+                bitsArr[index++] = 255;
+                bitsArr[index++] = 255;
+                bitsArr[index++] = 255;
+            }
+            else
+            {
+                index += 4;
+            }
+        }
+        GifWriteFrame(writer, bitsArr, frameWidth, frameHeight, _previewAnimTimer.interval() / 10);
+//        GifWriteFrame8(writer, bitsArr, frameWidth, frameHeight, _previewAnimTimer.interval() / 10);
+    }
+    GifEnd(writer);
+
     /*
     if (!filename.toLower().endsWith(".gif")) filename.append(".gif");
 
     QString tempFile = QString(filename).replace(".gif", ".png");
     QList<Image> newFrames;
-    for (int i = 0; i < frames.size(); i++) {
+    for (int i = 0; i < _frames.size(); i++) {
         Magick::Image f;
-        frames.at(i)->pixels().save(tempFile);
+        _frames.at(i)->pixels().save(tempFile);
         f.read(tempFile.toStdString());
-        f.animationDelay(previewAnimTimer.interval() / 10);
-        f.gifDisposeMethod(3);  // disposes previous frame
+        f.animationDelay(_previewAnimTimer.interval() / 10);
+        f.gifDisposeMethod(Magick::PreviousDispose);  // disposes previous frame
         newFrames.push_back(f);
         QFile(tempFile).remove();
     }
