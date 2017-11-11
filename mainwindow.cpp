@@ -253,3 +253,5 @@ void MainWindow::newFrame(int index) {
     _ui->frameContainer->layout()->addItem(new QSpacerItem(10, 10, QSizePolicy::Expanding));
 }
 
+
+

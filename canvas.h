@@ -30,6 +30,9 @@ public slots:
     void setFrame(Frame *frame);
 
 private:
+    int _lastX;
+    int _lastY;
+    int _lastButton;
     QColor _primaryColor = QColor(0, 0, 0, 255);
     QColor _secondaryColor = QColor(255, 255, 255, 255);
     QVector<QPoint> _points = QVector<QPoint>();

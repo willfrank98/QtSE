@@ -44,7 +44,6 @@ void Canvas::draw(QPointF point) {
     if (_buttonHeld != Qt::NoButton) {
         QPoint convertedPoint = QPoint(point.x() / _pixSize.width(), point.y() / _pixSize.height());
         QColor color = (_buttonHeld == Qt::LeftButton) ? _primaryColor : _secondaryColor;
-
         switch (_tool) {
         case PenTool:
             _frame->drawPen(convertedPoint, color);
@@ -82,27 +81,23 @@ void Canvas::refresh() {
     QRect convertedRect = QRect(_rect.x() / _pixSize.width(), _rect.y() / _pixSize.height(),
                                 _rect.size().width() / _pixSize.width(), _rect.size().height() / _pixSize.height());
     clear();
-
-    // Need special handling for ellipses and rectangles
+    QColor color = (_lastButton == 1) ? _primaryColor : _secondaryColor;
     QPen pen;
     pen.setCapStyle(Qt::FlatCap);
     pen.setWidth(_pixSize.width());
-    pen.setColor(_primaryColor);
+    pen.setColor(color);
     switch (_tool) {
     case RectangleTool:
-        if (_buttonHeld != Qt::NoButton) addRect(_rect, pen)->setZValue(1);
-        else _frame->drawRectangle(convertedRect, _primaryColor, QColor(0, 0, 0, 0));
+        if (_buttonHeld != Qt::NoButton)
+            addRect(_rect, pen)->setZValue(1);
+        else _frame->drawRectangle(convertedRect, color, QColor(0, 0, 0, 0));
         break;
     case EllipseTool:
         if (_buttonHeld != Qt::NoButton) addEllipse(_rect, pen)->setZValue(1);
-        else _frame->drawEllipse(convertedRect, _primaryColor, QColor(0, 0, 0, 0));
+        else _frame->drawEllipse(convertedRect, color, QColor(0, 0, 0, 0));
         break;
     case RectSelectTool:
-        // I don't really know what we want to be doing here...
-        pen.setWidth(2);
-        pen.setStyle(Qt::DashLine);
-        addRect(_rect, pen)->setZValue(1);
-        pen.setStyle(Qt::SolidLine);
+        if (_buttonHeld != Qt::NoButton)_frame->selectRegion(convertedRect);
         break;
     case LineTool:
         if (_buttonHeld != Qt::NoButton) addLine(_rect.x(), _rect.y(), _rect.x() + _rect.width(), _rect.y() + _rect.height(), pen)->setZValue(1);
@@ -113,19 +108,22 @@ void Canvas::refresh() {
     default:
         break;
     }
+    _lastButton = _buttonHeld;
     addPixmap(QPixmap::fromImage(_frame->pixels().scaled(sceneRect().width(), sceneRect().height())));
-
     emit frameUpdated(_frame);
 }
 
 void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (!_mouseEnabled) return;
-
-    _rect = QRectF(_rect.x(), _rect.y(), mouseEvent->scenePos().x() - _rect.x(), mouseEvent->scenePos().y() - _rect.y());
-    draw(mouseEvent->scenePos());
-
-//    qDebug() << mouseEvent->scenePos();
+    int currentX = mouseEvent->scenePos().rx()/_pixSize.width();
+    int currentY = mouseEvent->scenePos().ry()/_pixSize.height();
+    if((_lastX != currentX) | (_lastY != currentY)){
+        _rect = QRectF(_rect.x(), _rect.y(), mouseEvent->scenePos().x() - _rect.x(), mouseEvent->scenePos().y() - _rect.y());
+        draw(mouseEvent->scenePos());
+        _lastX = currentX;
+        _lastY = currentY;
+    }
 }
 
 void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)

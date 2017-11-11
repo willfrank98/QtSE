@@ -62,7 +62,6 @@ void Frame::drawPen(QPoint point, QColor color) {
 void Frame::drawRectangle(QRect area, QColor line, QColor fill) {
     _painter->setPen(line);
     _painter->setBrush(fill);
-
     _painter->drawRect(area);
 }
 
@@ -120,6 +119,13 @@ void Frame::colorSwap(QPoint startPoint, QColor color) {
     QBitmap mask = QPixmap::fromImage(_image).createMaskFromColor(oldColor.rgb(), Qt::MaskOutColor);
     _painter->setPen(color);
     _painter->drawPixmap(_image.rect(), mask, mask.rect());
+}
+
+
+void Frame::selectRegion(QRectF rect) {
+    //QBitmap mask = QPixmap::fromImage(_image).createMaskFromColor(oldColor.rgb(), Qt::MaskOutColor);
+    //_painter->setPen(color);
+    //_painter->drawPixmap(_image.rect(), mask, mask.rect());
 }
 
 void Frame::undo(){

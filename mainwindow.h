@@ -31,6 +31,7 @@ public:
     explicit MainWindow(Model& _model, QWidget *parent = 0);
     ~MainWindow();
 
+
 private:
     Model *_model;
     Canvas *_canvas = new Canvas();
