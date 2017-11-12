@@ -38,16 +38,13 @@ Frame::~Frame() {
 }
 
 void Frame::drawEllipse(QRect area, QColor line, QColor fill) {
-    _painter->setPen(line);
-    _painter->setBrush(fill);
-
+    setupDraw(area, line, fill);
     _painter->drawEllipse(area);
 }
 
 void Frame::drawMirrorPen(QPoint point, QColor color) {
     _painter->setPen(color);
     _painter->setBrush(QColor(0, 0, 0, 0));
-
     _painter->drawPoint(point);
     _painter->drawPoint(-point.x() + _image.size().width() - 1, point.y());
 }
@@ -59,16 +56,26 @@ void Frame::drawPen(QPoint point, QColor color) {
     _painter->drawPoint(point);
 }
 
-void Frame::drawRectangle(QRect area, QColor line, QColor fill) {
+void Frame::setupDraw(QRect area, QColor line, QColor fill){
+    QColor q(0,0,0,0);
+    QBrush b(q);
+    _image.fill(q);
+     QImage _image(_tempImage);
+    _painter->drawImage(_image.rect(), _image, _tempImage.rect(), Qt::AutoColor);
     _painter->setPen(line);
     _painter->setBrush(fill);
+}
+void Frame::drawRectangle(QRect area, QColor line, QColor fill) {
+    setupDraw(area, line, fill);
     _painter->drawRect(area);
 }
 
 void Frame::drawLine(QPoint start, QPoint end, QColor color) {
     _painter->setPen(color);
     _painter->setBrush(QColor(0, 0, 0, 0));
-
+    _image.fill(QColor(0,0,0,0));
+    QImage _image(_tempImage);
+    _painter->drawImage(_image.rect(), _image, _tempImage.rect(), Qt::AutoColor);
     _painter->drawLine(start, end);
 }
 

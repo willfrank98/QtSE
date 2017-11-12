@@ -88,20 +88,16 @@ void Canvas::refresh() {
     pen.setColor(color);
     switch (_tool) {
     case RectangleTool:
-        if (_buttonHeld != Qt::NoButton)
-            addRect(_rect, pen)->setZValue(1);
-        else _frame->drawRectangle(convertedRect, color, QColor(0, 0, 0, 0));
+        _frame->drawRectangle(convertedRect, color, QColor(0, 0, 0, 0));
         break;
     case EllipseTool:
-        if (_buttonHeld != Qt::NoButton) addEllipse(_rect, pen)->setZValue(1);
-        else _frame->drawEllipse(convertedRect, color, QColor(0, 0, 0, 0));
+        _frame->drawEllipse(convertedRect, color, QColor(0, 0, 0, 0));
         break;
     case RectSelectTool:
         if (_buttonHeld != Qt::NoButton)_frame->selectRegion(convertedRect);
         break;
     case LineTool:
-        if (_buttonHeld != Qt::NoButton) addLine(_rect.x(), _rect.y(), _rect.x() + _rect.width(), _rect.y() + _rect.height(), pen)->setZValue(1);
-        else if (convertedRect != QRect()) _frame->drawLine(QPoint(convertedRect.x(), convertedRect.y()),
+        if (convertedRect != QRect()) _frame->drawLine(QPoint(convertedRect.x(), convertedRect.y()),
                              QPoint(convertedRect.x() + convertedRect.width(), convertedRect.y() + convertedRect.height()),
                              _primaryColor);
         break;
@@ -129,7 +125,7 @@ void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (!_mouseEnabled) return;
-
+    _frame->_tempImage = _frame->_image;
     _buttonHeld = mouseEvent->button();
     _rect = QRectF(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 0, 0);
     draw(mouseEvent->scenePos());
