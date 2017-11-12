@@ -25,7 +25,6 @@ Model::Model(QObject *parent) : QObject(parent)
     // Make Magick look in the current directory for the library files.
 //    Magick::InitializeMagick(NULL);
 
-    // TODO: hook up a timer to the previewFrame signal
     _previewAnimTimer.setInterval(200);
     connect(&_previewAnimTimer, SIGNAL(timeout()), this, SLOT(previewDisplay()));
     _previewAnimTimer.start();
@@ -42,7 +41,6 @@ void Model::previewDisplay(){
 }
 
 void Model::setPreviewFPS(int secs) {
-    // TODO
     _previewAnimTimer.setInterval(1000/secs);
 }
 
@@ -90,9 +88,8 @@ void Model::deleteFrame(int index) {
     {
         return;
     }
-    if (index = 1)
+    if (index == 1)
     {
-
         _frames.removeAt(0);
         _currentFrame = _frames.first();
     }

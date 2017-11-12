@@ -15,6 +15,7 @@ Frame::Frame() {
 
 }
 
+//Copy constructor.
 Frame::Frame(Frame& f) {
     this->_image = f._image;
     this->_undoStack = f._undoStack;
@@ -37,11 +38,13 @@ Frame::~Frame() {
     _pixelStack.clear();
 }
 
+//Draws an ellipse on the frame.
 void Frame::drawEllipse(QRect area, QColor line, QColor fill) {
     setupDraw(area, line, fill);
     _painter->drawEllipse(area);
 }
 
+//Draws like the pen tool except also mirrors the operation across the y-axis.
 void Frame::drawMirrorPen(QPoint point, QColor color) {
     _painter->setPen(color);
     _painter->setBrush(QColor(0, 0, 0, 0));
@@ -49,6 +52,7 @@ void Frame::drawMirrorPen(QPoint point, QColor color) {
     _painter->drawPoint(-point.x() + _image.size().width() - 1, point.y());
 }
 
+//Pen tool enables freeform drawing on the frame in a single color.
 void Frame::drawPen(QPoint point, QColor color) {
     _painter->setPen(color);
     _painter->setBrush(QColor(0, 0, 0, 0));
@@ -56,6 +60,7 @@ void Frame::drawPen(QPoint point, QColor color) {
     _painter->drawPoint(point);
 }
 
+//Helper function for drawing rectangles and selecting pixel tools.
 void Frame::setupDraw(QRect area, QColor line, QColor fill){
     QColor q(0,0,0,0);
     QBrush b(q);
@@ -65,11 +70,14 @@ void Frame::setupDraw(QRect area, QColor line, QColor fill){
     _painter->setPen(line);
     _painter->setBrush(fill);
 }
+
+//Draws a rectangle on the frame.
 void Frame::drawRectangle(QRect area, QColor line, QColor fill) {
     setupDraw(area, line, fill);
     _painter->drawRect(area);
 }
 
+//Draws a line between two points and fills it in with the passed in color.
 void Frame::drawLine(QPoint start, QPoint end, QColor color) {
     _painter->setPen(color);
     _painter->setBrush(QColor(0, 0, 0, 0));
@@ -79,10 +87,13 @@ void Frame::drawLine(QPoint start, QPoint end, QColor color) {
     _painter->drawLine(start, end);
 }
 
+//Erases a pixel by changing its color to white.
 void Frame::erase(QPoint point) {
     _image.setPixelColor(point, QColor(0, 0, 0, 0));
 }
 
+//The bucket fill tool replaces one color in a closed space with another color.
+//We run the function recursively checking the 4 cardinal directions from each pixel.
 void Frame::bucketFill(QPoint startPoint, QColor initialColor, QColor replacementColor) {
     // Fill behavior is undefined if you click the same color as you want to fill so we do nothing.
     if(initialColor == replacementColor)
@@ -113,6 +124,7 @@ void Frame::bucketFill(QPoint startPoint, QColor initialColor, QColor replacemen
     }
 }
 
+//Doesnt Dither already work? Do we need this function anymore?
 void Frame::drawDither(QPoint point, QColor color1, QColor color2) {
     // TODO
 }
@@ -128,15 +140,17 @@ void Frame::colorSwap(QPoint startPoint, QColor color) {
     _painter->drawPixmap(_image.rect(), mask, mask.rect());
 }
 
-
+//Selects pixels in the drawn region.
 void Frame::selectRegion(QRect area, QColor line, QColor fill) {
     setupDraw(area, line, fill);
     _painter->setPen(Qt::NoPen);
     _painter->drawRect(area);
 }
 
+//Pops an older version of the image off the undoStack and replaces the current image.
 void Frame::undo(){
-    if (!_undoStack.isEmpty()) {
+    if (!_undoStack.isEmpty())
+    {
         _redoStack.push(_image);
         _tempImage = _undoStack.pop();
         _painter->end();
@@ -145,8 +159,10 @@ void Frame::undo(){
     }
 }
 
+//Pops a newer version of the frame image off the redoStack and replaces the current image.
 void Frame::redo(){
-    if (!_redoStack.isEmpty()) {
+    if (!_redoStack.isEmpty())
+    {
         _undoStack.push(_image);
         _tempImage = _redoStack.pop();
         _painter->end();
@@ -155,23 +171,29 @@ void Frame::redo(){
     }
 }
 
+//Called when a new change is made to the image.
+//Resets the redoStack and adds the current image to the undoStack.
 void Frame::updateUndoRedo(QImage newImage){
-    if (!_redoStack.isEmpty()) {
+    if (!_redoStack.isEmpty())
+    {
         _redoStack = QStack<QImage>();
     }
     _undoStack.push(newImage);
 }
 
+//Im pretty sure this is now unused.
 void Frame::setPixels(QImage newImage) {
     _painter->end();
     _image = newImage;
     _painter->begin(&_image);
 }
 
+//Gets the current image in a QImage format.
 QImage Frame::pixels() {
     return _image;
 }
 
+//Gets the size of the current image in pixels.
 QSize Frame::size() {
     return _image.size();
 }

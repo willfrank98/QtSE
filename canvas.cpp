@@ -115,7 +115,8 @@ void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
     if (!_mouseEnabled) return;
     int currentX = mouseEvent->scenePos().rx()/_pixSize.width();
     int currentY = mouseEvent->scenePos().ry()/_pixSize.height();
-    if((_lastX != currentX) | (_lastY != currentY)){
+    if((_lastX != currentX) | (_lastY != currentY))
+    {
         _rect = QRectF(_rect.x(), _rect.y(), mouseEvent->scenePos().x() - _rect.x(), mouseEvent->scenePos().y() - _rect.y());
         draw(mouseEvent->scenePos());
         _lastX = currentX;
