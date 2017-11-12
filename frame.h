@@ -40,7 +40,7 @@ public:
     void bucketFill(QPoint startPoint, QColor initialColor, QColor replacementColor);
     void colorSwap(QPoint startPoint, QColor color);
     void drawDither(QPoint point, QColor color1, QColor color2);
-    void selectRegion(QRectF);
+    void selectRegion(QRect area, QColor line, QColor fill);
     void undo();
     void redo();
     void updateUndoRedo(QImage newImage);

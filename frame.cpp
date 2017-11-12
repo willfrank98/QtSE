@@ -129,10 +129,10 @@ void Frame::colorSwap(QPoint startPoint, QColor color) {
 }
 
 
-void Frame::selectRegion(QRectF rect) {
-    //QBitmap mask = QPixmap::fromImage(_image).createMaskFromColor(oldColor.rgb(), Qt::MaskOutColor);
-    //_painter->setPen(color);
-    //_painter->drawPixmap(_image.rect(), mask, mask.rect());
+void Frame::selectRegion(QRect area, QColor line, QColor fill) {
+    setupDraw(area, line, fill);
+    _painter->setPen(Qt::NoPen);
+    _painter->drawRect(area);
 }
 
 void Frame::undo(){

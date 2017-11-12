@@ -86,6 +86,7 @@ void Canvas::refresh() {
     pen.setCapStyle(Qt::FlatCap);
     pen.setWidth(_pixSize.width());
     pen.setColor(color);
+    qDebug()<< _tool;
     switch (_tool) {
     case RectangleTool:
         _frame->drawRectangle(convertedRect, color, QColor(0, 0, 0, 0));
@@ -94,7 +95,7 @@ void Canvas::refresh() {
         _frame->drawEllipse(convertedRect, color, QColor(0, 0, 0, 0));
         break;
     case RectSelectTool:
-        if (_buttonHeld != Qt::NoButton)_frame->selectRegion(convertedRect);
+        _frame->selectRegion(convertedRect, color, QColor(0, 40, 50, 50));
         break;
     case LineTool:
         if (convertedRect != QRect()) _frame->drawLine(QPoint(convertedRect.x(), convertedRect.y()),
