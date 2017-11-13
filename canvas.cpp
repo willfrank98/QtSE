@@ -143,3 +143,15 @@ void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
 //    qDebug() << mouseEvent->scenePos();
 }
+
+//Used for loading a file
+void Canvas::drawSlot(QPoint point, QColor color)
+{
+	_frame->drawPen(point, color);
+}
+
+//Used for loading a file
+void Canvas::refreshSlot()
+{
+	refresh();
+}

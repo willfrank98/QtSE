@@ -30,6 +30,8 @@ signals:
     void frameCreated(int);
     void frameUpdated(Frame*);
     void previewFrame(QImage);
+//	void drawEmit(QPoint point, QColor color); //see canvas.h
+//	void refreshEmit();
 
 public slots:
     void updateUndoRedo(QImage);

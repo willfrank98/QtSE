@@ -294,21 +294,20 @@ void Model::loadFromFile(QString filename)
 	for (int f = 1; f <= frames; f++)
 	{
 		QImage tempImage = QImage(sizeX, sizeY, QImage::Format_ARGB32);
-		//tempImage.fill(QColor(0, 0, 0, 0));
 		for (int y = 0; y < sizeY; y++)
 		{
 			for (int x = 0; x < sizeX; x++)
 			{
 				//reads in the next 4 values and creates a color
-				QColor color/*(list.at(listIter++), list.at(listIter++), list.at(listIter++), list.at(listIter++))*/;
+				QColor color;
 				color.setRed(list.at(listIter++));
 				color.setBlue(list.at(listIter++));
 				color.setGreen(list.at(listIter++));
 				color.setAlpha(list.at(listIter++));
-                tempImage.setPixel(x, y, color.rgba());
+
+				//_currentFrame->drawPen(QPoint(x, y), color);
 			}
 		}
-        _currentFrame->setPixels(tempImage);
 
 		//if necessary creates a new frame
 		if (f < frames)
