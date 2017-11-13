@@ -257,7 +257,7 @@ void MainWindow::newFrame(int index)
         int frameNum = _ui->frameContainer->layout()->indexOf(newFrame);
         frameSelected->setChecked(true);
         _model->setActiveFrame(frameNum);
-        _model->dupeFrame(_frameButtons.id(_frameButtons.checkedButton()));
+        _model->dupeFrame(frameNum);
     });
 
     QToolButton *removeFrame = new QToolButton(newFrame);

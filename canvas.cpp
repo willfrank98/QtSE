@@ -134,7 +134,7 @@ void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
     int currentY = mouseEvent->scenePos().ry()/_pixSize.height();
     if((_lastX != currentX) | (_lastY != currentY))
     {
-        _rect = QRectF(_rect.x(), _rect.y(), mouseEvent->scenePos().x() - _rect.x(), mouseEvent->scenePos().y() - _rect.y());       
+        _rect = QRectF(_rect.x(), _rect.y(), mouseEvent->scenePos().x() - _rect.x(), mouseEvent->scenePos().y() - _rect.y());
         draw(mouseEvent->scenePos());
         _lastX = currentX;
         _lastY = currentY;
@@ -181,13 +181,13 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     draw(mouseEvent->scenePos());
 }
 
-
 void Canvas::keyPressEvent(QKeyEvent *event)
 {
     qDebug()<<event->key();
   // if (event->matches(QKeySequence::Cut))
        //qDebug()<<"cut"<<endl;
 }
+
 void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (!_mouseEnabled) return;
@@ -208,7 +208,7 @@ void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 //}
 
 //Used for loading a file
-void Canvas::refreshSlot()
-{
-	refresh();
-}
+//void Canvas::refreshSlot()
+//{
+//	refresh();
+//}

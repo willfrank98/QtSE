@@ -47,6 +47,7 @@ public slots:
     void setActiveFrame(int index);
     void dupeFrame(int index);
     void deleteFrame(int index);
+    void clearFrames();
     void exit();    // a better name might be needed
 
 private:

@@ -54,7 +54,7 @@ void Model::newSurface(int dimension) {
     _previewAnimTimer.stop();
 
     Frame *newFrame = new Frame(dimension);
-    _frames.clear();
+    clearFrames();
     _frames.append(newFrame);
     _currentFrame = newFrame;
     emit frameCreated(_frames.indexOf(_currentFrame));
@@ -150,6 +150,7 @@ void Model::saveAnimatedGIF(QString filename) {
 //        GifWriteFrame8(writer, bitsArr, frameWidth, frameHeight, _previewAnimTimer.interval() / 10);
     }
     GifEnd(writer);
+<<<<<<< HEAD
 
 	//TODO: delete this
     /*
@@ -168,6 +169,8 @@ void Model::saveAnimatedGIF(QString filename) {
     }
     writeImages(newFrames.begin(), newFrames.end(), filename.toStdString());
     */
+=======
+>>>>>>> refs/remotes/origin/canvas2
 }
 
 // Save the currently active frame to a PNG
@@ -271,6 +274,7 @@ void Model::loadFromFile(QString filename)
 	}
 
     QFile f(filename);
+    clearFrames();
 	f.open(QIODevice::ReadOnly);
 	QTextStream in(&f);
 
@@ -314,6 +318,10 @@ void Model::loadFromFile(QString filename)
 	}
 
 	f.close();
+}
+
+void Model::clearFrames() {
+    _frames.clear();
 }
 
 void Model::exit() {
