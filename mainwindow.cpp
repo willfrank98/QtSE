@@ -35,12 +35,14 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     colorPicker2->setOption(QColorDialog::ShowAlphaChannel, true);
 
     // adds palette buttons to a list (ordered)
-    for (int i = 0; i < _ui->paletteButtons->buttons().count(); i++) {
+	for (int i = 0; i < _ui->paletteButtons->buttons().count(); i++)
+	{
         QString name = QString("palette"+QString::number(i + 1));
         QToolButton *button = _ui->frameToolsAndPalette->findChild<QToolButton*>(name);
         _paletteHistory.append(QColor(255, 255, 255, 255));
 
-        connect(button, &QToolButton::clicked, this, [=]() {
+		connect(button, &QToolButton::clicked, this, [=]()
+		{
             _canvas->setPrimaryColor(_paletteHistory.at(i));
             _ui->color1Box->setStyleSheet(colorToString(_paletteHistory.at(i)));
         });
@@ -171,7 +173,7 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     _ui->penToolButton->setShortcut(Qt::CTRL | Qt::Key_1);
 
 	//Helper connections for loading a file
-	//connect(&)
+	connect(&model, &Model::newCanvasSignal, this, &MainWindow::newCanvasSlot);
 
     model.newSurface(32);
 }
@@ -223,6 +225,11 @@ void MainWindow::saveDialog(){
     }
 }
 
+void MainWindow::newCanvasSlot(int dimension)
+{
+	newCanvas(dimension);
+}
+
 void MainWindow::newCanvas(int dimension)
 {
     emit checkSave();
@@ -240,6 +247,8 @@ void MainWindow::newFrame(int index)
     newFrame->setMinimumHeight(75);
     newFrame->setMaximumWidth(75);
     newFrame->setMaximumHeight(75);
+
+	//should this connection be moved?
 	connect(this, &MainWindow::resetCanvas, this, [=]()
 	{
         newFrame->hide();
@@ -270,7 +279,7 @@ void MainWindow::newFrame(int index)
     framePreview->setParent(newFrame);
 
     QToolButton *dupeFrame = new QToolButton(newFrame);
-    dupeFrame->setGeometry(55, 55, 20, 20);
+    dupeFrame->setGeometry(60, 60, 15, 15);
     dupeFrame->setObjectName("dupe");
     dupeFrame->setText("D");
 	connect(dupeFrame, &QToolButton::clicked, _model, [=]()
@@ -278,19 +287,19 @@ void MainWindow::newFrame(int index)
         int frameNum = _ui->frameContainer->layout()->indexOf(newFrame);
         frameSelected->setChecked(true);
         _model->setActiveFrame(frameNum);
-        _model->dupeFrame(_frameButtons.id(_frameButtons.checkedButton()));
+        _model->dupeFrame(frameNum);
     });
 
     QToolButton *removeFrame = new QToolButton(newFrame);
-    removeFrame->setGeometry(6, 6, 13, 13);
+    removeFrame->setGeometry(0, 0, 15, 15);
     removeFrame->setObjectName("remove");
     removeFrame->setText("X");
-   connect(removeFrame, &QToolButton::clicked, _model, [=]()
-   {
-       int frameNum = _ui->frameContainer->layout()->indexOf(newFrame);
+    connect(removeFrame, &QToolButton::clicked, _model, [=]()
+    {
+        int frameNum = _ui->frameContainer->layout()->indexOf(newFrame);
         frameSelected->setChecked(true);
         _model->setActiveFrame(frameNum);
-        _model->deleteFrame(_frameButtons.id(_frameButtons.checkedButton()));
+        _model->deleteFrame(frameNum);
     });
 
 

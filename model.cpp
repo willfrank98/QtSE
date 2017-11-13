@@ -22,9 +22,6 @@
 
 Model::Model(QObject *parent) : QObject(parent)
 {
-    // Make Magick look in the current directory for the library files.
-//    Magick::InitializeMagick(NULL);
-
     _previewAnimTimer.setInterval(200);
     connect(&_previewAnimTimer, SIGNAL(timeout()), this, SLOT(previewDisplay()));
     _previewAnimTimer.start();
@@ -57,7 +54,7 @@ void Model::newSurface(int dimension) {
     _previewAnimTimer.stop();
 
     Frame *newFrame = new Frame(dimension);
-    _frames.clear();
+    clearFrames();
     _frames.append(newFrame);
     _currentFrame = newFrame;
     emit frameCreated(_frames.indexOf(_currentFrame));
@@ -154,23 +151,6 @@ void Model::saveAnimatedGIF(QString filename) {
 //        GifWriteFrame8(writer, bitsArr, frameWidth, frameHeight, _previewAnimTimer.interval() / 10);
     }
     GifEnd(writer);
-
-    /*
-    if (!filename.toLower().endsWith(".gif")) filename.append(".gif");
-
-    QString tempFile = QString(filename).replace(".gif", ".png");
-    QList<Image> newFrames;
-    for (int i = 0; i < _frames.size(); i++) {
-        Magick::Image f;
-        _frames.at(i)->pixels().save(tempFile);
-        f.read(tempFile.toStdString());
-        f.animationDelay(_previewAnimTimer.interval() / 10);
-        f.gifDisposeMethod(Magick::PreviousDispose);  // disposes previous frame
-        newFrames.push_back(f);
-        QFile(tempFile).remove();
-    }
-    writeImages(newFrames.begin(), newFrames.end(), filename.toStdString());
-    */
 }
 
 // Save the currently active frame to a PNG
@@ -279,6 +259,7 @@ void Model::loadFromFile(QString filename)
 	}
 
     QFile f(filename);
+    clearFrames();
 	f.open(QIODevice::ReadOnly);
 	QTextStream in(&f);
 
@@ -294,12 +275,11 @@ void Model::loadFromFile(QString filename)
 	int sizeY = list.at(1);
 	int frames = list.at(2);
 
-	newSurface(sizeX);
+	emit newCanvasSignal(sizeX);
 
 	int listIter = 3;
 	for (int f = 1; f <= frames; f++)
 	{
-		QImage tempImage = QImage(sizeX, sizeY, QImage::Format_ARGB32);
 		for (int y = 0; y < sizeY; y++)
 		{
 			for (int x = 0; x < sizeX; x++)
@@ -310,8 +290,7 @@ void Model::loadFromFile(QString filename)
 				color.setBlue(list.at(listIter++));
 				color.setGreen(list.at(listIter++));
 				color.setAlpha(list.at(listIter++));
-
-                _currentFrame->drawPen(QPoint(x, y), color);
+				_currentFrame->drawPen(QPoint(x, y), color);
 			}
 		}
 
@@ -329,9 +308,14 @@ void Model::loadFromFile(QString filename)
 }
 
 void Model::checkSaveStatus(){
-    if (!_isSaved){
+    if (!_isSaved)
+    {
         emit savePrompt();
     }
+}
+
+void Model::clearFrames() {
+    _frames.clear();
 }
 
 void Model::exit() {

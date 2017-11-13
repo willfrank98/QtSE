@@ -31,6 +31,7 @@ signals:
     void frameUpdated(Frame*);
     void previewFrame(QImage);
     void savePrompt();
+	void newCanvasSignal(int dimension);
 //	void drawEmit(QPoint point, QColor color); //see canvas.h
 //	void refreshEmit();
 
@@ -48,6 +49,7 @@ public slots:
     void setActiveFrame(int index);
     void dupeFrame(int index);
     void deleteFrame(int index);
+    void clearFrames();
     void exit();    // a better name might be needed
 
 private:
