@@ -305,9 +305,6 @@ void Model::loadFromFile(QString filename)
 		}
 	}
 
-    //We need to delete old frames that existed before the load command.
-    //Currently you can still see the older frames in the frame preview bar at the top.
-    //Clicking on an old frame crashes the program because of an out of range error on our frame list.
 	f.close();
 }
 

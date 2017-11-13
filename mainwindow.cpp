@@ -152,16 +152,14 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(this, &MainWindow::checkSave, &model, &Model::checkSaveStatus);
 	connect(_ui->actionSave, &QAction::triggered, this, [=]()
 	{
-		QString filename = QFileDialog::getSaveFileName(this, "Save File", "./", "Sprites (*.ssp)");
+		QString filename = QFileDialog::getSaveFileName(this, tr("Save File"), QDir::currentPath(), tr("Sprites (*.ssp)"));
 		this->_model->saveToFile(filename);
 	});
 	connect(_ui->actionLoad, &QAction::triggered, this, [=]()
 	{
         //need to check whether to save first.
         emit checkSave();
-		QString filename = QFileDialog::getOpenFileName(this,tr("Open Document"),
-		QDir::currentPath(),
-		tr("sprite files (*.ssp)"));
+		QString filename = QFileDialog::getOpenFileName(this,tr("Open File"), QDir::currentPath(), tr("Sprites (*.ssp)"));
 		if(!filename.isEmpty() && !filename.isNull())
 		{
 			this->_model->loadFromFile(filename);
