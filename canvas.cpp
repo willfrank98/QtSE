@@ -181,13 +181,13 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     draw(mouseEvent->scenePos());
 }
 
-
 void Canvas::keyPressEvent(QKeyEvent *event)
 {
     qDebug()<<event->key();
   // if (event->matches(QKeySequence::Cut))
        //qDebug()<<"cut"<<endl;
 }
+
 void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (!_mouseEnabled) return;
@@ -202,13 +202,13 @@ void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 }
 
 //Used for loading a file
-void Canvas::drawSlot(QPoint point, QColor color)
-{
-	_frame->drawPen(point, color);
-}
+//void Canvas::drawSlot(QPoint point, QColor color)
+//{
+//	_frame->drawPen(point, color);
+//}
 
 //Used for loading a file
-void Canvas::refreshSlot()
-{
-	refresh();
-}
+//void Canvas::refreshSlot()
+//{
+//	refresh();
+//}

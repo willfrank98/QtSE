@@ -57,7 +57,7 @@ void Model::newSurface(int dimension) {
     _previewAnimTimer.stop();
 
     Frame *newFrame = new Frame(dimension);
-    _frames.clear();
+    clearFrames();
     _frames.append(newFrame);
     _currentFrame = newFrame;
     emit frameCreated(_frames.indexOf(_currentFrame));
@@ -153,23 +153,6 @@ void Model::saveAnimatedGIF(QString filename) {
 //        GifWriteFrame8(writer, bitsArr, frameWidth, frameHeight, _previewAnimTimer.interval() / 10);
     }
     GifEnd(writer);
-
-    /*
-    if (!filename.toLower().endsWith(".gif")) filename.append(".gif");
-
-    QString tempFile = QString(filename).replace(".gif", ".png");
-    QList<Image> newFrames;
-    for (int i = 0; i < _frames.size(); i++) {
-        Magick::Image f;
-        _frames.at(i)->pixels().save(tempFile);
-        f.read(tempFile.toStdString());
-        f.animationDelay(_previewAnimTimer.interval() / 10);
-        f.gifDisposeMethod(Magick::PreviousDispose);  // disposes previous frame
-        newFrames.push_back(f);
-        QFile(tempFile).remove();
-    }
-    writeImages(newFrames.begin(), newFrames.end(), filename.toStdString());
-    */
 }
 
 // Save the currently active frame to a PNG
@@ -273,6 +256,7 @@ void Model::loadFromFile(QString filename)
 	}
 
     QFile f(filename);
+    clearFrames();
 	f.open(QIODevice::ReadOnly);
 	QTextStream in(&f);
 
@@ -317,6 +301,10 @@ void Model::loadFromFile(QString filename)
 	}
 
 	f.close();
+}
+
+void Model::clearFrames() {
+    _frames.clear();
 }
 
 void Model::exit() {
