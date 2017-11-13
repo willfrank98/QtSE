@@ -17,7 +17,8 @@
 #include <QToolButton>
 #include <QButtonGroup>
 
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 

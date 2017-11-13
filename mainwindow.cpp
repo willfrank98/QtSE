@@ -52,21 +52,24 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(colorPicker1, &QColorDialog::colorSelected, _canvas, &Canvas::setPrimaryColor);
     connect(_ui->color2Box, &QToolButton::clicked, _canvas, [=](){ colorPicker2->show(); });
     connect(colorPicker2, &QColorDialog::colorSelected, _canvas, &Canvas::setSecondaryColor);
-    connect(colorPicker1, &QColorDialog::colorSelected, _ui->color1Box, [=](QColor color){
+	connect(colorPicker1, &QColorDialog::colorSelected, _ui->color1Box, [=](QColor color)
+	{
         QString newStyle = colorToString(color);
         _ui->color1Box->setStyleSheet(newStyle);
         if (_paletteHistory.size() == _ui->paletteButtons->buttons().count()) _paletteHistory.replace(_paletteHistoryIndex, color);
         else _paletteHistory.insert(_paletteHistoryIndex, color);
         updatePaletteHistory();
     });
-    connect(colorPicker2, &QColorDialog::colorSelected, _ui->color2Box, [=](QColor color){
+	connect(colorPicker2, &QColorDialog::colorSelected, _ui->color2Box, [=](QColor color)
+	{
         QString newStyle = colorToString(color);
         _ui->color2Box->setStyleSheet(newStyle);
         if (_paletteHistory.size() == _ui->paletteButtons->buttons().count()) _paletteHistory.replace(_paletteHistoryIndex, color);
         else _paletteHistory.insert(_paletteHistoryIndex, color);
         updatePaletteHistory();
     });
-    connect(_ui->swapColors, &QToolButton::clicked, this, [=](){
+	connect(_ui->swapColors, &QToolButton::clicked, this, [=]()
+	{
         QString temp = _ui->color1Box->styleSheet();
         _ui->color1Box->setStyleSheet(_ui->color2Box->styleSheet());
         _ui->color2Box->setStyleSheet(temp);
@@ -104,28 +107,34 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
         // TODO: do something with the image from previewFrame
         _ui->labelPreview->setPixmap(QPixmap::fromImage(image.scaled(_ui->labelPreview->size())));
     });
-    connect(_ui->zoomLevelCheckbox, &QCheckBox::toggled, this, [=](bool toggled){
+	connect(_ui->zoomLevelCheckbox, &QCheckBox::toggled, this, [=](bool toggled)
+	{
         // TODO: handle the zoom toggle
     });
-    connect(_canvas, &Canvas::frameUpdated, this, [=](Frame *frame){
+	connect(_canvas, &Canvas::frameUpdated, this, [=](Frame *frame)
+	{
         QLabel *l = _frameButtons.checkedButton()->parent()->findChild<QLabel *>("view");
         l->setPixmap(QPixmap::fromImage(frame->pixels().scaled(l->size())));
     });
 
     // connects the File>Export actions
-    connect(_ui->actionCurrentFrame, &QAction::triggered, this, [=]() {
+	connect(_ui->actionCurrentFrame, &QAction::triggered, this, [=]()
+	{
         QString filename = QFileDialog::getSaveFileName(this, "Export to .PNG", "./", "PNG Files (*.png)");
         this->_model->saveFrameToPNG(filename);
     });
-    connect(_ui->actionAll_Frames, &QAction::triggered, this, [=]() {
+	connect(_ui->actionAll_Frames, &QAction::triggered, this, [=]()
+	{
         QString dirname = QFileDialog::getExistingDirectory(this, "Export frames to directory.", "./");
         this->_model->saveFrameSequence(dirname);
     });
-    connect(_ui->actionSprite_Sheet, &QAction::triggered, this, [=]() {
+	connect(_ui->actionSprite_Sheet, &QAction::triggered, this, [=]()
+	{
         QString filename = QFileDialog::getSaveFileName(this, "Export frames to PNG spritesheet.", "./", "PNG Files (*.png)");
         this->_model->saveSpritesheet(filename);
     });
-    connect(_ui->actionAnimated_GIF, &QAction::triggered, &model, [=](){
+	connect(_ui->actionAnimated_GIF, &QAction::triggered, &model, [=]()
+	{
         QString filename = QFileDialog::getSaveFileName(this, "Export to animated .GIF", "./", "GIF Files (*.gif)");
         this->_model->saveAnimatedGIF(filename);
     });
@@ -137,18 +146,21 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(&model, &Model::frameCreated, this, [=](int i){ newFrame(i); });
 
 	//	connects File>Save and >Load
-        connect(_ui->actionSave, &QAction::triggered, this, [=]() {
-            QString filename = QFileDialog::getSaveFileName(this, "Save File", "./", "Sprites (*.ssp)");
-            this->_model->saveToFile(filename);
-		});
-        connect(_ui->actionLoad, &QAction::triggered, this, [=]() {
-            QString filename = QFileDialog::getOpenFileName(this,tr("Open Document"),
-            QDir::currentPath(),
-            tr("sprite files (*.ssp)"));
-            if(!filename.isEmpty() && !filename.isNull()){
-                this->_model->loadFromFile(filename);
-            }
-		});
+	connect(_ui->actionSave, &QAction::triggered, this, [=]()
+	{
+		QString filename = QFileDialog::getSaveFileName(this, "Save File", "./", "Sprites (*.ssp)");
+		this->_model->saveToFile(filename);
+	});
+	connect(_ui->actionLoad, &QAction::triggered, this, [=]()
+	{
+		QString filename = QFileDialog::getOpenFileName(this,tr("Open Document"),
+		QDir::currentPath(),
+		tr("sprite files (*.ssp)"));
+		if(!filename.isEmpty() && !filename.isNull())
+		{
+			this->_model->loadFromFile(filename);
+		}
+	});
 
     // Connects the Shortcut Keys
     _ui->penToolButton->setShortcut(Qt::CTRL | Qt::Key_1);
@@ -164,38 +176,42 @@ MainWindow::~MainWindow()
     delete _ui;
 }
 
-QString MainWindow::colorToString(QColor color) {
-    return "background-color: rgb(" +
-            QString::number(color.red()) + "," +
-            QString::number(color.green()) + "," +
-            QString::number(color.blue()) + ");";
+QString MainWindow::colorToString(QColor color)
+{
+	return "background-color: rgb(" + QString::number(color.red()) + "," + QString::number(color.green()) + "," + QString::number(color.blue()) + ");";
 }
 
-void MainWindow::updatePaletteHistory() {
+void MainWindow::updatePaletteHistory()
+{
     QString newStyle;
     newStyle = colorToString(_paletteHistory.at(_paletteHistoryIndex));
     _paletteButtons.at(_paletteHistoryIndex)->setStyleSheet(newStyle);
     _paletteHistoryIndex++;
 
-    if (_paletteHistoryIndex == _ui->paletteButtons->buttons().count()) _paletteHistoryIndex = 0;
+	if (_paletteHistoryIndex == _ui->paletteButtons->buttons().count())
+	{
+		_paletteHistoryIndex = 0;
+	}
 }
 
-// These signals and slots are getting ridiculous.
-void MainWindow::newCanvas(int dimension) {
+void MainWindow::newCanvas(int dimension)
+{
     emit resetCanvas();
     this->disconnect();
     _model->newSurface(dimension);
 }
 
 
-void MainWindow::newFrame(int index) {
+void MainWindow::newFrame(int index)
+{
     QFrame *newFrame = new QFrame();
     newFrame->setGeometry(0, 0, 75, 75);
     newFrame->setMinimumWidth(75);
     newFrame->setMinimumHeight(75);
     newFrame->setMaximumWidth(75);
     newFrame->setMaximumHeight(75);
-    connect(this, &MainWindow::resetCanvas, this, [=]() {
+	connect(this, &MainWindow::resetCanvas, this, [=]()
+	{
         newFrame->hide();
         _ui->frameContainer->layout()->removeWidget(newFrame);
         newFrame->setParent(nullptr);
@@ -216,7 +232,8 @@ void MainWindow::newFrame(int index) {
     frameSelected->setObjectName("button");
     frameSelected->setCheckable(true);
     _frameButtons.addButton(frameSelected, index);
-    connect(frameSelected, &QPushButton::clicked, _model, [=](){
+	connect(frameSelected, &QPushButton::clicked, _model, [=]()
+	{
         int frameNum = _ui->frameContainer->layout()->indexOf(newFrame);
         _model->setActiveFrame(frameNum);
     });
@@ -226,7 +243,8 @@ void MainWindow::newFrame(int index) {
     dupeFrame->setGeometry(55, 55, 20, 20);
     dupeFrame->setObjectName("dupe");
     dupeFrame->setText("D");
-    connect(dupeFrame, &QToolButton::clicked, _model, [=](){
+	connect(dupeFrame, &QToolButton::clicked, _model, [=]()
+	{
         int frameNum = _ui->frameContainer->layout()->indexOf(newFrame);
         frameSelected->setChecked(true);
         _model->setActiveFrame(frameNum);
@@ -237,7 +255,8 @@ void MainWindow::newFrame(int index) {
     removeFrame->setGeometry(6, 6, 13, 13);
     removeFrame->setObjectName("remove");
     removeFrame->setText("X");
-   connect(removeFrame, &QToolButton::clicked, _model, [=](){
+   connect(removeFrame, &QToolButton::clicked, _model, [=]()
+   {
        int frameNum = _ui->frameContainer->layout()->indexOf(newFrame);
         frameSelected->setChecked(true);
         _model->setActiveFrame(frameNum);
