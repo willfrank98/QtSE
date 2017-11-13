@@ -12,6 +12,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QVector>
 #include <QStack>
+#include <QKeyEvent>
 #include <tool.h>
 #include <frame.h>
 
@@ -43,8 +44,12 @@ private:
     Frame *_frame;
     Tool _tool;
     QRectF _rect;
+    QRectF _prevRect;
+    QPoint _convertedPoint;
+    QRect _convertedRect;
+    bool _isRectSelected;
     bool _mouseEnabled = true;
-
+    Tool _lastTool;
     void draw(QPointF point);
     void refresh();
 
@@ -53,6 +58,7 @@ public:
     void setDisableMouse(bool val) { _mouseEnabled = !val; }
     void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent);
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent);
+    void keyPressEvent(QKeyEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent * mouseEvent);
 };
 

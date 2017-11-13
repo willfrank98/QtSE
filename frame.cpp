@@ -40,7 +40,7 @@ Frame::~Frame() {
 
 //Draws an ellipse on the frame.
 void Frame::drawEllipse(QRect area, QColor line, QColor fill) {
-    setupDraw(area, line, fill);
+    setupDraw(line, fill, _tempImage);
     _painter->drawEllipse(area);
 }
 
@@ -61,19 +61,19 @@ void Frame::drawPen(QPoint point, QColor color) {
 }
 
 //Helper function for drawing rectangles and selecting pixel tools.
-void Frame::setupDraw(QRect area, QColor line, QColor fill){
+void Frame::setupDraw(QColor line, QColor fill, QImage temp){
     QColor q(0,0,0,0);
     QBrush b(q);
     _image.fill(q);
-     QImage _image(_tempImage);
-    _painter->drawImage(_image.rect(), _image, _tempImage.rect(), Qt::AutoColor);
+     QImage _image(temp);
+    _painter->drawImage(_image.rect(), _image, _image.rect(), Qt::AutoColor);
     _painter->setPen(line);
     _painter->setBrush(fill);
 }
 
 //Draws a rectangle on the frame.
 void Frame::drawRectangle(QRect area, QColor line, QColor fill) {
-    setupDraw(area, line, fill);
+    setupDraw(line, fill, _tempImage);
     _painter->drawRect(area);
 }
 
@@ -142,7 +142,7 @@ void Frame::colorSwap(QPoint startPoint, QColor color) {
 
 //Selects pixels in the drawn region.
 void Frame::selectRegion(QRect area, QColor line, QColor fill) {
-    setupDraw(area, line, fill);
+    setupDraw(line, fill, _tempImage);
     _painter->setPen(Qt::NoPen);
     _painter->drawRect(area);
 }
