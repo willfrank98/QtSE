@@ -124,10 +124,10 @@ void Frame::bucketFill(QPoint startPoint, QColor initialColor, QColor replacemen
     }
 }
 
-//Doesnt Dither already work? Do we need this function anymore?
-void Frame::drawDither(QPoint point, QColor color1, QColor color2) {
-    // TODO
-}
+////Doesnt Dither already work? Do we need this function anymore?
+//void Frame::drawDither(QPoint point, QColor color1, QColor color2) {
+//    // TODO
+//}
 
 // This is the color-fill tool.  We might want to rename it to better reflect that.
 void Frame::colorSwap(QPoint startPoint, QColor color) {

@@ -30,6 +30,7 @@ signals:
     void frameCreated(int);
     void frameUpdated(Frame*);
     void previewFrame(QImage);
+	void newCanvasSignal(int dimension);
 //	void drawEmit(QPoint point, QColor color); //see canvas.h
 //	void refreshEmit();
 
