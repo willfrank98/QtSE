@@ -208,7 +208,7 @@ void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 //}
 
 //Used for loading a file
-//void Canvas::refreshSlot()
-//{
-//	refresh();
-//}
+void Canvas::refreshSlot()
+{
+    refresh();
+}
