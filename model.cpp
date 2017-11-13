@@ -248,10 +248,11 @@ void Model::saveToFile(QString filename)
 
 void Model::loadFromFile(QString filename)
 {
-    if (!_isSaved)
-    {
-        emit savePrompt();
-    }
+	//this is redundant, as far as I can tell
+//  if (!_isSaved)
+//  {
+//      emit savePrompt();
+//  }
 
 	if (filename.length() < 4)
 	{
@@ -275,6 +276,7 @@ void Model::loadFromFile(QString filename)
 	int sizeY = list.at(1);
 	int frames = list.at(2);
 
+	//TODO: scale x to a power of 2 if it's not
 	emit newCanvasSignal(sizeX);
 
 	int listIter = 3;
@@ -293,6 +295,8 @@ void Model::loadFromFile(QString filename)
 				_currentFrame->drawPen(QPoint(x, y), color);
 			}
 		}
+
+		emit frameUpdated(_currentFrame);
 
 		//if necessary creates a new frame
 		if (f < frames)
