@@ -240,7 +240,7 @@ void MainWindow::newFrame(int index)
     framePreview->setParent(newFrame);
 
     QToolButton *dupeFrame = new QToolButton(newFrame);
-    dupeFrame->setGeometry(55, 55, 20, 20);
+    dupeFrame->setGeometry(60, 60, 15, 15);
     dupeFrame->setObjectName("dupe");
     dupeFrame->setText("D");
 	connect(dupeFrame, &QToolButton::clicked, _model, [=]()
@@ -252,15 +252,15 @@ void MainWindow::newFrame(int index)
     });
 
     QToolButton *removeFrame = new QToolButton(newFrame);
-    removeFrame->setGeometry(6, 6, 13, 13);
+    removeFrame->setGeometry(0, 0, 15, 15);
     removeFrame->setObjectName("remove");
     removeFrame->setText("X");
-   connect(removeFrame, &QToolButton::clicked, _model, [=]()
-   {
-       int frameNum = _ui->frameContainer->layout()->indexOf(newFrame);
+    connect(removeFrame, &QToolButton::clicked, _model, [=]()
+    {
+        int frameNum = _ui->frameContainer->layout()->indexOf(newFrame);
         frameSelected->setChecked(true);
         _model->setActiveFrame(frameNum);
-        _model->deleteFrame(_frameButtons.id(_frameButtons.checkedButton()));
+        _model->deleteFrame(frameNum);
     });
 
 
