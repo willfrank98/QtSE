@@ -30,7 +30,7 @@ public slots:
     void setTool(Tool tool);
     void setFrame(Frame *frame);
 //	void drawSlot(QPoint point, QColor color);	//intended to be used for loading files. Attempting to be more like human drawing to see if that fixes things
-//	void refreshSlot();
+	void refreshSlot();
 
 private:
     int _lastX;

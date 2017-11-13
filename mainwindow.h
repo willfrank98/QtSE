@@ -32,6 +32,8 @@ public:
     explicit MainWindow(Model& _model, QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+	void newCanvasSlot(int dimension);
 
 private:
     Model *_model;

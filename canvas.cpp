@@ -202,10 +202,10 @@ void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 }
 
 //Used for loading a file
-void Canvas::drawSlot(QPoint point, QColor color)
-{
-	_frame->drawPen(point, color);
-}
+//void Canvas::drawSlot(QPoint point, QColor color)
+//{
+//	_frame->drawPen(point, color);
+//}
 
 //Used for loading a file
 void Canvas::refreshSlot()
