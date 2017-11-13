@@ -17,13 +17,14 @@
 class Frame
 {
 private:
-
-    QPainter *_painter;
     QStack<QPoint> _pixelStack;
     QStack<QImage> _undoStack;
     QStack<QImage> _redoStack;
 
 public:
+    QPainter *_painter;
+    QImage _prevRectImage;
+    QImage _prevPreverRectImage;
     QImage _image;
     QImage _tempImage;
     Frame();
@@ -34,7 +35,7 @@ public:
     void drawMirrorPen(QPoint point, QColor color);
     void drawPen(QPoint point, QColor color);
     void drawRectangle(QRect area, QColor line, QColor fill);
-    void setupDraw(QRect area, QColor line, QColor fill);
+    void setupDraw(QColor line, QColor fill, QImage temp);
     void drawLine(QPoint start, QPoint end, QColor color);
     void erase(QPoint point);
     void bucketFill(QPoint startPoint, QColor initialColor, QColor replacementColor);
