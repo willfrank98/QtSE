@@ -15,6 +15,7 @@
 #include <QVector>
 #include <QShortcut>
 #include <QFileDialog>
+#include <QMessageBox>
 
 MainWindow::MainWindow(Model &model, QWidget *parent) :
 	QMainWindow(parent),
@@ -146,6 +147,7 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(&model, &Model::frameCreated, this, [=](int i){ newFrame(i); });
 
 	//	connects File>Save and >Load
+    connect(this, &MainWindow::checkSave, &model, &Model::checkSaveStatus);
 	connect(_ui->actionSave, &QAction::triggered, this, [=]()
 	{
 		QString filename = QFileDialog::getSaveFileName(this, "Save File", "./", "Sprites (*.ssp)");
@@ -153,6 +155,8 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 	});
 	connect(_ui->actionLoad, &QAction::triggered, this, [=]()
 	{
+        //need to check whether to save first.
+        emit checkSave();
 		QString filename = QFileDialog::getOpenFileName(this,tr("Open Document"),
 		QDir::currentPath(),
 		tr("sprite files (*.ssp)"));
@@ -161,6 +165,7 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 			this->_model->loadFromFile(filename);
 		}
 	});
+    connect(&model, SIGNAL(savePrompt()), this, SLOT(saveDialog()));
 
     // Connects the Shortcut Keys
     _ui->penToolButton->setShortcut(Qt::CTRL | Qt::Key_1);
@@ -194,8 +199,33 @@ void MainWindow::updatePaletteHistory()
 	}
 }
 
+void MainWindow::saveDialog(){
+    QMessageBox saveBox;
+    saveBox.setText("The sprite has been modified.");
+    saveBox.setInformativeText("Do you want to save your changes?");
+    saveBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    saveBox.setDefaultButton(QMessageBox::Save);
+    int result = saveBox.exec();
+    switch (result)
+    {
+      case QMessageBox::Save:
+          //Tell model to save.
+        emit _ui->actionSave->triggered();
+        break;
+      case QMessageBox::Discard:
+          //We do nothing and let the process that called continue.
+        break;
+      case QMessageBox::Cancel:
+          // Cancel was clicked. Not sure how to implement this option.
+        break;
+      default:
+        break;
+    }
+}
+
 void MainWindow::newCanvas(int dimension)
 {
+    emit checkSave();
     emit resetCanvas();
     this->disconnect();
     _model->newSurface(dimension);

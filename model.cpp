@@ -103,6 +103,7 @@ void Model::deleteFrame(int index) {
 
 // When a new change is made we push image into undoStack and clear redoStack
 void Model::updateUndoRedo(QImage newImage) {
+    _isSaved = false;
     _currentFrame->updateUndoRedo(newImage);
 }
 
@@ -261,12 +262,17 @@ void Model::saveToFile(QString filename)
             outstream << endl;
 		}
 	}
-
 	file.close();
+    _isSaved = true;
 }
 
 void Model::loadFromFile(QString filename)
 {
+    if (!_isSaved)
+    {
+        emit savePrompt();
+    }
+
 	if (filename.length() < 4)
 	{
 		return;
@@ -305,7 +311,7 @@ void Model::loadFromFile(QString filename)
 				color.setGreen(list.at(listIter++));
 				color.setAlpha(list.at(listIter++));
 
-				//_currentFrame->drawPen(QPoint(x, y), color);
+                _currentFrame->drawPen(QPoint(x, y), color);
 			}
 		}
 
@@ -316,7 +322,16 @@ void Model::loadFromFile(QString filename)
 		}
 	}
 
+    //We need to delete old frames that existed before the load command.
+    //Currently you can still see the older frames in the frame preview bar at the top.
+    //Clicking on an old frame crashes the program because of an out of range error on our frame list.
 	f.close();
+}
+
+void Model::checkSaveStatus(){
+    if (!_isSaved){
+        emit savePrompt();
+    }
 }
 
 void Model::exit() {
@@ -325,5 +340,7 @@ void Model::exit() {
     }
     else {
         // emit a signal that triggers a dialog that asks if the user would like to save (or something)
+        emit savePrompt();
+        QApplication::exit();
     }
 }

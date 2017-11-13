@@ -30,6 +30,7 @@ signals:
     void frameCreated(int);
     void frameUpdated(Frame*);
     void previewFrame(QImage);
+    void savePrompt();
 //	void drawEmit(QPoint point, QColor color); //see canvas.h
 //	void refreshEmit();
 
@@ -41,6 +42,7 @@ public slots:
     void saveSpritesheet(QString filename);
 	void saveToFile(QString filename);
 	void loadFromFile(QString filename);
+    void checkSaveStatus();
     void setPreviewFPS(int secs);
     void previewDisplay();
     void setActiveFrame(int index);
