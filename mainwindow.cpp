@@ -153,6 +153,9 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     // Connects the Shortcut Keys
     _ui->penToolButton->setShortcut(Qt::CTRL | Qt::Key_1);
 
+	//Helper connections for loading a file
+	//connect(&)
+
     model.newSurface(32);
 }
 
