@@ -295,8 +295,15 @@ void Model::loadFromFile(QString filename)
 	int sizeY = list.at(1);
 	int frames = list.at(2);
 
-	//TODO: scale x to a power of 2 if it's not
-	emit newCanvasSignal(sizeX);
+	//accounts for loading non-square sprites
+	if (sizeX > sizeY)
+	{
+		emit newCanvasSignal(sizeX);
+	}
+	else
+	{
+		emit newCanvasSignal(sizeY);
+	}
 
 	int listIter = 3;
 	for (int f = 1; f <= frames; f++)
@@ -324,9 +331,6 @@ void Model::loadFromFile(QString filename)
 		}
 	}
 
-    //We need to delete old frames that existed before the load command.
-    //Currently you can still see the older frames in the frame preview bar at the top.
-    //Clicking on an old frame crashes the program because of an out of range error on our frame list.
 	f.close();
 
     _previewAnimTimer.start();
@@ -343,11 +347,6 @@ void Model::checkSaveStatus(){
 // Clear the frames and mark as unsaved
 void Model::clearFrames() {
     _frames.clear();
-    _isSaved = false;
-}
-
-// A slot used by some connections in the MainWindow
-void Model::markUnsaved() {
     _isSaved = false;
 }
 
