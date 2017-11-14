@@ -177,6 +177,7 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     else{
         //QRect _prevRect;
     }
+    emit updateUndo(_frame->pixels());
     _buttonHeld = mouseEvent->button();
     draw(mouseEvent->scenePos());
 }
@@ -208,7 +209,7 @@ void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 //}
 
 //Used for loading a file
-void Canvas::refreshSlot()
-{
-    refresh();
-}
+//void Canvas::refreshSlot()
+//{
+//    refresh();
+//}

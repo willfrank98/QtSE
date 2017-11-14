@@ -27,6 +27,10 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 signals:
     void resetCanvas();
+    void checkSave();
+
+public slots:
+    void saveDialog();
 
 public:
     explicit MainWindow(Model& _model, QWidget *parent = 0);

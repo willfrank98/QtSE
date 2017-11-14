@@ -22,7 +22,7 @@
 
 Model::Model(QObject *parent) : QObject(parent)
 {
-    _previewAnimTimer.setInterval(200);
+    _previewAnimTimer.setInterval(1000/12);
     connect(&_previewAnimTimer, SIGNAL(timeout()), this, SLOT(previewDisplay()));
     _previewAnimTimer.start();
 }
@@ -114,6 +114,7 @@ void Model::deleteFrame(int index) {
 
 // When a new change is made we push image into undoStack and clear redoStack
 void Model::updateUndoRedo(QImage newImage) {
+    _isSaved = false;
     _currentFrame->updateUndoRedo(newImage);
 }
 
@@ -255,12 +256,18 @@ void Model::saveToFile(QString filename)
             outstream << endl;
 		}
 	}
-
 	file.close();
+    _isSaved = true;
 }
 
 void Model::loadFromFile(QString filename)
 {
+	//this is redundant, as far as I can tell
+//  if (!_isSaved)
+//  {
+//      emit savePrompt();
+//  }
+
 	if (filename.length() < 4)
 	{
 		return;
@@ -283,6 +290,7 @@ void Model::loadFromFile(QString filename)
 	int sizeY = list.at(1);
 	int frames = list.at(2);
 
+	//TODO: scale x to a power of 2 if it's not
 	emit newCanvasSignal(sizeX);
 
 	int listIter = 3;
@@ -298,10 +306,11 @@ void Model::loadFromFile(QString filename)
 				color.setBlue(list.at(listIter++));
 				color.setGreen(list.at(listIter++));
 				color.setAlpha(list.at(listIter++));
-
 				_currentFrame->drawPen(QPoint(x, y), color);
 			}
 		}
+
+		emit frameUpdated(_currentFrame);
 
 		//if necessary creates a new frame
 		if (f < frames)
@@ -310,7 +319,17 @@ void Model::loadFromFile(QString filename)
 		}
 	}
 
+    //We need to delete old frames that existed before the load command.
+    //Currently you can still see the older frames in the frame preview bar at the top.
+    //Clicking on an old frame crashes the program because of an out of range error on our frame list.
 	f.close();
+}
+
+void Model::checkSaveStatus(){
+    if (!_isSaved)
+    {
+        emit savePrompt();
+    }
 }
 
 void Model::clearFrames() {
@@ -323,5 +342,7 @@ void Model::exit() {
     }
     else {
         // emit a signal that triggers a dialog that asks if the user would like to save (or something)
+        emit savePrompt();
+        QApplication::exit();
     }
 }

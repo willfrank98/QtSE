@@ -174,10 +174,19 @@ void Frame::redo(){
 //Called when a new change is made to the image.
 //Resets the redoStack and adds the current image to the undoStack.
 void Frame::updateUndoRedo(QImage newImage){
+
+    if(_blankFrame)
+    {
+        _blankFrame = false;
+        return;
+        //_undoStack.pop();
+    }
+
     if (!_redoStack.isEmpty())
     {
         _redoStack = QStack<QImage>();
     }
+
     _undoStack.push(newImage);
 }
 
