@@ -45,6 +45,7 @@ Frame::~Frame()
 void Frame::drawEllipse(QRect area, QColor line, QColor fill)
 {
     setupDraw(line, fill, _tempImage,_tempImage.rect());
+    _painter->setBrush(fill);
     _painter->drawEllipse(area);
 }
 
@@ -80,6 +81,7 @@ void Frame::setupDraw(QColor line, QColor fill, QImage temp, QRect area)
 void Frame::drawRectangle(QRect area, QColor line, QColor fill)
 {
     setupDraw(line, fill, _tempImage, _tempImage.rect());
+    _painter->setBrush(fill);
     _painter->drawRect(area);
 }
 
