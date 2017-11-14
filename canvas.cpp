@@ -194,7 +194,10 @@ void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     if (!_mouseEnabled) return;
 
     _buttonHeld = Qt::NoButton;
-    if (_tool == RectangleTool || _tool == EllipseTool || _tool == LineTool) refresh();
+    if (_tool == RectangleTool || _tool == EllipseTool || _tool == LineTool) {
+        refresh();
+        _frame->_tempImage = _frame->_image;
+    }
     if (_tool == RectSelectTool){
         _prevRect = _convertedRect;
         _isRectSelected = true;
