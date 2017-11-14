@@ -342,9 +342,6 @@ void Model::exit() {
     if (!_isSaved)
     {
         emit savePrompt();
-    }
-    else
-    {
         QApplication::quit();
     }
 }
