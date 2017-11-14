@@ -108,16 +108,25 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(_ui->spinBoxSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), &model, &Model::setPreviewFPS);
     connect(&model, &Model::frameUpdated, _canvas, &Canvas::setFrame);
     connect(&model, &Model::previewFrame, this, [=](QImage image) {
-        if (_ui->zoomLevelCheckbox->isChecked()) _ui->labelPreview->setPixmap(QPixmap::fromImage(image));
-        else _ui->labelPreview->setPixmap(QPixmap::fromImage(image).scaled(_ui->labelPreview->size()));
+        if (_ui->zoomLevelCheckbox->isChecked())
+        {
+            _ui->labelPreview->setPixmap(QPixmap::fromImage(image));
+        }
+        else
+        {
+            _ui->labelPreview->setPixmap(QPixmap::fromImage(image).scaled(_ui->labelPreview->size()));
+        }
     });
     connect(_ui->zoomLevelCheckbox, &QCheckBox::toggled, this, [=](bool toggled){
-        if (toggled) {
+        if (toggled)
+        {
             QSize oneToOne = QSize(_ui->labelPreview->objectName().toInt(), _ui->labelPreview->objectName().toInt());
             _ui->labelPreview->setPixmap(_ui->labelPreview->pixmap()->scaled(oneToOne));
         }
         else
+        {
             _ui->labelPreview->setPixmap(_ui->labelPreview->pixmap()->scaled(_ui->labelPreview->size()));
+        }
     });
 	connect(_canvas, &Canvas::frameUpdated, this, [=](Frame *frame)
 	{
