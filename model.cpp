@@ -7,14 +7,7 @@
  */
 
 #include "model.h"
-#include <math.h>
-#include <QtGlobal>
-#include <QApplication>
-#include <QTextStream>
-#include <QFile>
-#include <QDir>
 #include <gif.h>
-
 
 Model::Model(QObject *parent) : QObject(parent)
 {
