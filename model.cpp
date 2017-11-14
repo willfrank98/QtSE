@@ -350,11 +350,6 @@ void Model::clearFrames() {
     _isSaved = false;
 }
 
-// A slot used by some connections in the MainWindow
-void Model::markUnsaved() {
-    _isSaved = false;
-}
-
 // A slot called when exit (from the menu) is requested
 void Model::exit() {
     if (!_isSaved)

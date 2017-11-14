@@ -27,7 +27,6 @@ public:
 	explicit Model(QObject *parent = nullptr);
     void newSurface(int dimension);
     void createFrame();
-    void markUnsaved();
     void undo();
     void redo();
 

@@ -132,7 +132,6 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 	{
         QLabel *l = _frameButtons.checkedButton()->parent()->findChild<QLabel *>("view");
         l->setPixmap(QPixmap::fromImage(frame->pixels().scaled(l->size())));
-        _model->markUnsaved();
     });
 
     // connects the File>Export actions
