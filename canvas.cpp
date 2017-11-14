@@ -2,6 +2,8 @@
  * Team Deathstar IT
  * CS3505 - A7: Sprite Editor
  * canvas.cpp
+ *
+ *
  */
 
 #include "canvas.h"
@@ -12,6 +14,7 @@ Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
     _tool = PenTool;
     _isRectSelected = false;
     _isCut = false;
+    _isPaste = false;
 }
 
 //Sets the primary selected color.
@@ -54,6 +57,7 @@ void Canvas::setFrame(Frame *frame)
     this->_frame = frame;
     _rect = QRect();
     refresh();
+
 }
 
 //Draws on the canvas then adds changes to the selected frame.
@@ -122,6 +126,7 @@ void Canvas::refresh()
         {
             _frame->drawEllipse(_convertedRect, color, QColor(0, 0, 0, 0));
         }
+
         break;
     case RectSelectTool:
         if (_isCut)
@@ -131,15 +136,21 @@ void Canvas::refresh()
             _isCut = false;
             break;
         }
-        if (_isPaste)
-        {
+        if (_isPaste){
+            _frame->setupDraw(QColor(0,0,0,0), QColor(0,0,0,0), _frame->_prevSelectionToolImage, _frame->_image.rect());
+
+            for(auto it = _temp.begin(); it != _temp.end(); ++it){
+                auto v_temp = *it;
+                QPoint p (std::get<0>(v_temp));
+                QColor c(std::get<1>(v_temp));
+                _frame->drawPen(p,c);
+            }
             _frame->_prevSelectionToolImage = _frame->_image;
             _frame->selectRegion(_prevRect, QColor(0, 40, 50, 50), QColor(0, 40, 50, 50));
             _isPaste = false;
             break;
         }
-        if (!_isRectSelected)
-        {
+        if (!_isRectSelected){
             _convertedRect = _convertedRect.normalized();
             _prevRect = _convertedRect;
             _frame->selectRegion(_convertedRect, QColor(0, 40, 50, 50), QColor(0, 40, 50, 50));
@@ -163,7 +174,6 @@ void Canvas::refresh()
                 _frame->drawPen(p,c);
                 _temp.push_back(std::make_tuple(p, c));
             }
-
         }
         break;
     case LineTool:
@@ -182,10 +192,7 @@ void Canvas::refresh()
 //Get the x and y coordinates of the mouse.
 void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    if (!_mouseEnabled)
-    {
-        return;
-    }
+    if (!_mouseEnabled) return;
     int currentX = mouseEvent->scenePos().rx()/_pixSize.width();
     int currentY = mouseEvent->scenePos().ry()/_pixSize.height();
     if((_lastX != currentX) | (_lastY != currentY))
@@ -197,10 +204,8 @@ void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
     }
 }
 
-
 //Normalizes the coordinates of a rectangle.
-void Canvas::normalizeRectSides(QRect r)
-{
+void Canvas::normalizeRectSides(QRect r){
     if (_prevRect.top() > r.bottom())
     {
         _lastTop = r.top();
@@ -269,9 +274,7 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 //Handles key presses. i.e. hotkeys
 void Canvas::keyPressEvent(QKeyEvent *event)
 {
-    if (_tool == RectSelectTool && _isRectSelected)
-    {
-         qDebug()<<_convertedRect.topLeft()<<" "<<_convertedRect.topRight()<<" "<<_convertedRect.bottomLeft()<<" "<<_convertedRect.bottomRight()<<endl;
+    if (_tool == RectSelectTool && _isRectSelected){
         if (event->matches(QKeySequence::Cut)){
             _frame->_selectionPoints.clear();
             _isCut = true;
@@ -321,13 +324,14 @@ void Canvas::keyPressEvent(QKeyEvent *event)
     }
 }
 
-//Mouse was released, check for dragging shapes
+//Handles the release of the mouse.
 void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (!_mouseEnabled)
     {
         return;
     }
+
     _buttonHeld = Qt::NoButton;
     if (_tool == RectangleTool || _tool == EllipseTool || _tool == LineTool)
     {
