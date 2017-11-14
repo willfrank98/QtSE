@@ -25,7 +25,7 @@ private:
 public:
     QPainter *_painter;
     QImage _prevRectImage;
-    QImage _prevPreverRectImage;
+    QImage _prevSelectionToolImage;
     QImage _image;
     QImage _tempImage;
     Frame();
