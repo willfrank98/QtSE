@@ -43,13 +43,10 @@ void Canvas::setTool(Tool tool)
     if (_lastTool == RectSelectTool)
     {
         _isRectSelected = false;
-        QRect _prevRect;
         _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_prevSelectionToolImage, _frame->_image.rect());
-        //_frame->selectRegion(_convertedRect, QColor(0, 40, 50, 50), QColor(0, 40, 50, 50));
-        _isCut = true;
-        refresh();
+        addPixmap(QPixmap::fromImage(_frame->_image.scaled(sceneRect().width(), sceneRect().height())));
+        emit frameUpdated(_frame);
     }
-
     _tool = tool;
 }
 
@@ -222,16 +219,15 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     {
         return;
     }
-
     if (!_isRectSelected && _tool == RectSelectTool)
     {
+        _frame->_prevRectImage = _frame->_image;
         _frame->_prevSelectionToolImage = _frame->_image;
     }
-    else
+    if (_tool != RectSelectTool)
     {
         _frame->_tempImage = _frame->_image;
     }
-
     _rect = QRectF(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 0, 0);
     if (_tool == RectSelectTool)
     {
