@@ -13,6 +13,10 @@
 #include <QVector>
 #include <QStack>
 #include <QKeyEvent>
+#include <QDebug>
+#include <QGraphicsPixmapItem>
+#include <QPen>
+#include <QLabel>
 #include <tool.h>
 #include <frame.h>
 
