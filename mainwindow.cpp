@@ -266,10 +266,32 @@ void MainWindow::newFrame(int index)
     removeFrame->setText("X");
     connect(removeFrame, &QToolButton::clicked, _model, [=]()
     {
-        int frameNum = _ui->frameContainer->layout()->indexOf(newFrame);
+        QLayout *framesLayout = _ui->frameContainer->layout();
+        int frameNum = framesLayout->indexOf(newFrame);
         frameSelected->setChecked(true);
         _model->setActiveFrame(frameNum);
         _model->deleteFrame(frameNum);
+
+        if (framesLayout->parent()->children().count() > 2)
+        {
+            if (frameNum > 0 && frameNum < framesLayout->parent()->children().count() - 2)
+            {
+                frameNum += 1;
+            }
+            else if (frameNum != 0)
+            {
+                frameNum -= 1;
+            }
+            framesLayout->itemAt(frameNum)->widget()->findChild<QPushButton *>("button")->setChecked(true);
+            newFrame->hide();
+            framesLayout->removeWidget(newFrame);
+            newFrame->setParent(nullptr);
+            delete newFrame;
+            if (_frameButtons.checkedButton() == nullptr)
+            {
+                framesLayout->itemAt(frameNum)->widget()->findChild<QPushButton *>("button")->setChecked(true);
+            }
+        }
     });
 
 

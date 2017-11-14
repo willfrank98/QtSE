@@ -81,21 +81,35 @@ void Model::dupeFrame(int index) {
 }
 
 void Model::deleteFrame(int index) {
-    if (_frames.size()<=1)
+    _previewAnimTimer.stop();
+
+    if (index > 0 && index < _frames.size() - 1)
     {
-        return;
+        _frames.removeAt(index);
+        _currentFrame = _frames.at(index);
     }
-    if (index == 1)
+    else if (index == 0)
     {
-        _frames.removeAt(0);
-        _currentFrame = _frames.first();
+        int dimen = _frames.first()->size().width();
+        _frames.removeFirst();
+        if (_frames.size() == 0)
+        {
+            newSurface(dimen);
+        }
+        else
+        {
+            _currentFrame = _frames.at(index);
+        }
     }
     else
     {
-        _frames.removeAt(index-1);
-        _currentFrame = _frames.at(index-2);
+        _frames.removeAt(index);
+        _currentFrame = _frames.at(index - 1);
     }
     emit frameUpdated(_currentFrame);
+
+    _previewAnimIndex = 0;
+    _previewAnimTimer.start(_previewAnimTimer.interval());
 }
 
 // When a new change is made we push image into undoStack and clear redoStack
