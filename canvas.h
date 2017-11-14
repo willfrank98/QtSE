@@ -39,6 +39,7 @@ private:
     QPoint _rectStartPos;
     int _lastX, _lastY, _startX, _startY;
     int _lastButton;
+    std::vector<std::tuple<QPoint, QColor>> _temp;
     int _lastLeft,_lastRight,_lastTop, _lastBottom;
     QColor _primaryColor = QColor(0, 0, 0, 255);
     QColor _secondaryColor = QColor(255, 255, 255, 255);
@@ -51,6 +52,7 @@ private:
     QRect _prevRect;
     QPoint _convertedPoint;
     QRect _convertedRect;
+    bool _isPaste;
     bool _isCut;
     bool _isRectSelected;
     bool _mouseEnabled = true;

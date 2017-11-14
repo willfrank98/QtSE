@@ -36,11 +36,9 @@ void Canvas::setTool(Tool tool)
     if (_lastTool == RectSelectTool)
     {
         _isRectSelected = false;
-        QRect _prevRect;
         _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_prevSelectionToolImage, _frame->_image.rect());
-        //_frame->selectRegion(_convertedRect, QColor(0, 40, 50, 50), QColor(0, 40, 50, 50));
-        _isCut = true;
-        refresh();
+        addPixmap(QPixmap::fromImage(_frame->_image.scaled(sceneRect().width(), sceneRect().height())));
+        emit frameUpdated(_frame);
     }
     _tool = tool;
 }
@@ -125,6 +123,13 @@ void Canvas::refresh()
             _isCut = false;
             break;
         }
+        if (_isPaste)
+        {
+            _frame->_prevSelectionToolImage = _frame->_image;
+            _frame->selectRegion(_prevRect, QColor(0, 40, 50, 50), QColor(0, 40, 50, 50));
+            _isPaste = false;
+            break;
+        }
         if (!_isRectSelected)
         {
             _convertedRect = _convertedRect.normalized();
@@ -140,6 +145,7 @@ void Canvas::refresh()
             _frame->selectRegion(_convertedRect, QColor(0, 40, 50, 50), QColor(0, 40, 50, 50));
             int xShift = _convertedRect.center().rx() - _prevRect.center().rx();
             int yShift = _convertedRect.center().ry() - _prevRect.center().ry();
+            _temp.clear();
             for(auto it = _frame->_selectionPoints.begin(); it != _frame->_selectionPoints.end(); ++it){
                 auto v_temp = *it;
                 QPoint p (std::get<0>(v_temp));
@@ -147,7 +153,9 @@ void Canvas::refresh()
                 p.setX(p.rx()+xShift);
                 p.setY(p.ry()+yShift);
                 _frame->drawPen(p,c);
+                _temp.push_back(std::make_tuple(p, c));
             }
+
         }
         break;
     case LineTool:
@@ -214,12 +222,11 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     }
     if (!_isRectSelected && _tool == RectSelectTool)
     {
+        _frame->_prevRectImage = _frame->_image;
         _frame->_prevSelectionToolImage = _frame->_image;
     }
-    else
-    {
+    if (_tool != RectSelectTool)
         _frame->_tempImage = _frame->_image;
-    }
     _rect = QRectF(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 0, 0);
     if (_tool == RectSelectTool)
     {
@@ -250,6 +257,7 @@ void Canvas::keyPressEvent(QKeyEvent *event)
     {
          qDebug()<<_convertedRect.topLeft()<<" "<<_convertedRect.topRight()<<" "<<_convertedRect.bottomLeft()<<" "<<_convertedRect.bottomRight()<<endl;
         if (event->matches(QKeySequence::Cut)){
+            _frame->_selectionPoints.clear();
             _isCut = true;
              _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_prevSelectionToolImage, _frame->_prevSelectionToolImage.rect());
             _convertedRect = _convertedRect.normalized();
@@ -278,6 +286,7 @@ void Canvas::keyPressEvent(QKeyEvent *event)
             if (bot>_frame->_dimension) bot = _frame->_dimension;
             if (left < 0) left = 0;
             if (right > _frame->_dimension) right = _frame->_dimension;
+
             for(int i = top; i <= bot+1; i++)
                 for (int j = left; j<= right+1; j++){
                     QColor col(_frame->_image.pixelColor(j,i));
@@ -286,6 +295,11 @@ void Canvas::keyPressEvent(QKeyEvent *event)
                         _frame->erase(QPoint(j,i));
                     }
                 }
+            refresh();
+        }
+        if (event->matches(QKeySequence::Paste)){
+            _isPaste = true;
+            _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_prevSelectionToolImage, _frame->_prevSelectionToolImage.rect());
             refresh();
         }
     }
@@ -307,6 +321,8 @@ void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     //checks for selection tool
     if (_tool == RectSelectTool)
     {
+        _frame->_selectionPoints.clear();
+        _frame->_selectionPoints = _temp;
         _prevRect = _convertedRect;
         _isRectSelected = true;
     }
