@@ -10,20 +10,16 @@
 #include <math.h>
 #include <QtGlobal>
 #include <QApplication>
-#include <QDebug>
+#include <QTextStream>
 #include <QFile>
 #include <QDir>
 #include <gif.h>
 
 
-//#include <Magick++.h>
-//using namespace Magick;
-
-
 Model::Model(QObject *parent) : QObject(parent)
 {
     _previewAnimTimer.setInterval(1000/12);
-    connect(&_previewAnimTimer, SIGNAL(timeout()), this, SLOT(previewDisplay()));
+    connect(&_previewAnimTimer, &QTimer::timeout, this, &Model::previewDisplay);
     _previewAnimTimer.start();
 }
 
@@ -47,10 +43,6 @@ void Model::setActiveFrame(int index) {
 }
 
 void Model::newSurface(int dimension) {
-    if (!_isSaved) {
-        // emit a signal that prompts to save or something
-    }
-
     _previewAnimTimer.stop();
 
     Frame *newFrame = new Frame(dimension);
@@ -59,6 +51,7 @@ void Model::newSurface(int dimension) {
     _currentFrame = newFrame;
     emit frameCreated(_frames.indexOf(_currentFrame));
     emit frameUpdated(_currentFrame);
+    _isSaved = true;
 
     _previewAnimIndex = 0;
     _previewAnimTimer.start(_previewAnimTimer.interval());
@@ -70,6 +63,7 @@ void Model::createFrame() {
     _currentFrame = newFrame;
     emit frameCreated(_frames.indexOf(_currentFrame));
     emit frameUpdated(_currentFrame);
+    _isSaved = false;
 }
 
 void Model::dupeFrame(int index) {
@@ -78,6 +72,7 @@ void Model::dupeFrame(int index) {
     _currentFrame = newFrame;
     emit frameCreated(_frames.indexOf(_currentFrame));
     emit frameUpdated(_currentFrame);
+    _isSaved = false;
 }
 
 void Model::deleteFrame(int index) {
@@ -107,6 +102,7 @@ void Model::deleteFrame(int index) {
         _currentFrame = _frames.at(index - 1);
     }
     emit frameUpdated(_currentFrame);
+    _isSaved = false;
 
     _previewAnimIndex = 0;
     _previewAnimTimer.start(_previewAnimTimer.interval());
@@ -120,14 +116,12 @@ void Model::updateUndoRedo(QImage newImage) {
 
 // Tells the currentframe to run an undo command.
 void Model::undo() {
-    qDebug() << _undoStack;
     _currentFrame->undo();
     emit frameUpdated(_currentFrame);
 }
 
 // Tells the current frame to run a redo command.
 void Model::redo() {
-    qDebug() << _redoStack;
     _currentFrame->redo();
     emit frameUpdated(_currentFrame);
 }
@@ -200,7 +194,7 @@ void Model::saveSpritesheet(QString filename) {
 
     // The ceil floor is to try to limit the amount of blank space in the resulting image.
     int width = ceil(sqrt(_frames.count()));
-    int height = floor(sqrt(_frames.count()));
+    int height = ceil(sqrt(_frames.count()));
     QImage sheet = QImage(QSize(width * spriteSize.width(), height * spriteSize.height()), QImage::Format_ARGB32);
 
     // Gets rid of image artifacts that are present on creation for some reason.
@@ -268,13 +262,14 @@ void Model::loadFromFile(QString filename)
 //      emit savePrompt();
 //  }
 
+    _previewAnimTimer.stop();
+
 	if (filename.length() < 4)
 	{
 		return;
 	}
 
     QFile f(filename);
-    clearFrames();
 	f.open(QIODevice::ReadOnly);
 	QTextStream in(&f);
 
@@ -323,6 +318,8 @@ void Model::loadFromFile(QString filename)
     //Currently you can still see the older frames in the frame preview bar at the top.
     //Clicking on an old frame crashes the program because of an out of range error on our frame list.
 	f.close();
+
+    _previewAnimTimer.start();
 }
 
 void Model::checkSaveStatus(){
@@ -334,15 +331,20 @@ void Model::checkSaveStatus(){
 
 void Model::clearFrames() {
     _frames.clear();
+    _isSaved = false;
+}
+
+void Model::markUnsaved() {
+    _isSaved = false;
 }
 
 void Model::exit() {
-    if (_isSaved) {
-        QApplication::exit();
-    }
-    else {
-        // emit a signal that triggers a dialog that asks if the user would like to save (or something)
+    if (!_isSaved)
+    {
         emit savePrompt();
-        QApplication::exit();
+    }
+    else
+    {
+        QApplication::quit();
     }
 }

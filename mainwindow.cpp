@@ -119,6 +119,7 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 	{
         QLabel *l = _frameButtons.checkedButton()->parent()->findChild<QLabel *>("view");
         l->setPixmap(QPixmap::fromImage(frame->pixels().scaled(l->size())));
+        _model->markUnsaved();
     });
 
     // connects the File>Export actions
@@ -168,7 +169,7 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 			this->_model->loadFromFile(filename);
 		}
 	});
-    connect(&model, SIGNAL(savePrompt()), this, SLOT(saveDialog()));
+    connect(&model, &Model::savePrompt, this, &MainWindow::saveDialog);
 
     // Connects the Shortcut Keys
     _ui->penToolButton->setShortcut(Qt::CTRL | Qt::Key_1);
@@ -216,7 +217,7 @@ void MainWindow::saveDialog(){
         emit _ui->actionSave->triggered();
         break;
       case QMessageBox::Discard:
-          //We do nothing and let the process that called continue.
+          //Do nothing so that the process can continue
         break;
       case QMessageBox::Cancel:
           // Cancel was clicked. Not sure how to implement this option.
