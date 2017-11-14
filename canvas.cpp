@@ -5,10 +5,6 @@
  */
 
 #include "canvas.h"
-#include <QDebug>
-#include <QGraphicsPixmapItem>
-#include <QPen>
-#include <QLabel>
 
 Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 {
@@ -46,7 +42,6 @@ void Canvas::setTool(Tool tool)
         _isCut = true;
         refresh();
     }
-
     _tool = tool;
 }
 
@@ -55,7 +50,6 @@ void Canvas::setFrame(Frame *frame)
     this->_frame = frame;
     _rect = QRect();
     refresh();
-
 }
 
 void Canvas::draw(QPointF point)
@@ -122,7 +116,6 @@ void Canvas::refresh()
         {
             _frame->drawEllipse(_convertedRect, color, QColor(0, 0, 0, 0));
         }
-
         break;
     case RectSelectTool:
         if (_isCut)
@@ -172,7 +165,10 @@ void Canvas::refresh()
 
 void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    if (!_mouseEnabled) return;
+    if (!_mouseEnabled)
+    {
+        return;
+    }
     int currentX = mouseEvent->scenePos().rx()/_pixSize.width();
     int currentY = mouseEvent->scenePos().ry()/_pixSize.height();
     if((_lastX != currentX) | (_lastY != currentY))
@@ -208,14 +204,25 @@ void Canvas::normalizeRectSides(QRect r)
         _lastRight = r.left();
     }
 }
+
+//Mouse was clicked
 void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    if (!_mouseEnabled) return;
+    if (!_mouseEnabled)
+    {
+        return;
+    }
     if (!_isRectSelected && _tool == RectSelectTool)
+    {
         _frame->_prevSelectionToolImage = _frame->_image;
-
+    }
+    else
+    {
+        _frame->_tempImage = _frame->_image;
+    }
     _rect = QRectF(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 0, 0);
-    if (_tool == RectSelectTool){
+    if (_tool == RectSelectTool)
+    {
          QPoint _point(_rect.x() / _pixSize.width(), _rect.y() / _pixSize.height());
          normalizeRectSides(_prevRect);
         if ((_point.x() >= _lastLeft) && (_point.x() <= _lastRight)
@@ -232,14 +239,13 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     {
         //QRect _prevRect;
     }
+    emit updateUndo(_frame->pixels());
     _buttonHeld = mouseEvent->button();
     draw(mouseEvent->scenePos());
 }
 
-
 void Canvas::keyPressEvent(QKeyEvent *event)
 {
-
     if (_tool == RectSelectTool && _isRectSelected)
     {
          qDebug()<<_convertedRect.topLeft()<<" "<<_convertedRect.topRight()<<" "<<_convertedRect.bottomLeft()<<" "<<_convertedRect.bottomRight()<<endl;
@@ -284,12 +290,21 @@ void Canvas::keyPressEvent(QKeyEvent *event)
         }
     }
 }
+
+//Mouse was released, check for dragging shapes
 void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    if (!_mouseEnabled) return;
-
+    if (!_mouseEnabled)
+    {
+        return;
+    }
     _buttonHeld = Qt::NoButton;
-    if (_tool == RectangleTool || _tool == EllipseTool || _tool == LineTool) refresh();
+    //drops shape on canvas
+    if (_tool == RectangleTool || _tool == EllipseTool || _tool == LineTool)
+    {
+        refresh();
+    }
+    //checks for selection tool
     if (_tool == RectSelectTool)
     {
         _prevRect = _convertedRect;

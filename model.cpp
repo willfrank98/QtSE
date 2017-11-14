@@ -7,7 +7,7 @@
  */
 
 #include "model.h"
-#include <gif.h>
+#include <gif.h>    // please don't delete, thing'll break
 
 Model::Model(QObject *parent) : QObject(parent)
 {
