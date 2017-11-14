@@ -20,6 +20,7 @@ private:
     QStack<QPoint> _pixelStack;
     QStack<QImage> _undoStack;
     QStack<QImage> _redoStack;
+    bool _blankFrame = true;
 
 public:
     QPainter *_painter;

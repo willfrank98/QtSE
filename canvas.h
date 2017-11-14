@@ -50,7 +50,7 @@ private:
     QRect _convertedRect;
     bool _isRectSelected;
     bool _mouseEnabled = true;
-    bool _blankCanvas = true;
+    //bool _blankCanvas = true;
     Tool _lastTool;
     void draw(QPointF point);
     void refresh();
