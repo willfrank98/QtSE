@@ -209,6 +209,8 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     if (!_mouseEnabled) return;
     if (!_isRectSelected && _tool == RectSelectTool)
         _frame->_prevSelectionToolImage = _frame->_image;
+    else
+        _frame->_tempImage = _frame->_image;
 
     _rect = QRectF(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 0, 0);
     if (_tool == RectSelectTool){
@@ -235,17 +237,9 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
 void Canvas::keyPressEvent(QKeyEvent *event)
 {
-<<<<<<< HEAD
-    if (_tool == RectSelectTool && _isRectSelected)
-    {
-         //qDebug()<<_convertedRect.topLeft()<<" "<<_convertedRect.topRight()<<" "<<_convertedRect.bottomLeft()<<" "<<_convertedRect.bottomRight()<<endl;
-        if (event->matches(QKeySequence::Cut))
-        {
-=======
     if (_tool == RectSelectTool && _isRectSelected){
          qDebug()<<_convertedRect.topLeft()<<" "<<_convertedRect.topRight()<<" "<<_convertedRect.bottomLeft()<<" "<<_convertedRect.bottomRight()<<endl;
         if (event->matches(QKeySequence::Cut)){
->>>>>>> dfee3d54b4602ea7659f5a96d007e90c7852df7d
             _isCut = true;
              _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_prevSelectionToolImage, _frame->_prevSelectionToolImage.rect());
             _convertedRect = _convertedRect.normalized();
