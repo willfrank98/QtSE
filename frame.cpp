@@ -58,7 +58,6 @@ void Frame::drawMirrorPen(QPoint point, QColor color) {
 void Frame::drawPen(QPoint point, QColor color) {
     _painter->setPen(color);
     _painter->setBrush(QColor(0, 0, 0, 0));
-
     _painter->drawPoint(point);
 }
 

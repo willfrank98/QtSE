@@ -23,6 +23,7 @@ private:
     QStack<QImage> _redoStack;
 
 public:
+    std::vector<std::tuple<QPoint, QColor>> _selectionPoints;
     QPainter *_painter;
     QImage _prevRectImage;
     QImage _prevSelectionToolImage;
