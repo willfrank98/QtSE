@@ -39,6 +39,7 @@ void Canvas::setTool(Tool tool) {
         _isRectSelected = false;
         _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_tempImage);
     }
+
     _tool = tool;
      qDebug()<<tool<<" "<<_lastTool;
 }
