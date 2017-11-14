@@ -144,7 +144,7 @@ void Frame::colorSwap(QPoint startPoint, QColor color) {
 
 //Selects pixels in the drawn region.
 void Frame::selectRegion(QRect area, QColor line, QColor fill) {
-    setupDraw(line, fill, _tempImage, _tempImage.rect());
+    setupDraw(line, fill, _prevSelectionToolImage, _prevSelectionToolImage.rect());
     _painter->setBrush(fill);
     _painter->drawRect(area);
 }

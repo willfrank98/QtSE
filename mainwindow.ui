@@ -943,7 +943,7 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
      <x>0</x>
      <y>0</y>
      <width>691</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -986,20 +986,12 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
   </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="enabled">
     <bool>true</bool>
    </property>
    <property name="statusTip">
-    <string>Perhaps we can show the name of the tool here.</string>
+    <string/>
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>
@@ -1007,6 +999,14 @@ image: url(:/tool_icons/line_tool_icon.png);</string>
    <property name="sizeGripEnabled">
     <bool>false</bool>
    </property>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
   </widget>
   <action name="actionSave">
    <property name="text">

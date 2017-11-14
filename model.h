@@ -23,6 +23,7 @@ public:
 	explicit Model(QObject *parent = nullptr);
     void newSurface(int dimension);
     void createFrame();
+    void markUnsaved();
     void undo();
     void redo();
 
@@ -31,9 +32,7 @@ signals:
     void frameUpdated(Frame*);
     void previewFrame(QImage);
     void savePrompt();
-	void newCanvasSignal(int dimension);
-//	void drawEmit(QPoint point, QColor color); //see canvas.h
-//	void refreshEmit();
+    void newCanvasSignal(int dimension);
 
 public slots:
     void updateUndoRedo(QImage);
@@ -50,10 +49,10 @@ public slots:
     void dupeFrame(int index);
     void deleteFrame(int index);
     void clearFrames();
-    void exit();    // a better name might be needed
+    void exit();
 
 private:
-    bool _isSaved = true;   // toggle to true when saved, make false after changes are made
+    bool _isSaved = false;   // toggle to true when saved, make false after changes are made
     QList<Frame*> _frames = QList<Frame*>();
     Frame *_currentFrame;
     QTimer _previewAnimTimer;
