@@ -2,11 +2,13 @@
  * Team Deathstar IT
  * CS3505 - A7: Sprite Editor
  * canvas.cpp
- *
- *
  */
 
 #include "canvas.h"
+#include <QDebug>
+#include <QGraphicsPixmapItem>
+#include <QPen>
+#include <QLabel>
 
 Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 {
@@ -130,7 +132,8 @@ void Canvas::refresh()
             _isCut = false;
             break;
         }
-        if (!_isRectSelected){
+        if (!_isRectSelected)
+        {
             _convertedRect = _convertedRect.normalized();
             _prevRect = _convertedRect;
             _frame->selectRegion(_convertedRect, QColor(0, 40, 50, 50), QColor(0, 40, 50, 50));
@@ -181,7 +184,8 @@ void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
     }
 }
 
-void Canvas::normalizeRectSides(QRect r){
+void Canvas::normalizeRectSides(QRect r)
+{
     if (_prevRect.top() > r.bottom())
     {
         _lastTop = r.top();
@@ -235,17 +239,11 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
 void Canvas::keyPressEvent(QKeyEvent *event)
 {
-<<<<<<< HEAD
+
     if (_tool == RectSelectTool && _isRectSelected)
     {
-         //qDebug()<<_convertedRect.topLeft()<<" "<<_convertedRect.topRight()<<" "<<_convertedRect.bottomLeft()<<" "<<_convertedRect.bottomRight()<<endl;
-        if (event->matches(QKeySequence::Cut))
-        {
-=======
-    if (_tool == RectSelectTool && _isRectSelected){
          qDebug()<<_convertedRect.topLeft()<<" "<<_convertedRect.topRight()<<" "<<_convertedRect.bottomLeft()<<" "<<_convertedRect.bottomRight()<<endl;
         if (event->matches(QKeySequence::Cut)){
->>>>>>> dfee3d54b4602ea7659f5a96d007e90c7852df7d
             _isCut = true;
              _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_prevSelectionToolImage, _frame->_prevSelectionToolImage.rect());
             _convertedRect = _convertedRect.normalized();
