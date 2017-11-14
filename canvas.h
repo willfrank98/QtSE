@@ -36,6 +36,7 @@ public slots:
     void setFrame(Frame *frame);
 
 private:
+    QPoint _rectStartPos;
     int _lastX, _lastY, _startX, _startY;
     int _lastButton;
     int _lastLeft,_lastRight,_lastTop, _lastBottom;

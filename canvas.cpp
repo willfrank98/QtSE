@@ -134,6 +134,7 @@ void Canvas::refresh()
             _convertedRect = _convertedRect.normalized();
             _prevRect = _convertedRect;
             _frame->selectRegion(_convertedRect, QColor(0, 40, 50, 50), QColor(0, 40, 50, 50));
+            _rectStartPos = _prevRect.center();
         }
         else
         {
@@ -141,6 +142,16 @@ void Canvas::refresh()
                                    _prevRect.y() + _convertedPoint.y() -_convertedRect.y(),
                                    _prevRect.width(), _prevRect.height());
             _frame->selectRegion(_convertedRect, QColor(0, 40, 50, 50), QColor(0, 40, 50, 50));
+            int xShift = _convertedRect.center().rx() - _prevRect.center().rx();
+            int yShift = _convertedRect.center().ry() - _prevRect.center().ry();
+            for(auto it = _frame->_selectionPoints.begin(); it != _frame->_selectionPoints.end(); ++it){
+                auto v_temp = *it;
+                QPoint p (std::get<0>(v_temp));
+                QColor c(std::get<1>(v_temp));
+                p.setX(p.rx()+xShift);
+                p.setY(p.ry()+yShift);
+                _frame->drawPen(p,c);
+            }
         }
         break;
     case LineTool:
@@ -224,11 +235,17 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
 void Canvas::keyPressEvent(QKeyEvent *event)
 {
+<<<<<<< HEAD
     if (_tool == RectSelectTool && _isRectSelected)
     {
          //qDebug()<<_convertedRect.topLeft()<<" "<<_convertedRect.topRight()<<" "<<_convertedRect.bottomLeft()<<" "<<_convertedRect.bottomRight()<<endl;
         if (event->matches(QKeySequence::Cut))
         {
+=======
+    if (_tool == RectSelectTool && _isRectSelected){
+         qDebug()<<_convertedRect.topLeft()<<" "<<_convertedRect.topRight()<<" "<<_convertedRect.bottomLeft()<<" "<<_convertedRect.bottomRight()<<endl;
+        if (event->matches(QKeySequence::Cut)){
+>>>>>>> dfee3d54b4602ea7659f5a96d007e90c7852df7d
             _isCut = true;
              _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_prevSelectionToolImage, _frame->_prevSelectionToolImage.rect());
             _convertedRect = _convertedRect.normalized();
@@ -259,7 +276,11 @@ void Canvas::keyPressEvent(QKeyEvent *event)
             if (right > _frame->_dimension) right = _frame->_dimension;
             for(int i = top; i <= bot+1; i++)
                 for (int j = left; j<= right+1; j++){
-                    _frame->erase(QPoint(j,i));
+                    QColor col(_frame->_image.pixelColor(j,i));
+                    if (col != (Qt::transparent)){
+                        _frame->_selectionPoints.push_back(std::make_tuple(QPoint(j,i), col));
+                        _frame->erase(QPoint(j,i));
+                    }
                 }
             refresh();
         }

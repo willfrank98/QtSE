@@ -9,11 +9,15 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include <math.h>
+#include <frame.h>
 #include <QObject>
 #include <QStack>
 #include <QTimer>
-#include <frame.h>
-#include <tool.h>
+#include <QApplication>
+#include <QTextStream>
+#include <QFile>
+#include <QDir>
 
 class Model : public QObject
 {
