@@ -115,6 +115,7 @@ void Canvas::refresh() {
     case RectSelectTool:
         if (_isCut){
             _frame->_prevSelectionToolImage = _frame->_image;
+            _frame->selectRegion(_prevRect, QColor(0, 40, 50, 50), QColor(0, 40, 50, 50));
             _isCut = false;
             break;
         }
@@ -230,8 +231,8 @@ void Canvas::keyPressEvent(QKeyEvent *event)
             if (bot>_frame->_dimension) bot = _frame->_dimension;
             if (left < 0) left = 0;
             if (right > _frame->_dimension) right = _frame->_dimension;
-            for(int i = top; i <= bot; i++)
-                for (int j = left; j<= right; j++){
+            for(int i = top; i <= bot+1; i++)
+                for (int j = left; j<= right+1; j++){
                     _frame->erase(QPoint(j,i));
                 }
             refresh();
