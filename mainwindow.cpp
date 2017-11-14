@@ -196,11 +196,13 @@ MainWindow::~MainWindow()
     delete _ui;
 }
 
+//Converts a given QColor to a QString based on its RGB values
 QString MainWindow::colorToString(QColor color)
 {
 	return "background-color: rgb(" + QString::number(color.red()) + "," + QString::number(color.green()) + "," + QString::number(color.blue()) + ");";
 }
 
+//Updates the color history
 void MainWindow::updatePaletteHistory()
 {
     QString newStyle;
@@ -214,6 +216,7 @@ void MainWindow::updatePaletteHistory()
 	}
 }
 
+//Prompts user to save if they are about to discard unsaved changes
 void MainWindow::saveDialog(){
     QMessageBox saveBox;
     saveBox.setText("The sprite has been modified.");
@@ -238,11 +241,13 @@ void MainWindow::saveDialog(){
     }
 }
 
+//Helper method for loading. Used to create a new canvas from scratch before drawing in saved pixels
 void MainWindow::newCanvasSlot(int dimension)
 {
 	newCanvas(dimension);
 }
 
+//Creates a new cavnas upon user request
 void MainWindow::newCanvas(int dimension)
 {
     emit checkSave();
@@ -251,7 +256,7 @@ void MainWindow::newCanvas(int dimension)
     _model->newSurface(dimension);
 }
 
-
+//Creates a new frame and adds it to the frame selection and preview
 void MainWindow::newFrame(int index)
 {
     QFrame *newFrame = new QFrame();
@@ -261,9 +266,6 @@ void MainWindow::newFrame(int index)
     newFrame->setMaximumWidth(75);
     newFrame->setMaximumHeight(75);
 
-    // Should this connection be moved?
-    // Yes and no.  Yes if we want to loop through the frame previews to delete them,
-    //   no if we don't want to deal with that.
 	connect(this, &MainWindow::resetCanvas, this, [=]()
 	{
         newFrame->hide();

@@ -295,8 +295,15 @@ void Model::loadFromFile(QString filename)
 	int sizeY = list.at(1);
 	int frames = list.at(2);
 
-	//TODO: scale x to a power of 2 if it's not
-	emit newCanvasSignal(sizeX);
+	//accounts for loading non-square sprites
+	if (sizeX > sizeY)
+	{
+		emit newCanvasSignal(sizeX);
+	}
+	else
+	{
+		emit newCanvasSignal(sizeY);
+	}
 
 	int listIter = 3;
 	for (int f = 1; f <= frames; f++)
