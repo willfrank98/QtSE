@@ -100,10 +100,15 @@ void Canvas::refresh() {
 
     switch (_tool) {
     case RectangleTool:
-        _frame->drawRectangle(_convertedRect, color, QColor(0, 0, 0, 0));
+        if (_convertedRect != QRect()) {
+            _frame->drawRectangle(_convertedRect, color, QColor(0, 0, 0, 0));
+        }
         break;
     case EllipseTool:
-        _frame->drawEllipse(_convertedRect, color, QColor(0, 0, 0, 0));
+        if (_convertedRect != QRect()) {
+            _frame->drawEllipse(_convertedRect, color, QColor(0, 0, 0, 0));
+        }
+
         break;
     case RectSelectTool:
         if (_isCut){
