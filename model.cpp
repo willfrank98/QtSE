@@ -303,8 +303,8 @@ void Model::loadFromFile(QString filename)
 				//reads in the next 4 values and creates a color
 				QColor color;
 				color.setRed(list.at(listIter++));
+                color.setGreen(list.at(listIter++));
 				color.setBlue(list.at(listIter++));
-				color.setGreen(list.at(listIter++));
 				color.setAlpha(list.at(listIter++));
 				_currentFrame->drawPen(QPoint(x, y), color);
 			}
