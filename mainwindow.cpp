@@ -253,6 +253,7 @@ void MainWindow::newCanvas(int dimension)
     emit resetCanvas();
     this->disconnect();
     _model->newSurface(dimension);
+    connect(this, &MainWindow::checkSave, _model, &Model::checkSaveStatus);
 }
 
 //Creates a new frame and adds it to the frame selection and preview

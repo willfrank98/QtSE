@@ -29,15 +29,13 @@ signals:
     void resetCanvas();
     void checkSave();
 
-public slots:
-    void saveDialog();
-
 public:
     explicit MainWindow(Model& _model, QWidget *parent = 0);
     ~MainWindow();
 
 public slots:
 	void newCanvasSlot(int dimension);
+    void saveDialog();
 
 private:
     Model *_model;
@@ -49,7 +47,6 @@ private:
     QVector<QColor> _paletteHistory;
     int _paletteHistoryIndex = 0;
     QButtonGroup _frameButtons;
-
     QString colorToString(QColor color);
     void updatePaletteHistory();
     void newFrame(int index);
