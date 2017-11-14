@@ -22,7 +22,7 @@
 
 Model::Model(QObject *parent) : QObject(parent)
 {
-    _previewAnimTimer.setInterval(200);
+    _previewAnimTimer.setInterval(1000/12);
     connect(&_previewAnimTimer, SIGNAL(timeout()), this, SLOT(previewDisplay()));
     _previewAnimTimer.start();
 }

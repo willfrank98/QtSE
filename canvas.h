@@ -22,6 +22,7 @@ class Canvas : public QGraphicsScene
 signals:
     void frameUpdated(Frame *_frame);
     void pixelsModified(QImage);
+    void updateUndo(QImage);
 
 public slots:
     void setPrimaryColor(QColor color);
@@ -49,6 +50,7 @@ private:
     QRect _convertedRect;
     bool _isRectSelected;
     bool _mouseEnabled = true;
+    bool _blankCanvas = true;
     Tool _lastTool;
     void draw(QPointF point);
     void refresh();

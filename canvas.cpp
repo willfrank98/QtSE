@@ -177,6 +177,10 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     else{
         //QRect _prevRect;
     }
+    if (!_blankCanvas){
+        emit updateUndo(_frame->pixels());
+    }
+    _blankCanvas = false;
     _buttonHeld = mouseEvent->button();
     draw(mouseEvent->scenePos());
 }
