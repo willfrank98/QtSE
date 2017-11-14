@@ -337,7 +337,8 @@ void Model::loadFromFile(QString filename)
 }
 
 // If not saved, signal for a save prompt
-void Model::checkSaveStatus(){
+void Model::checkSaveStatus()
+{
     if (!_isSaved)
     {
         emit savePrompt();
@@ -355,6 +356,11 @@ void Model::exit() {
     if (!_isSaved)
     {
         emit savePrompt();
+        QApplication::quit();
+    }
+    else
+    {
+        //So that the user can quit a saved project.
         QApplication::quit();
     }
 }
