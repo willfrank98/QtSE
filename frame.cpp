@@ -21,6 +21,7 @@ Frame::Frame(Frame& f) {
     this->_undoStack = f._undoStack;
     this->_redoStack = f._redoStack;
     _painter = new QPainter(&_image);
+
 }
 
 Frame::Frame(int dimension) {
@@ -29,6 +30,7 @@ Frame::Frame(int dimension) {
     _undoStack.push(_image);
     _painter = new QPainter(&_image);
     _painter->setBackgroundMode(Qt::TransparentMode);
+    _dimension = dimension;
 }
 
 Frame::~Frame() {
@@ -40,7 +42,7 @@ Frame::~Frame() {
 
 //Draws an ellipse on the frame.
 void Frame::drawEllipse(QRect area, QColor line, QColor fill) {
-    setupDraw(line, fill, _tempImage);
+    setupDraw(line, fill, _tempImage,_tempImage.rect() );
     _painter->drawEllipse(area);
 }
 
@@ -61,19 +63,19 @@ void Frame::drawPen(QPoint point, QColor color) {
 }
 
 //Helper function for drawing rectangles and selecting pixel tools.
-void Frame::setupDraw(QColor line, QColor fill, QImage temp){
+void Frame::setupDraw(QColor line, QColor fill, QImage temp, QRect area){
     QColor q(0,0,0,0);
     QBrush b(q);
     _image.fill(q);
      QImage _image(temp);
-    _painter->drawImage(_image.rect(), _image, _image.rect(), Qt::AutoColor);
+    _painter->drawImage(_image.rect(), _image, area, Qt::AutoColor);
     _painter->setPen(line);
-    _painter->setBrush(fill);
+
 }
 
 //Draws a rectangle on the frame.
 void Frame::drawRectangle(QRect area, QColor line, QColor fill) {
-    setupDraw(line, fill, _tempImage);
+    setupDraw(line, fill, _tempImage, _tempImage.rect());
     _painter->drawRect(area);
 }
 
@@ -87,7 +89,7 @@ void Frame::drawLine(QPoint start, QPoint end, QColor color) {
     _painter->drawLine(start, end);
 }
 
-//Erases a pixel by changing its color to white.
+//Erases a pixel by changing its color to transparent.
 void Frame::erase(QPoint point) {
     _image.setPixelColor(point, QColor(0, 0, 0, 0));
 }
@@ -124,10 +126,10 @@ void Frame::bucketFill(QPoint startPoint, QColor initialColor, QColor replacemen
     }
 }
 
-////Doesnt Dither already work? Do we need this function anymore?
-//void Frame::drawDither(QPoint point, QColor color1, QColor color2) {
-//    // TODO
-//}
+//Doesnt Dither already work? Do we need this function anymore?
+void Frame::drawDither(QPoint point, QColor color1, QColor color2) {
+    // TODO
+}
 
 // This is the color-fill tool.  We might want to rename it to better reflect that.
 void Frame::colorSwap(QPoint startPoint, QColor color) {
@@ -142,8 +144,8 @@ void Frame::colorSwap(QPoint startPoint, QColor color) {
 
 //Selects pixels in the drawn region.
 void Frame::selectRegion(QRect area, QColor line, QColor fill) {
-    setupDraw(line, fill, _tempImage);
-    _painter->setPen(Qt::NoPen);
+    setupDraw(line, fill, _tempImage, _tempImage.rect());
+    _painter->setBrush(fill);
     _painter->drawRect(area);
 }
 
@@ -189,6 +191,7 @@ void Frame::updateUndoRedo(QImage newImage){
 
     _undoStack.push(newImage);
 }
+
 
 //Im pretty sure this is now unused.
 void Frame::setPixels(QImage newImage) {
