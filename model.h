@@ -42,7 +42,7 @@ public slots:
     void saveAnimatedGIF(QString filename);
     void saveFrameToPNG(QString filename);
     void saveFrameSequence(QString dir);
-    void saveSpritesheet(QString filename);
+    void saveSpriteSheet(QString filename);
 	void saveToFile(QString filename);
 	void loadFromFile(QString filename);
     void checkSaveStatus();

@@ -194,7 +194,7 @@ void Model::saveFrameSequence(QString dir) {
 }
 
 // Saves all the frames to a (somewhat) traditional style sprite sheet.
-void Model::saveSpritesheet(QString filename) {
+void Model::saveSpriteSheet(QString filename) {
     if (!filename.toLower().endsWith(".png"))
     {
         filename.append(".png");

@@ -6,6 +6,7 @@
 
 #include "canvas.h"
 
+//Constructor.
 Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 {
     _tool = PenTool;
@@ -13,16 +14,19 @@ Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
     _isCut = false;
 }
 
+//Sets the primary selected color.
 void Canvas::setPrimaryColor(QColor color)
 {
     _primaryColor = color;
 }
 
+//Sets the secondary selected color.
 void Canvas::setSecondaryColor(QColor color)
 {
     _secondaryColor = color;
 }
 
+//Swaps the primary and secondary selected color.
 void Canvas::swapColors()
 {
     QColor temp = _secondaryColor;
@@ -30,6 +34,7 @@ void Canvas::swapColors()
     _primaryColor = temp;
 }
 
+//Sets the selected tool.
 void Canvas::setTool(Tool tool)
 {
     _lastTool = _tool;
@@ -43,6 +48,7 @@ void Canvas::setTool(Tool tool)
     _tool = tool;
 }
 
+//Sets the selected frame.
 void Canvas::setFrame(Frame *frame)
 {
     this->_frame = frame;
@@ -50,6 +56,7 @@ void Canvas::setFrame(Frame *frame)
     refresh();
 }
 
+//Draws on the canvas then adds changes to the selected frame.
 void Canvas::draw(QPointF point)
 {
     if (_buttonHeld != Qt::NoButton)
@@ -88,6 +95,7 @@ void Canvas::draw(QPointF point)
     }
 }
 
+//Refreshes the canvas and sends a signal that the frame has been updated.
 void Canvas::refresh()
 {
     _pixSize = QSizeF(sceneRect().width() / (qreal)_frame->size().width(),
@@ -171,6 +179,7 @@ void Canvas::refresh()
     emit frameUpdated(_frame);
 }
 
+//Get the x and y coordinates of the mouse.
 void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (!_mouseEnabled)
@@ -188,6 +197,8 @@ void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
     }
 }
 
+
+//Normalizes the coordinates of a rectangle.
 void Canvas::normalizeRectSides(QRect r)
 {
     if (_prevRect.top() > r.bottom())
@@ -213,7 +224,7 @@ void Canvas::normalizeRectSides(QRect r)
     }
 }
 
-//Mouse was clicked
+//Gets the information
 void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (!_mouseEnabled)
@@ -226,7 +237,9 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         _frame->_prevSelectionToolImage = _frame->_image;
     }
     if (_tool != RectSelectTool)
+    {
         _frame->_tempImage = _frame->_image;
+    }
     _rect = QRectF(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 0, 0);
     if (_tool == RectSelectTool)
     {
@@ -246,11 +259,14 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     {
         //QRect _prevRect;
     }
+
+
     emit updateUndo(_frame->pixels());
     _buttonHeld = mouseEvent->button();
     draw(mouseEvent->scenePos());
 }
 
+//Handles key presses. i.e. hotkeys
 void Canvas::keyPressEvent(QKeyEvent *event)
 {
     if (_tool == RectSelectTool && _isRectSelected)
@@ -313,12 +329,10 @@ void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
         return;
     }
     _buttonHeld = Qt::NoButton;
-    //drops shape on canvas
     if (_tool == RectangleTool || _tool == EllipseTool || _tool == LineTool)
     {
         refresh();
     }
-    //checks for selection tool
     if (_tool == RectSelectTool)
     {
         _frame->_selectionPoints.clear();
