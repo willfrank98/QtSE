@@ -10,12 +10,13 @@
 #include <QDebug>
 #include <QGraphicsPixmapItem>
 #include <QPen>
+#include <QLabel>
 
 Canvas::Canvas(QObject *parent) : QGraphicsScene(parent)
 {
     _tool = PenTool;
     _isRectSelected = false;
-
+    _isCut = false;
 }
 
 void Canvas::setPrimaryColor(QColor color) {
@@ -37,17 +38,18 @@ void Canvas::setTool(Tool tool) {
     _lastTool = _tool;
     if (_lastTool == RectSelectTool){
         _isRectSelected = false;
-        _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_tempImage);
+        QRect _prevRect;
+        _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_tempImage, _frame->_tempImage.rect());
     }
 
     _tool = tool;
-     qDebug()<<tool<<" "<<_lastTool;
 }
 
 void Canvas::setFrame(Frame *frame) {
     this->_frame = frame;
     _rect = QRect();
     refresh();
+
 }
 
 void Canvas::draw(QPointF point) {
@@ -96,23 +98,35 @@ void Canvas::refresh() {
     pen.setCapStyle(Qt::FlatCap);
     pen.setWidth(_pixSize.width());
     pen.setColor(color);
+
     switch (_tool) {
     case RectangleTool:
-        _frame->drawRectangle(_convertedRect, color, QColor(0, 0, 0, 0));
+        if (_convertedRect != QRect()) {
+            _frame->drawRectangle(_convertedRect, color, QColor(0, 0, 0, 0));
+        }
         break;
     case EllipseTool:
-        _frame->drawEllipse(_convertedRect, color, QColor(0, 0, 0, 0));
+        if (_convertedRect != QRect()) {
+            _frame->drawEllipse(_convertedRect, color, QColor(0, 0, 0, 0));
+        }
+
         break;
     case RectSelectTool:
+        if (_isCut){
+            _frame->_tempImage = _frame->_image;
+            _isCut = false;
+            break;
+        }
         if (!_isRectSelected){
+            _convertedRect = _convertedRect.normalized();
             _prevRect = _convertedRect;
-            _frame->selectRegion(_convertedRect, color, QColor(0, 40, 50, 50));
+            _frame->selectRegion(_convertedRect, QColor(0, 40, 50, 50), QColor(0, 40, 50, 50));
         }
         else {
             _convertedRect = QRect(_prevRect.x() + _convertedPoint.x() -_convertedRect.x(),
                                    _prevRect.y() + _convertedPoint.y() -_convertedRect.y(),
                                    _prevRect.width(), _prevRect.height());
-            _frame->selectRegion(_convertedRect, color, QColor(0, 40, 50, 50));
+            _frame->selectRegion(_convertedRect, QColor(0, 40, 50, 50), QColor(0, 40, 50, 50));
         }
         break;
     case LineTool:
@@ -124,7 +138,7 @@ void Canvas::refresh() {
         break;
     }
     _lastButton = _buttonHeld;
-    addPixmap(QPixmap::fromImage(_frame->pixels().scaled(sceneRect().width(), sceneRect().height())));
+    addPixmap(QPixmap::fromImage(_frame->_image.scaled(sceneRect().width(), sceneRect().height())));
     emit frameUpdated(_frame);
 }
 
@@ -142,33 +156,36 @@ void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
     }
 }
 
+void Canvas::normalizeRectSides(QRect r){
+    if (_prevRect.top() > r.bottom()) {
+        _lastTop = r.top();
+        _lastBottom = r.bottom();
+    }
+    else{
+        _lastTop = r.bottom();
+        _lastBottom = r.top();
+    }
+    if (_prevRect.left() < r.right()) {
+        _lastLeft = r.left();
+        _lastRight = r.right();
+    }
+    else {
+        _lastLeft = r.right();
+        _lastRight = r.left();
+    }
+}
 void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (!_mouseEnabled) return;
+
     if (!_isRectSelected)
         _frame->_tempImage = _frame->_image;
     _rect = QRectF(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 0, 0);
     if (_tool == RectSelectTool){
          QPoint _point(_rect.x() / _pixSize.width(), _rect.y() / _pixSize.height());
-        int top, bottom, left, right;
-        if (_prevRect.top()> _prevRect.bottom()) {
-            top = _prevRect.top();
-            bottom = _prevRect.bottom();
-        }
-        else{
-            top = _prevRect.bottom();
-            bottom = _prevRect.top();
-        }
-        if (_prevRect.left() < _prevRect.right()) {
-            left = _prevRect.left();
-            right = _prevRect.right();
-        }
-        else {
-            left = _prevRect.right();
-            right = _prevRect.left();
-        }
-        if ((_point.x() >= left) && (_point.x() <= right)
-                && (_point.y() <= top ) && (_point.y() >= bottom)){
+         normalizeRectSides(_prevRect);
+        if ((_point.x() >= _lastLeft) && (_point.x() <= _lastRight)
+                && (_point.y() <= _lastTop ) && (_point.y() >= _lastBottom)){
             _isRectSelected = true;
         }
         else {
@@ -182,13 +199,45 @@ void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     draw(mouseEvent->scenePos());
 }
 
+
 void Canvas::keyPressEvent(QKeyEvent *event)
 {
-    qDebug()<<event->key();
-  // if (event->matches(QKeySequence::Cut))
-       //qDebug()<<"cut"<<endl;
-}
+    if (_tool == RectSelectTool && _isRectSelected){
+         //qDebug()<<_convertedRect.topLeft()<<" "<<_convertedRect.topRight()<<" "<<_convertedRect.bottomLeft()<<" "<<_convertedRect.bottomRight()<<endl;
+        if (event->matches(QKeySequence::Cut)){
+            _isCut = true;
+             _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_tempImage, _frame->_tempImage.rect());
+            _convertedRect = _convertedRect.normalized();
+            int top,bot, left,right;
+            if (_prevRect.top() < _prevRect.bottom()) {
+                top = _convertedRect.top();
+                bot = _convertedRect.bottom();
+            }
+            else{
+                top = _convertedRect.bottom();
+                bot = _convertedRect.top();
+            }
+            if (_prevRect.left() < _prevRect.right()) {
+                left = _convertedRect.left();
+                right = _convertedRect.right();
+            }
+            else {
+                left = _convertedRect.right();
+                right = _convertedRect.left();
+            }
+            if (top<0) top = 0;
+            if (bot>_frame->_dimension) bot = _frame->_dimension;
+            if (left < 0) left = 0;
+            if (right > _frame->_dimension) right = _frame->_dimension;
+            for(int i = top; i <= bot; i++)
+                for (int j = left; j<= right; j++){
+                    _frame->erase(QPoint(j,i));
+                }
+            refresh();
 
+        }
+    }
+}
 void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (!_mouseEnabled) return;
@@ -201,15 +250,3 @@ void Canvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
     }
     emit pixelsModified(_frame->pixels());
 }
-
-//Used for loading a file
-//void Canvas::drawSlot(QPoint point, QColor color)
-//{
-//	_frame->drawPen(point, color);
-//}
-
-//Used for loading a file
-//void Canvas::refreshSlot()
-//{
-//    refresh();
-//}

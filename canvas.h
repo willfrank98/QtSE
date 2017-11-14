@@ -20,6 +20,7 @@ class Canvas : public QGraphicsScene
 {
     Q_OBJECT
 signals:
+    void updateUndo(QImage);
     void frameUpdated(Frame *_frame);
     void pixelsModified(QImage);
 
@@ -29,13 +30,11 @@ public slots:
     void swapColors();
     void setTool(Tool tool);
     void setFrame(Frame *frame);
-    //void drawSlot(QPoint point, QColor color);	//intended to be used for loading files. Attempting to be more like human drawing to see if that fixes things
-    //void refreshSlot();
 
 private:
-    int _lastX;
-    int _lastY;
+    int _lastX, _lastY, _startX, _startY;
     int _lastButton;
+    int _lastLeft,_lastRight,_lastTop, _lastBottom;
     QColor _primaryColor = QColor(0, 0, 0, 255);
     QColor _secondaryColor = QColor(255, 255, 255, 255);
     QVector<QPoint> _points = QVector<QPoint>();
@@ -44,14 +43,16 @@ private:
     Frame *_frame;
     Tool _tool;
     QRectF _rect;
-    QRectF _prevRect;
+    QRect _prevRect;
     QPoint _convertedPoint;
     QRect _convertedRect;
+    bool _isCut;
     bool _isRectSelected;
     bool _mouseEnabled = true;
     Tool _lastTool;
     void draw(QPointF point);
     void refresh();
+    void normalizeRectSides(QRect r);
 
 public:
     explicit Canvas(QObject *parent = nullptr);

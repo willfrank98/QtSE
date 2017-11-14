@@ -22,7 +22,7 @@
 
 Model::Model(QObject *parent) : QObject(parent)
 {
-    _previewAnimTimer.setInterval(200);
+    _previewAnimTimer.setInterval(1000/12);
     connect(&_previewAnimTimer, SIGNAL(timeout()), this, SLOT(previewDisplay()));
     _previewAnimTimer.start();
 }
@@ -81,21 +81,35 @@ void Model::dupeFrame(int index) {
 }
 
 void Model::deleteFrame(int index) {
-    if (_frames.size()<=1)
+    _previewAnimTimer.stop();
+
+    if (index > 0 && index < _frames.size() - 1)
     {
-        return;
+        _frames.removeAt(index);
+        _currentFrame = _frames.at(index);
     }
-    if (index == 1)
+    else if (index == 0)
     {
-        _frames.removeAt(0);
-        _currentFrame = _frames.first();
+        int dimen = _frames.first()->size().width();
+        _frames.removeFirst();
+        if (_frames.size() == 0)
+        {
+            newSurface(dimen);
+        }
+        else
+        {
+            _currentFrame = _frames.at(index);
+        }
     }
     else
     {
-        _frames.removeAt(index-1);
-        _currentFrame = _frames.at(index-2);
+        _frames.removeAt(index);
+        _currentFrame = _frames.at(index - 1);
     }
     emit frameUpdated(_currentFrame);
+
+    _previewAnimIndex = 0;
+    _previewAnimTimer.start(_previewAnimTimer.interval());
 }
 
 // When a new change is made we push image into undoStack and clear redoStack
@@ -248,10 +262,11 @@ void Model::saveToFile(QString filename)
 
 void Model::loadFromFile(QString filename)
 {
-    if (!_isSaved)
-    {
-        emit savePrompt();
-    }
+	//this is redundant, as far as I can tell
+//  if (!_isSaved)
+//  {
+//      emit savePrompt();
+//  }
 
 	if (filename.length() < 4)
 	{
@@ -275,6 +290,7 @@ void Model::loadFromFile(QString filename)
 	int sizeY = list.at(1);
 	int frames = list.at(2);
 
+	//TODO: scale x to a power of 2 if it's not
 	emit newCanvasSignal(sizeX);
 
 	int listIter = 3;
@@ -287,12 +303,14 @@ void Model::loadFromFile(QString filename)
 				//reads in the next 4 values and creates a color
 				QColor color;
 				color.setRed(list.at(listIter++));
+                color.setGreen(list.at(listIter++));
 				color.setBlue(list.at(listIter++));
-				color.setGreen(list.at(listIter++));
 				color.setAlpha(list.at(listIter++));
 				_currentFrame->drawPen(QPoint(x, y), color);
 			}
 		}
+
+		emit frameUpdated(_currentFrame);
 
 		//if necessary creates a new frame
 		if (f < frames)
