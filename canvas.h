@@ -13,6 +13,10 @@
 #include <QVector>
 #include <QStack>
 #include <QKeyEvent>
+#include <QDebug>
+#include <QGraphicsPixmapItem>
+#include <QPen>
+#include <QLabel>
 #include <tool.h>
 #include <frame.h>
 
@@ -32,6 +36,7 @@ public slots:
     void setFrame(Frame *frame);
 
 private:
+    QPoint _rectStartPos;
     int _lastX, _lastY, _startX, _startY;
     int _lastButton;
     int _lastLeft,_lastRight,_lastTop, _lastBottom;

@@ -13,25 +13,27 @@
 #include <QPainter>
 #include <QStack>
 #include <QMap>
+#include <QDebug>
+#include <QBitmap>
 
 class Frame
 {
 private:
-    bool _blankFrame = true;
     QStack<QPoint> _pixelStack;
     QStack<QImage> _undoStack;
     QStack<QImage> _redoStack;
+    bool _blankFrame = true;
 
 public:
+    std::vector<std::tuple<QPoint, QColor>> _selectionPoints;
     QPainter *_painter;
     QImage _prevRectImage;
-    QImage _prevPreverRectImage;
+    QImage _prevSelectionToolImage;
     QImage _image;
     QImage _tempImage;
     Frame();
     Frame(Frame& f);
     Frame(int dimension);
-    int _dimension;
     ~Frame();
     void drawEllipse(QRect area, QColor line, QColor fill);
     void drawMirrorPen(QPoint point, QColor color);
@@ -42,14 +44,13 @@ public:
     void erase(QPoint point);
     void bucketFill(QPoint startPoint, QColor initialColor, QColor replacementColor);
     void colorSwap(QPoint startPoint, QColor color);
-    void drawDither(QPoint point, QColor color1, QColor color2);
     void selectRegion(QRect area, QColor line, QColor fill);
     void undo();
     void redo();
     void updateUndoRedo(QImage newImage);
-    void setPixels(QImage newImage);
     QImage pixels();
     QSize size();
+    int _dimension;
 };
 
 #endif // FRAME_H

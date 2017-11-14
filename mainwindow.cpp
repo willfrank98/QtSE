@@ -108,17 +108,31 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(_ui->spinBoxSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), &model, &Model::setPreviewFPS);
     connect(&model, &Model::frameUpdated, _canvas, &Canvas::setFrame);
     connect(&model, &Model::previewFrame, this, [=](QImage image) {
-        // TODO: do something with the image from previewFrame
-        _ui->labelPreview->setPixmap(QPixmap::fromImage(image.scaled(_ui->labelPreview->size())));
+        if (_ui->zoomLevelCheckbox->isChecked())
+        {
+            _ui->labelPreview->setPixmap(QPixmap::fromImage(image));
+        }
+        else
+        {
+            _ui->labelPreview->setPixmap(QPixmap::fromImage(image).scaled(_ui->labelPreview->size()));
+        }
     });
-	connect(_ui->zoomLevelCheckbox, &QCheckBox::toggled, this, [=](bool toggled)
-	{
-        // TODO: handle the zoom toggle
+    connect(_ui->zoomLevelCheckbox, &QCheckBox::toggled, this, [=](bool toggled){
+        if (toggled)
+        {
+            QSize oneToOne = QSize(_ui->labelPreview->objectName().toInt(), _ui->labelPreview->objectName().toInt());
+            _ui->labelPreview->setPixmap(_ui->labelPreview->pixmap()->scaled(oneToOne));
+        }
+        else
+        {
+            _ui->labelPreview->setPixmap(_ui->labelPreview->pixmap()->scaled(_ui->labelPreview->size()));
+        }
     });
 	connect(_canvas, &Canvas::frameUpdated, this, [=](Frame *frame)
 	{
         QLabel *l = _frameButtons.checkedButton()->parent()->findChild<QLabel *>("view");
         l->setPixmap(QPixmap::fromImage(frame->pixels().scaled(l->size())));
+        _model->markUnsaved();
     });
 
     // connects the File>Export actions
@@ -166,7 +180,7 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
 			this->_model->loadFromFile(filename);
 		}
 	});
-    connect(&model, SIGNAL(savePrompt()), this, SLOT(saveDialog()));
+    connect(&model, &Model::savePrompt, this, &MainWindow::saveDialog);
 
     // Connects the Shortcut Keys
     _ui->penToolButton->setShortcut(Qt::CTRL | Qt::Key_1);
@@ -214,7 +228,7 @@ void MainWindow::saveDialog(){
         emit _ui->actionSave->triggered();
         break;
       case QMessageBox::Discard:
-          //We do nothing and let the process that called continue.
+          //Do nothing so that the process can continue
         break;
       case QMessageBox::Cancel:
           // Cancel was clicked. Not sure how to implement this option.
@@ -247,7 +261,9 @@ void MainWindow::newFrame(int index)
     newFrame->setMaximumWidth(75);
     newFrame->setMaximumHeight(75);
 
-	//should this connection be moved?
+    // Should this connection be moved?
+    // Yes and no.  Yes if we want to loop through the frame previews to delete them,
+    //   no if we don't want to deal with that.
 	connect(this, &MainWindow::resetCanvas, this, [=]()
 	{
         newFrame->hide();
