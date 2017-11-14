@@ -34,12 +34,14 @@ void Canvas::swapColors() {
 }
 
 void Canvas::setTool(Tool tool) {
-
     _lastTool = _tool;
     if (_lastTool == RectSelectTool){
         _isRectSelected = false;
         QRect _prevRect;
-        _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_tempImage, _frame->_tempImage.rect());
+        _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_prevSelectionToolImage, _frame->_image.rect());
+        //_frame->selectRegion(_convertedRect, QColor(0, 40, 50, 50), QColor(0, 40, 50, 50));
+        _isCut = true;
+        refresh();
     }
     _tool = tool;
 }
@@ -107,7 +109,7 @@ void Canvas::refresh() {
         break;
     case RectSelectTool:
         if (_isCut){
-            _frame->_tempImage = _frame->_image;
+            _frame->_prevSelectionToolImage = _frame->_image;
             _isCut = false;
             break;
         }
@@ -171,9 +173,9 @@ void Canvas::normalizeRectSides(QRect r){
 void Canvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (!_mouseEnabled) return;
+    if (!_isRectSelected && _tool == RectSelectTool)
+        _frame->_prevSelectionToolImage = _frame->_image;
 
-    if (!_isRectSelected)
-        _frame->_tempImage = _frame->_image;
     _rect = QRectF(mouseEvent->scenePos().x(), mouseEvent->scenePos().y(), 0, 0);
     if (_tool == RectSelectTool){
          QPoint _point(_rect.x() / _pixSize.width(), _rect.y() / _pixSize.height());
@@ -200,7 +202,7 @@ void Canvas::keyPressEvent(QKeyEvent *event)
          //qDebug()<<_convertedRect.topLeft()<<" "<<_convertedRect.topRight()<<" "<<_convertedRect.bottomLeft()<<" "<<_convertedRect.bottomRight()<<endl;
         if (event->matches(QKeySequence::Cut)){
             _isCut = true;
-             _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_tempImage, _frame->_tempImage.rect());
+             _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_prevSelectionToolImage, _frame->_prevSelectionToolImage.rect());
             _convertedRect = _convertedRect.normalized();
             int top,bot, left,right;
             if (_prevRect.top() < _prevRect.bottom()) {
@@ -228,7 +230,6 @@ void Canvas::keyPressEvent(QKeyEvent *event)
                     _frame->erase(QPoint(j,i));
                 }
             refresh();
-
         }
     }
 }
