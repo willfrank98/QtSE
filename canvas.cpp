@@ -100,12 +100,17 @@ void Canvas::refresh() {
 
     switch (_tool) {
     case RectangleTool:
-        _frame->drawRectangle(_convertedRect, color, QColor(0, 0, 0, 0));
+        if (_convertedRect != QRect()) {
+            _frame->drawRectangle(_convertedRect, color, QColor(0, 0, 0, 0));
+        }
         break;
     case EllipseTool:
-        _frame->drawEllipse(_convertedRect, color, QColor(0, 0, 0, 0));
+        if (_convertedRect != QRect()) {
+            _frame->drawEllipse(_convertedRect, color, QColor(0, 0, 0, 0));
+        }
         break;
     case RectSelectTool:
+<<<<<<< HEAD
         if (_isCut){
             _frame->_tempImage = _frame->_image;
             _isCut = false;
@@ -113,10 +118,14 @@ void Canvas::refresh() {
         }
         if (!_isRectSelected){
             _convertedRect = _convertedRect.normalized();
+=======
+        if (!_isRectSelected) {
+>>>>>>> e39cbd8dfe78a13e2fbbdb78f1fd36c982a6a941
             _prevRect = _convertedRect;
             _frame->selectRegion(_convertedRect, QColor(0, 40, 50, 50), QColor(0, 40, 50, 50));
         }
-        else {
+        else
+        {
             _convertedRect = QRect(_prevRect.x() + _convertedPoint.x() -_convertedRect.x(),
                                    _prevRect.y() + _convertedPoint.y() -_convertedRect.y(),
                                    _prevRect.width(), _prevRect.height());
@@ -124,9 +133,11 @@ void Canvas::refresh() {
         }
         break;
     case LineTool:
-        if (_convertedRect != QRect()) _frame->drawLine(QPoint(_convertedRect.x(), _convertedRect.y()),
+        if (_convertedRect != QRect()) {
+            _frame->drawLine(QPoint(_convertedRect.x(), _convertedRect.y()),
                              QPoint(_convertedRect.x() + _convertedRect.width(), _convertedRect.y() + _convertedRect.height()),
                              _primaryColor);
+        }
         break;
     default:
         break;
