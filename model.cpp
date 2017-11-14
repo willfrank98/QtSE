@@ -23,25 +23,31 @@ Model::Model(QObject *parent) : QObject(parent)
     _previewAnimTimer.start();
 }
 
+// Called every tick of a timer to update the preview area display
 void Model::previewDisplay(){
     emit previewFrame(_frames.at(_previewAnimIndex)->pixels());
-    if(_previewAnimIndex + 1 == _frames.size()){
+    if(_previewAnimIndex + 1 == _frames.size())
+    {
         _previewAnimIndex = 0;
     }
-    else{
+    else
+    {
         _previewAnimIndex++;
     }
 }
 
+// Sets the FPS of the preview area display
 void Model::setPreviewFPS(int secs) {
     _previewAnimTimer.setInterval(1000/secs);
 }
 
+// Sets the current frame being worked/drawn upon
 void Model::setActiveFrame(int index) {
     _currentFrame = _frames.at(index);
     emit frameUpdated(_currentFrame);
 }
 
+// Creates a new surface; clears everything and starts a new surface
 void Model::newSurface(int dimension) {
     _previewAnimTimer.stop();
 
@@ -57,6 +63,8 @@ void Model::newSurface(int dimension) {
     _previewAnimTimer.start(_previewAnimTimer.interval());
 }
 
+// Creates a frame right after the currently active frame
+//   and makes the newly creative frame the currently active frame
 void Model::createFrame() {
     Frame *newFrame = new Frame(_frames.first()->size().width());
     _frames.insert(_frames.indexOf(_currentFrame)+1, newFrame);
@@ -66,6 +74,8 @@ void Model::createFrame() {
     _isSaved = false;
 }
 
+// Duplicate the frame at a given index and set the duplicate
+//   as the currently active frame
 void Model::dupeFrame(int index) {
     Frame *newFrame = new Frame(*_frames.at(index));
     _frames.insert(_frames.indexOf(_currentFrame)+1, newFrame);
@@ -75,6 +85,7 @@ void Model::dupeFrame(int index) {
     _isSaved = false;
 }
 
+// Delete the frame at a given index
 void Model::deleteFrame(int index) {
     _previewAnimTimer.stop();
 
@@ -163,7 +174,10 @@ void Model::saveAnimatedGIF(QString filename) {
 
 // Save the currently active frame to a PNG
 void Model::saveFrameToPNG(QString filename) {
-    if (!filename.toLower().endsWith(".png")) filename.append(".png");
+    if (!filename.toLower().endsWith(".png"))
+    {
+        filename.append(".png");
+    }
     _currentFrame->pixels().save(filename);
 }
 
@@ -188,7 +202,10 @@ void Model::saveFrameSequence(QString dir) {
 
 // Saves all the frames to a (somewhat) traditional style sprite sheet.
 void Model::saveSpritesheet(QString filename) {
-    if (!filename.toLower().endsWith(".png")) filename.append(".png");
+    if (!filename.toLower().endsWith(".png"))
+    {
+        filename.append(".png");
+    }
 
     QSize spriteSize = _frames.first()->pixels().size();
 
@@ -207,7 +224,10 @@ void Model::saveSpritesheet(QString filename) {
         for (int x = 0; x < width; x++)
         {
             // Stop trying to add frames to the image if none are left.
-            if (frameIndex >= _frames.count()) break;
+            if (frameIndex >= _frames.count())
+            {
+                break;
+            }
 
             // Add the frame to the sprite sheet
             painter->drawImage(x * spriteSize.width(), y * spriteSize.height(), _frames.at(frameIndex++)->pixels());
@@ -219,6 +239,8 @@ void Model::saveSpritesheet(QString filename) {
     sheet.save(filename);
 }
 
+// Save the frames to a project file.  The format was specified in the assignment
+//   specifications page
 void Model::saveToFile(QString filename)
 {
 	if (!filename.toLower().endsWith(".ssp"))
@@ -254,14 +276,9 @@ void Model::saveToFile(QString filename)
     _isSaved = true;
 }
 
+// Load from a project file
 void Model::loadFromFile(QString filename)
 {
-	//this is redundant, as far as I can tell
-//  if (!_isSaved)
-//  {
-//      emit savePrompt();
-//  }
-
     _previewAnimTimer.stop();
 
 	if (filename.length() < 4)
@@ -322,6 +339,7 @@ void Model::loadFromFile(QString filename)
     _previewAnimTimer.start();
 }
 
+// If not saved, signal for a save prompt
 void Model::checkSaveStatus(){
     if (!_isSaved)
     {
@@ -329,15 +347,18 @@ void Model::checkSaveStatus(){
     }
 }
 
+// Clear the frames and mark as unsaved
 void Model::clearFrames() {
     _frames.clear();
     _isSaved = false;
 }
 
+// A slot used by some connections in the MainWindow
 void Model::markUnsaved() {
     _isSaved = false;
 }
 
+// A slot called when exit (from the menu) is requested
 void Model::exit() {
     if (!_isSaved)
     {

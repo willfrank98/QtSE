@@ -108,12 +108,16 @@ MainWindow::MainWindow(Model &model, QWidget *parent) :
     connect(_ui->spinBoxSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), &model, &Model::setPreviewFPS);
     connect(&model, &Model::frameUpdated, _canvas, &Canvas::setFrame);
     connect(&model, &Model::previewFrame, this, [=](QImage image) {
-        // TODO: do something with the image from previewFrame
-        _ui->labelPreview->setPixmap(QPixmap::fromImage(image.scaled(_ui->labelPreview->size())));
+        if (_ui->zoomLevelCheckbox->isChecked()) _ui->labelPreview->setPixmap(QPixmap::fromImage(image));
+        else _ui->labelPreview->setPixmap(QPixmap::fromImage(image).scaled(_ui->labelPreview->size()));
     });
-	connect(_ui->zoomLevelCheckbox, &QCheckBox::toggled, this, [=](bool toggled)
-	{
-        // TODO: handle the zoom toggle
+    connect(_ui->zoomLevelCheckbox, &QCheckBox::toggled, this, [=](bool toggled){
+        if (toggled) {
+            QSize oneToOne = QSize(_ui->labelPreview->objectName().toInt(), _ui->labelPreview->objectName().toInt());
+            _ui->labelPreview->setPixmap(_ui->labelPreview->pixmap()->scaled(oneToOne));
+        }
+        else
+            _ui->labelPreview->setPixmap(_ui->labelPreview->pixmap()->scaled(_ui->labelPreview->size()));
     });
 	connect(_canvas, &Canvas::frameUpdated, this, [=](Frame *frame)
 	{
@@ -250,7 +254,9 @@ void MainWindow::newFrame(int index)
     newFrame->setMaximumWidth(75);
     newFrame->setMaximumHeight(75);
 
-	//should this connection be moved?
+    // Should this connection be moved?
+    // Yes and no.  Yes if we want to loop through the frame previews to delete them,
+    //   no if we don't want to deal with that.
 	connect(this, &MainWindow::resetCanvas, this, [=]()
 	{
         newFrame->hide();
