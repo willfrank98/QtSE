@@ -192,7 +192,10 @@ void Canvas::refresh()
 //Get the x and y coordinates of the mouse.
 void Canvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    if (!_mouseEnabled) return;
+    if (!_mouseEnabled)
+    {
+        return;
+    }
     int currentX = mouseEvent->scenePos().rx()/_pixSize.width();
     int currentY = mouseEvent->scenePos().ry()/_pixSize.height();
     if((_lastX != currentX) | (_lastY != currentY))
@@ -301,22 +304,39 @@ void Canvas::keyPressEvent(QKeyEvent *event)
                 left = _convertedRect.right();
                 right = _convertedRect.left();
             }
-            if (top<0) top = 0;
-            if (bot>_frame->_dimension) bot = _frame->_dimension;
-            if (left < 0) left = 0;
-            if (right > _frame->_dimension) right = _frame->_dimension;
+            if (top<0)
+            {
+                top = 0;
+            }
+            if (bot>_frame->_dimension)
+            {
+                bot = _frame->_dimension;
+            }
+            if (left < 0)
+            {
+                left = 0;
+            }
+            if (right > _frame->_dimension)
+            {
+                right = _frame->_dimension;
+            }
 
             for(int i = top; i <= bot+1; i++)
-                for (int j = left; j<= right+1; j++){
+            {
+                for (int j = left; j<= right+1; j++)
+                {
                     QColor col(_frame->_image.pixelColor(j,i));
-                    if (col != (Qt::transparent)){
+                    if (col != (Qt::transparent))
+                    {
                         _frame->_selectionPoints.push_back(std::make_tuple(QPoint(j,i), col));
                         _frame->erase(QPoint(j,i));
                     }
                 }
+            }
             refresh();
         }
-        if (event->matches(QKeySequence::Paste)){
+        if (event->matches(QKeySequence::Paste))
+        {
             _isPaste = true;
             _frame->setupDraw(Qt::transparent, Qt::transparent, _frame->_prevSelectionToolImage, _frame->_prevSelectionToolImage.rect());
             refresh();
