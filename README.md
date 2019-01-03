@@ -18,6 +18,6 @@ A sprite editor (SE) written in Qt
 14. Square, allipse, and line tools
 
 ## Screenshots
-![](Screenshot_1.png)
-![](Screenshot_2.png)
-![](Screenshot_3.png)
+![](Screenshots/Screenshot_1.png)
+![](Screenshots/Screenshot_2.png)
+![](Screenshots/Screenshot_3.png)
